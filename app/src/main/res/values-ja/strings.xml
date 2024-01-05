@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- About -->
+    <string name="about_version_number">バージョン</string>
+    <string name="about_author">作者: </string>
+    <string name="about_author_contributors">および貢献者。</string>
+    <string name="about_affiliation">提携</string>
+    <string name="about_privacy_friendly">このアプリケーションは、ダルムシュタット工科大学 (Karlsruhe Institute of Technology, Germany) が開発したプライバシーフレンドリーアプリのグループに属しています。ソースコードは GPLv3 の下でライセンスされます。画像の著作権は Karlsruhe Institute of Technology および Google Inc.</string>
+    <string name="about_more_info">さらに詳しい情報は以下でご覧ください:</string>
+</resources>
