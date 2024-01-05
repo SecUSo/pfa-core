@@ -12,7 +12,7 @@ import org.secuso.privacyfriendlycore.ui.composables.SummaryText
 
 typealias Settings = HashMap<String, List<SettingData<*>>>
 
-class SettingsBuilder(private val context: Context) {
+class SettingsBuilder(context: Context) {
     internal val settings: Settings = hashMapOf()
     private val preferences = PreferenceManager.getDefaultSharedPreferences(context)
 
@@ -32,13 +32,39 @@ class SettingBuilder(
             .apply(initializer)
             .compose(state = { data ->
                 mutableStateOf(preferences.getBoolean(data.key!!, data.default!!))
-            }) {
-                data ->
-                    SwitchPreference(
-                        data = data,
-                        checked = data.state,
-                        update = { preferences.edit().putBoolean(data.key, it).apply(); data.state.value = it }
-                    )
+            }) { data -> SwitchPreference(
+                    data = data,
+                    checked = data.state,
+                    update = { preferences.edit().putBoolean(data.key, it).apply(); data.state.value = it }
+                )
+            }
+        this.settings.add(setting)
+    }
+
+    fun radioString(initializer: SettingDSL<String>.() -> Unit) {
+        val setting = SettingDSL<String>()
+            .apply(initializer)
+            .compose(state = { data ->
+                mutableStateOf(preferences.getString(data.key!!, data.default!!)!!)
+            }) { data -> RadioPreference(
+                    data = data,
+                    selected = data.state,
+                    update = { preferences.edit().putString(data.key, it).apply(); data.state.value = it }
+                )
+            }
+        this.settings.add(setting)
+    }
+
+    fun radioInt(initializer: SettingDSL<Int>.() -> Unit) {
+        val setting = SettingDSL<Int>()
+            .apply(initializer)
+            .compose(state = { data ->
+                mutableStateOf(preferences.getInt(data.key!!, data.default!!))
+            }) { data -> RadioPreference(
+                data = data,
+                selected = data.state,
+                update = { preferences.edit().putInt(data.key, it).apply(); data.state.value = it }
+            )
             }
         this.settings.add(setting)
     }
@@ -50,13 +76,18 @@ class SettingDSL<T>(
     var title: String? = null,
     var summary: String? = null,
     var customTitle: (@Composable (T, Modifier) -> Unit)? = null,
-    var customSummary: (@Composable (T, Modifier) -> Unit)? = null
+    var customSummary: (@Composable (T, Modifier) -> Unit)? = null,
+    private var entries: List<SettingEntry<T>>? = null,
 ) {
     private val defaultTitle: (String) -> (@Composable (T, Modifier) -> Unit) = { text ->
         { _, modifier -> Text(text = text, modifier = modifier) }
     }
     private val defaultSummary: (String) -> (@Composable (T, Modifier) -> Unit) = { text ->
         { _, modifier -> SummaryText(text = text, modifier = modifier) }
+    }
+
+    fun entries(initializer: SettingEntriesDSL<T>.() -> Unit) {
+        this.entries = SettingEntriesDSL<T>().apply(initializer).collect()
     }
     fun compose(state: (SettingDSL<T>) -> MutableState<T>, composable: @Composable (data: SettingData<T>) -> Unit): SettingData<T> {
         return when {
@@ -69,10 +100,18 @@ class SettingDSL<T>(
                 defaultValue = default!!,
                 title = customTitle ?: defaultTitle(title!!),
                 summary = customSummary ?: if (summary != null) { defaultSummary(summary!!) } else { { _, _ -> } },
-                _composable = composable
+                _composable = composable,
+                entries = entries
             )
         }
     }
+}
+
+class SettingEntriesDSL<T>(
+    var entries: List<String>? = null,
+    var values: List<T>? = null
+) {
+    fun collect() = entries!!.zip(values!!).map { (entry, value) -> SettingEntry(entry, value)}.toList()
 }
 
 fun settings(context: Context, initializer: SettingsBuilder.() -> Unit): Settings {

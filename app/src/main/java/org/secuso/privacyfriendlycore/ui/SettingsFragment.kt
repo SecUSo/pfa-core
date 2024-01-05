@@ -78,8 +78,10 @@ fun SettingGroup(group: String, settings: List<SettingData<*>>) {
 fun SettingsMenu(settings: Settings) {
     PrivacyFriendlyCoreTheme {
         Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
-            for (key in settings.keys) {
-                SettingGroup(group = key, settings = settings[key]!!)
+            Column(Modifier.fillMaxWidth()) {
+                for (key in settings.keys) {
+                    SettingGroup(group = key, settings = settings[key]!!)
+                }
             }
         }
     }
