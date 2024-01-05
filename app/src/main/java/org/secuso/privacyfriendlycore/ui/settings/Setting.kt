@@ -30,10 +30,11 @@ data class SettingData<T>(
     var key: String,
     var state: MutableState<T>,
     var defaultValue: T,
-    var title: @Composable (T, modifier: Modifier) -> Unit,
-    var summary: @Composable (T, modifier: Modifier) -> Unit,
+    var title: @Composable (SettingData<T>, modifier: Modifier) -> Unit,
+    var summary: @Composable (SettingData<T>, modifier: Modifier) -> Unit,
     private var _composable: @Composable (SettingData<T>) -> Unit,
-    var entries: List<SettingEntry<T>>? = null
+    var entries: List<SettingEntry<T>>? = null,
+    var enable: State<Boolean>
 ) {
     val composable = @Composable { this._composable(this) }
     val value = state.value
@@ -55,8 +56,8 @@ fun <T> Preference(
             .clickable { onClick() }
     ) {
         Column(Modifier.fillMaxWidth(0.8f)) {
-            data.title(data.value, Modifier)
-            data.summary(data.value, Modifier)
+            data.title(data, Modifier)
+            data.summary(data, Modifier)
         }
         Column(modifier = Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
             action()
@@ -67,25 +68,29 @@ fun <T> Preference(
 @Composable
 fun SwitchPreference(
     data: SettingData<Boolean>,
+    enabled: State<Boolean>,
     checked: State<Boolean>,
     update: (Boolean) -> Unit
 ) {
-    Preference(data = data, onClick = { update(!checked.value) }) {
-        Switch(checked = checked.value, onCheckedChange = update)
+    Preference(data = data, onClick = { if (enabled.value) update(!checked.value) }) {
+        Switch(checked = checked.value, onCheckedChange = update, enabled = enabled.value)
     }
 }
 
 @Composable
 fun <T> RadioPreference(
     data: SettingData<T>,
+    enabled: State<Boolean>,
     selected: State<T>,
     update: (T) -> Unit
 ) {
     val expanded = remember {
         mutableStateOf(false)
     }
-    Preference(data = data, onClick = { expanded.value = !expanded.value }) {
-        IconToggleButton(checked = expanded.value, onCheckedChange = { expanded.value = !expanded.value}) {
+    Preference(data = data, onClick = { if (enabled.value) {expanded.value = !expanded.value}}) {
+        IconToggleButton(checked = expanded.value, onCheckedChange = {  if (enabled.value) {
+            expanded.value = !expanded.value
+        }}) {
             if (!expanded.value) {
                 Icon(painter = painterResource(id = R.drawable.baseline_expand_more_24), contentDescription = "Expand")
             } else {

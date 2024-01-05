@@ -2,6 +2,7 @@ package org.secuso.privacyfriendlycore.ui.settings
 
 import android.content.Context
 import android.content.SharedPreferences
+import android.util.Log
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
@@ -27,13 +28,27 @@ class SettingBuilder(
     private val preferences: SharedPreferences
 ) {
 
+    fun track(dependency: String?): MutableState<Boolean> {
+        if (dependency == null) {
+            return mutableStateOf(true)
+        }
+        val state = settings.find { it.key == dependency }?.state ?: throw IllegalStateException("Dependency $dependency not found. Dependencies must be in the same category and precede the setting")
+        if (state.value !is Boolean) {
+            throw IllegalStateException("A Setting can only depend on Boolean-Settings")
+        }
+        return state as MutableState<Boolean>
+    }
     fun switch(initializer: SettingDSL<Boolean>.() -> Unit) {
         val setting = SettingDSL<Boolean>()
             .apply(initializer)
-            .compose(state = { data ->
-                mutableStateOf(preferences.getBoolean(data.key!!, data.default!!))
-            }) { data -> SwitchPreference(
+            .compose(
+                state = { data ->
+                    mutableStateOf(preferences.getBoolean(data.key!!, data.default!!))
+                },
+                enabled = { track(it) }
+            ) { data -> SwitchPreference(
                     data = data,
+                    enabled = data.enable,
                     checked = data.state,
                     update = { preferences.edit().putBoolean(data.key, it).apply(); data.state.value = it }
                 )
@@ -46,8 +61,11 @@ class SettingBuilder(
             .apply(initializer)
             .compose(state = { data ->
                 mutableStateOf(preferences.getString(data.key!!, data.default!!)!!)
-            }) { data -> RadioPreference(
+            },
+                enabled = { track(it) }
+            ) { data -> RadioPreference(
                     data = data,
+                    enabled = data.enable,
                     selected = data.state,
                     update = { preferences.edit().putString(data.key, it).apply(); data.state.value = it }
                 )
@@ -60,8 +78,11 @@ class SettingBuilder(
             .apply(initializer)
             .compose(state = { data ->
                 mutableStateOf(preferences.getInt(data.key!!, data.default!!))
-            }) { data -> RadioPreference(
+            },
+                enabled = { track(it) }
+            ) { data -> RadioPreference(
                 data = data,
+                enabled = data.enable,
                 selected = data.state,
                 update = { preferences.edit().putInt(data.key, it).apply(); data.state.value = it }
             )
@@ -75,21 +96,25 @@ class SettingDSL<T>(
     var default: T? = null,
     var title: String? = null,
     var summary: String? = null,
-    var customTitle: (@Composable (T, Modifier) -> Unit)? = null,
-    var customSummary: (@Composable (T, Modifier) -> Unit)? = null,
+    var customTitle: (@Composable (SettingData<T>, Modifier) -> Unit)? = null,
+    var customSummary: (@Composable (SettingData<T>, Modifier) -> Unit)? = null,
     private var entries: List<SettingEntry<T>>? = null,
+    var depends: String? = null
 ) {
-    private val defaultTitle: (String) -> (@Composable (T, Modifier) -> Unit) = { text ->
+    private val defaultTitle: (String) -> (@Composable (SettingData<T>, Modifier) -> Unit) = { text ->
         { _, modifier -> Text(text = text, modifier = modifier) }
     }
-    private val defaultSummary: (String) -> (@Composable (T, Modifier) -> Unit) = { text ->
+    private val defaultSummary: (String) -> (@Composable (SettingData<T>, Modifier) -> Unit) = { text ->
         { _, modifier -> SummaryText(text = text, modifier = modifier) }
     }
 
     fun entries(initializer: SettingEntriesDSL<T>.() -> Unit) {
         this.entries = SettingEntriesDSL<T>().apply(initializer).collect()
     }
-    fun compose(state: (SettingDSL<T>) -> MutableState<T>, composable: @Composable (data: SettingData<T>) -> Unit): SettingData<T> {
+    fun compose(
+        state: (SettingDSL<T>) -> MutableState<T>,
+        enabled: (String?) -> MutableState<Boolean>,
+        composable: @Composable (data: SettingData<T>) -> Unit): SettingData<T> {
         return when {
             key === null -> throw IllegalStateException("A setting needs to have a key")
             default === null -> throw IllegalStateException("A setting needs to have a default value")
@@ -101,7 +126,8 @@ class SettingDSL<T>(
                 title = customTitle ?: defaultTitle(title!!),
                 summary = customSummary ?: if (summary != null) { defaultSummary(summary!!) } else { { _, _ -> } },
                 _composable = composable,
-                entries = entries
+                entries = entries,
+                enable = enabled(depends)
             )
         }
     }
