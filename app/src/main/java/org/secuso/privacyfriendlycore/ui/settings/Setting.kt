@@ -18,9 +18,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.State
 import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
@@ -31,6 +31,7 @@ data class SettingEntry<T>(
     var entry: String,
     var value: T
 )
+
 data class SettingData<T>(
     var key: String,
     var state: MutableState<T>,
@@ -97,13 +98,21 @@ fun <T> RadioPreference(
     val selected by remember {
         derivedStateOf { data.state }
     }
-    Column(modifier = Modifier
-        .fillMaxWidth()
-        .animateContentSize()) {
-        Preference(data = data, state = selected, onClick = { if (enabled.value) {expanded.value = !expanded.value}}) {
-            IconToggleButton(checked = expanded.value, onCheckedChange = {  if (enabled.value) {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .animateContentSize()
+    ) {
+        Preference(data = data, state = selected, onClick = {
+            if (enabled.value) {
                 expanded.value = !expanded.value
-            }}) {
+            }
+        }) {
+            IconToggleButton(checked = expanded.value, onCheckedChange = {
+                if (enabled.value) {
+                    expanded.value = !expanded.value
+                }
+            }) {
                 if (!expanded.value) {
                     Icon(painter = painterResource(id = R.drawable.baseline_expand_more_24), contentDescription = "Expand")
                 } else {
@@ -122,11 +131,6 @@ fun <T> RadioPreference(
                         }
                     }
                 }
-//                Column {
-//                    data.entries!!.forEach { (entry, value) ->
-//
-//                    }
-//                }
             }
         }
     }

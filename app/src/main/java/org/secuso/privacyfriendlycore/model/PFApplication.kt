@@ -6,7 +6,7 @@ import org.secuso.privacyfriendlycore.ui.AboutData
 import org.secuso.privacyfriendlycore.ui.settings.Settings
 
 
-abstract class PFApplication: Application() {
+abstract class PFApplication : Application() {
     abstract val About: AboutData
     abstract val Settings: Settings
     abstract val ApplicationName: String

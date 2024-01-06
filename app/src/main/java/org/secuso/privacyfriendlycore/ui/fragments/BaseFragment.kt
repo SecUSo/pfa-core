@@ -18,7 +18,7 @@ import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.fragment.app.Fragment
 import org.secuso.privacyfriendlycore.ui.theme.PrivacyFriendlyCoreTheme
 
-abstract class BaseFragment: Fragment() {
+abstract class BaseFragment : Fragment() {
 
     abstract val layout: Int
     abstract val component: Int
@@ -32,11 +32,13 @@ abstract class BaseFragment: Fragment() {
             setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
             setContent {
                 PrivacyFriendlyCoreTheme(
-                    useDarkTheme = isSystemInDarkTheme() && resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK  == Configuration.UI_MODE_NIGHT_YES
+                    useDarkTheme = isSystemInDarkTheme() && resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK == Configuration.UI_MODE_NIGHT_YES
                 ) {
-                    Surface(modifier = Modifier
-                        .fillMaxSize()
-                        .verticalScroll(rememberScrollState()), color = MaterialTheme.colorScheme.background) {
+                    Surface(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .verticalScroll(rememberScrollState()), color = MaterialTheme.colorScheme.background
+                    ) {
                         content()
                     }
                 }

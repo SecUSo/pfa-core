@@ -41,28 +41,32 @@ data class AboutData(
     val authors: String,
     val repo: String
 )
+
 private class AboutPreviewProvider : PreviewParameterProvider<AboutData> {
-    override val values = listOf(AboutData(
-        name = "Privacy Friendly Core",
-        version = "1.0.0",
-        authors = "Patrick Schneider",
-        repo = "https://github.com/secuso/privacy-friendly-core"
-    )).asSequence()
+    override val values = listOf(
+        AboutData(
+            name = "Privacy Friendly Core",
+            version = "1.0.0",
+            authors = "Patrick Schneider",
+            repo = "https://github.com/secuso/privacy-friendly-core"
+        )
+    ).asSequence()
 }
 
 @Composable
 fun Authors(authors: String) {
     CenterLines(
         sentences = listOf(
-        stringResource(id = R.string.about_author),
-        authors,
-        stringResource(id = R.string.about_author_contributors)
-    ), modifier = Modifier.padding(top = 2.dp, bottom = 2.dp))
+            stringResource(id = R.string.about_author),
+            authors,
+            stringResource(id = R.string.about_author_contributors)
+        ), modifier = Modifier.padding(top = 2.dp, bottom = 2.dp)
+    )
 }
 
 @Composable
 fun PfaLogo() {
-    Image(painter = painterResource(id = R.drawable.privacyfriendlyappslogo), contentDescription = "Privacy Friendly Apps", modifier = Modifier.fillMaxWidth(),)
+    Image(painter = painterResource(id = R.drawable.privacyfriendlyappslogo), contentDescription = "Privacy Friendly Apps", modifier = Modifier.fillMaxWidth())
 }
 
 @Composable
@@ -75,9 +79,10 @@ fun SecusoLogo() {
 fun Header(name: String, version: String) {
     CenterLines(
         sentences = listOf(
-        name,
-        stringResource(id = R.string.about_version_number) + " v$version"
-    ))
+            name,
+            stringResource(id = R.string.about_version_number) + " v$version"
+        )
+    )
 }
 
 @Composable
@@ -123,7 +128,8 @@ fun AboutVertical(data: AboutData) {
     Column(
         Modifier
             .fillMaxWidth()
-            .padding(PaddingValues(top = 8.dp))) {
+            .padding(PaddingValues(top = 8.dp))
+    ) {
         PfaLogo()
         Header(name = data.name, version = data.version)
         Authors(authors = data.authors)
@@ -151,7 +157,7 @@ fun AboutLandscape(data: AboutData) {
 
 @Composable
 fun AboutOrientation(data: AboutData) {
-    when(LocalConfiguration.current.orientation) {
+    when (LocalConfiguration.current.orientation) {
         Configuration.ORIENTATION_LANDSCAPE -> AboutLandscape(data = data)
         else -> AboutVertical(data = data)
     }
@@ -167,9 +173,11 @@ fun About(@PreviewParameter(AboutPreviewProvider::class) data: AboutData) {
 @Composable
 fun AboutPreview() {
     PrivacyFriendlyCoreTheme {
-        Surface(modifier = Modifier
-            .fillMaxSize()
-            .verticalScroll(rememberScrollState()), color = MaterialTheme.colorScheme.background) {
+        Surface(
+            modifier = Modifier
+                .fillMaxSize()
+                .verticalScroll(rememberScrollState()), color = MaterialTheme.colorScheme.background
+        ) {
             About(data = AboutPreviewProvider().values.first())
         }
     }

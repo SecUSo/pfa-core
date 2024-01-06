@@ -17,10 +17,12 @@ class SettingsBuilder(private val context: Context) {
     internal val settings: Settings = hashMapOf()
     private val preferences = PreferenceManager.getDefaultSharedPreferences(context)
 
+    @Suppress("Unused")
     fun category(category: String, initializer: SettingBuilder.() -> Unit) {
         this.settings[category] = SettingBuilder(preferences = this.preferences, resources = context.resources).apply(initializer).settings
     }
 
+    @Suppress("Unused")
     fun category(categoryId: Int, initializer: SettingBuilder.() -> Unit) {
         this.settings[context.getString(categoryId)] = SettingBuilder(preferences = this.preferences, resources = context.resources).apply(initializer).settings
     }
@@ -36,12 +38,15 @@ class SettingBuilder(
         if (dependency == null) {
             return mutableStateOf(true)
         }
-        val state = settings.find { it.key == dependency }?.state ?: throw IllegalStateException("Dependency $dependency not found. Dependencies must be in the same category and precede the setting")
+        val state = settings.find { it.key == dependency }?.state
+            ?: throw IllegalStateException("Dependency $dependency not found. Dependencies must be in the same category and precede the setting")
         if (state.value !is Boolean) {
             throw IllegalStateException("A Setting can only depend on Boolean-Settings")
         }
         return state as MutableState<Boolean>
     }
+
+    @Suppress("Unused")
     fun switch(initializer: SettingDSL<Boolean>.() -> Unit) {
         val setting = SettingDSL<Boolean>(resources)
             .apply(initializer)
@@ -66,6 +71,7 @@ class SettingBuilder(
         this.settings.add(setting)
     }
 
+    @Suppress("Unused")
     fun radioString(initializer: SettingDSL<String>.() -> Unit) {
         val setting = SettingDSL<String>(resources)
             .apply(initializer)
@@ -89,6 +95,7 @@ class SettingBuilder(
         this.settings.add(setting)
     }
 
+    @Suppress("Unused")
     fun radioInt(initializer: SettingDSL<Int>.() -> Unit) {
         val setting = SettingDSL<Int>(resources)
             .apply(initializer)
@@ -124,16 +131,19 @@ class SettingDSL<T>(
     private var title: (@Composable (SettingData<T>, T, Modifier) -> Unit)? = null
     private var summary: (@Composable (SettingData<T>, T, Modifier) -> Unit)? = null
 
+    @Suppress("Unused")
     fun entries(initializer: SettingEntriesDSL<T>.() -> Unit) {
         this.entries = SettingEntriesDSL<T>(resources).apply(initializer).collect()
     }
 
+    @Suppress("Unused")
     fun title(initializer: SettingInfoDSL<T>.() -> Unit) {
         this.title = SettingInfoDSL<T>(resources) { transformer ->
             { data, value, modifier -> Text(text = transformer(data, value), modifier = modifier) }
         }.apply(initializer).build()
     }
 
+    @Suppress("Unused")
     fun summary(initializer: SettingInfoDSL<T>.() -> Unit) {
         this.summary = SettingInfoDSL<T>(resources) { transformer ->
             { data, value, modifier -> SummaryText(text = transformer(data, value), modifier = modifier) }
@@ -143,7 +153,8 @@ class SettingDSL<T>(
     fun compose(
         state: (SettingDSL<T>) -> MutableState<T>,
         enabled: (String?) -> MutableState<Boolean>,
-        composable: (SettingDSL<T>) -> @Composable (data: SettingData<T>) -> Unit): SettingData<T> {
+        composable: (SettingDSL<T>) -> @Composable (data: SettingData<T>) -> Unit
+    ): SettingData<T> {
         return when {
             key === null -> throw IllegalStateException("A setting needs to have a key")
             default === null -> throw IllegalStateException("A setting needs to have a default value")
@@ -167,15 +178,19 @@ class SettingEntriesDSL<T>(
     private var entries: List<String>? = null,
     private var values: List<T>? = null
 ) {
-    fun collect() = entries!!.zip(values!!).map { (entry, value) -> SettingEntry(entry, value)}.toList()
+    fun collect() = entries!!.zip(values!!).map { (entry, value) -> SettingEntry(entry, value) }.toList()
+
+    @Suppress("Unused")
     fun entries(entries: List<String>) {
         this.entries = entries
     }
 
+    @Suppress("Unused")
     fun entries(id: Int) {
         this.entries = resources.getStringArray(id).toList()
     }
 
+    @Suppress("Unused")
     fun values(values: List<T>) {
         this.values = values
     }
@@ -189,23 +204,28 @@ class SettingInfoDSL<T>(
 
     fun build() = this.composable!!
 
+    @Suppress("Unused")
     fun resource(id: Int) {
-        this.composable = default { _, _ -> resources.getString(id)}
+        this.composable = default { _, _ -> resources.getString(id) }
     }
 
+    @Suppress("Unused")
     fun literal(text: String) {
-        this.composable = default { _,_ -> text }
+        this.composable = default { _, _ -> text }
     }
 
+    @Suppress("Unused")
     fun transform(transformer: (SettingData<T>, T) -> String) {
         this.composable = default(transformer)
     }
 
+    @Suppress("Unused")
     fun custom(composable: (@Composable (SettingData<T>, T, Modifier) -> Unit)) {
         this.composable = composable
     }
 }
 
+@Suppress("Unused")
 fun settings(context: Context, initializer: SettingsBuilder.() -> Unit): Settings {
     return SettingsBuilder(context).apply(initializer).settings
 }

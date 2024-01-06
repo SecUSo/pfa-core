@@ -17,7 +17,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
-import android.R
 
 @Composable
 fun FormDialog(
@@ -41,10 +40,10 @@ fun FormDialog(
                 form()
                 Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
                     TextButton(onClick = { onDismiss() }, modifier = Modifier.padding(8.dp)) {
-                        Text(text = stringResource(id = R.string.cancel))
+                        Text(text = stringResource(id = android.R.string.cancel))
                     }
                     TextButton(onClick = { onConfirm() }, modifier = Modifier.padding(8.dp)) {
-                        Text(text = stringResource(id = R.string.ok))
+                        Text(text = stringResource(id = android.R.string.ok))
                     }
                 }
             }

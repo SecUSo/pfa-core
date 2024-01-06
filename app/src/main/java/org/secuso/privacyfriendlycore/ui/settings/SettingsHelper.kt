@@ -8,7 +8,7 @@ class SettingsHelper {
 
     companion object {
         fun <T> useEntryValue(): (@Composable (SettingData<T>, Modifier) -> Unit) {
-            return { data, modifier -> Text(text = data.entries!!.find { it.value == data.value}!!.entry, modifier = modifier)}
+            return { data, modifier -> Text(text = data.entries!!.find { it.value == data.value }!!.entry, modifier = modifier) }
         }
     }
 }

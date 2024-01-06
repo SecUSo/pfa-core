@@ -17,7 +17,7 @@ import org.secuso.privacyfriendlycore.ui.settings.Settings
 import org.secuso.privacyfriendlycore.ui.settings.SwitchPreference
 import org.secuso.privacyfriendlycore.ui.theme.PrivacyFriendlyCoreTheme
 
-class SettingsProvider: PreviewParameterProvider<Settings> {
+class SettingsProvider : PreviewParameterProvider<Settings> {
     private val state = mutableStateOf(false)
     override val values: Sequence<Settings> = listOf(
         hashMapOf<String, List<SettingData<*>>>("General" to listOf(
@@ -28,10 +28,12 @@ class SettingsProvider: PreviewParameterProvider<Settings> {
                 title = @Composable { _, _, modifier -> Text(text = "Test", modifier = modifier) },
                 summary = @Composable { _, _, modifier -> Text(text = "Summary", modifier = modifier) },
                 enable = state,
-                _composable = @Composable { data -> SwitchPreference(
-                    data = data,
-                    enabled = state,
-                    update = {})}
+                _composable = @Composable { data ->
+                    SwitchPreference(
+                        data = data,
+                        enabled = state,
+                        update = {})
+                }
             )
         ))
     ).asSequence()
@@ -40,7 +42,7 @@ class SettingsProvider: PreviewParameterProvider<Settings> {
 @Composable
 fun SettingsMenu(settings: Settings) {
     LazyColumn(Modifier.fillMaxWidth()) {
-        items(count = settings.keys.size, key = { settings.keys.elementAt(it)}) {
+        items(count = settings.keys.size, key = { settings.keys.elementAt(it) }) {
             val group = settings.keys.elementAt(it)
             PreferenceGroupHeader(text = group)
             for (setting in settings[group]!!) {

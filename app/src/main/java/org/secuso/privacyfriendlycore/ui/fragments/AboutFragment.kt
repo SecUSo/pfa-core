@@ -10,12 +10,13 @@ class AboutFragment(
     private val version: String,
     private val authors: String,
     private val repo: String
-): BaseFragment() {
+) : BaseFragment() {
     override val layout: Int
         get() = R.layout.fragment_about
 
     override val component: Int
         get() = R.id.compose_view
+
     override fun content() = @Composable { About(data = AboutData(name = name, version = version, authors = authors, repo = repo)) }
 
 }
