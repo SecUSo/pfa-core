@@ -1,9 +1,5 @@
 package org.secuso.privacyfriendlycore.ui
 
-import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.lazy.LazyColumn
@@ -13,12 +9,8 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.ComposeView
-import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
-import androidx.fragment.app.Fragment
-import org.secuso.privacyfriendlycore.R
 import org.secuso.privacyfriendlycore.ui.composables.PreferenceGroupHeader
 import org.secuso.privacyfriendlycore.ui.settings.SettingData
 import org.secuso.privacyfriendlycore.ui.settings.Settings
@@ -46,34 +38,14 @@ class SettingsProvider: PreviewParameterProvider<Settings> {
     ).asSequence()
 }
 
-class SettingsFragment(private val settings: Settings): Fragment() {
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        val view = inflater.inflate(R.layout.fragment_about, container, false)
-        val composeView = view.findViewById<ComposeView>(R.id.compose_view)
-
-        composeView.apply {
-            setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
-            setContent {
-                SettingsMenu(settings = settings)
-            }
-        }
-
-        return view
-    }
-}
-
 @Composable
 fun SettingsMenu(settings: Settings) {
-    PrivacyFriendlyCoreTheme {
-        Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
-            LazyColumn(Modifier.fillMaxWidth()) {
-                items(count = settings.keys.size, key = { settings.keys.elementAt(it)}) {
-                    val group = settings.keys.elementAt(it)
-                    PreferenceGroupHeader(text = group)
-                    for (setting in settings[group]!!) {
-                        setting.composable()
-                    }
-                }
+    LazyColumn(Modifier.fillMaxWidth()) {
+        items(count = settings.keys.size, key = { settings.keys.elementAt(it)}) {
+            val group = settings.keys.elementAt(it)
+            PreferenceGroupHeader(text = group)
+            for (setting in settings[group]!!) {
+                setting.composable()
             }
         }
     }
@@ -82,5 +54,9 @@ fun SettingsMenu(settings: Settings) {
 @Preview
 @Composable
 fun SettingsMenuPreview() {
-    SettingsMenu(settings = SettingsProvider().values.first())
+    PrivacyFriendlyCoreTheme {
+        Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
+            SettingsMenu(settings = SettingsProvider().values.first())
+        }
+    }
 }

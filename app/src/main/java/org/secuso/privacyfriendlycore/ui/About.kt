@@ -1,10 +1,6 @@
 package org.secuso.privacyfriendlycore.ui
 
 import android.content.res.Configuration
-import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -19,10 +15,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalUriHandler
-import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SpanStyle
@@ -36,7 +30,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import androidx.compose.ui.unit.dp
-import androidx.fragment.app.Fragment
 import org.secuso.privacyfriendlycore.R
 import org.secuso.privacyfriendlycore.ui.composables.CenterLines
 import org.secuso.privacyfriendlycore.ui.composables.CenterText
@@ -55,27 +48,6 @@ private class AboutPreviewProvider : PreviewParameterProvider<AboutData> {
         authors = "Patrick Schneider",
         repo = "https://github.com/secuso/privacy-friendly-core"
     )).asSequence()
-}
-
-class AboutFragment(
-    private val name: String,
-    private val version: String,
-    private val authors: String,
-    private val repo: String
-): Fragment() {
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        val view = inflater.inflate(R.layout.fragment_about, container, false)
-        val composeView = view.findViewById<ComposeView>(R.id.compose_view)
-        
-        composeView.apply {
-            setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
-            setContent { 
-                About(data = AboutData(name = name, version = version, authors = authors, repo = repo))
-            }
-        }
-        
-        return view
-    }
 }
 
 @Composable
@@ -148,7 +120,10 @@ fun Footer(repo: String) {
 
 @Composable
 fun AboutVertical(data: AboutData) {
-    Column(Modifier.fillMaxWidth().padding(PaddingValues(top = 8.dp))) {
+    Column(
+        Modifier
+            .fillMaxWidth()
+            .padding(PaddingValues(top = 8.dp))) {
         PfaLogo()
         Header(name = data.name, version = data.version)
         Authors(authors = data.authors)
@@ -185,17 +160,17 @@ fun AboutOrientation(data: AboutData) {
 @Preview
 @Composable
 fun About(@PreviewParameter(AboutPreviewProvider::class) data: AboutData) {
-    PrivacyFriendlyCoreTheme {
-        Surface(modifier = Modifier
-            .fillMaxSize()
-            .verticalScroll(rememberScrollState()), color = MaterialTheme.colorScheme.background) {
-            AboutOrientation(data = data)
-        }
-    }
+    AboutOrientation(data = data)
 }
 
 @Preview
 @Composable
 fun AboutPreview() {
-    About(data = AboutPreviewProvider().values.first())
+    PrivacyFriendlyCoreTheme {
+        Surface(modifier = Modifier
+            .fillMaxSize()
+            .verticalScroll(rememberScrollState()), color = MaterialTheme.colorScheme.background) {
+            About(data = AboutPreviewProvider().values.first())
+        }
+    }
 }

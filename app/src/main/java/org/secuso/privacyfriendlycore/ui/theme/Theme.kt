@@ -1,10 +1,14 @@
 package org.secuso.privacyfriendlycore.ui.theme
 
+import android.util.Log
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.material3.ColorScheme
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.lightColorScheme
 import androidx.compose.material3.darkColorScheme
+import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.graphics.Color
+
 
 private val LightColors = lightColorScheme(
     primary = md_theme_light_primary,
@@ -71,11 +75,15 @@ private val DarkColors = darkColorScheme(
     scrim = md_theme_dark_scrim,
 )
 
+val ColorScheme.navbar: Color
+    get() = Color(0xFF024265)
+
 @Composable
 fun PrivacyFriendlyCoreTheme(
     useDarkTheme: Boolean = isSystemInDarkTheme(),
     content: @Composable() () -> Unit
 ) {
+    Log.d("LightMode", "Selecting ${!useDarkTheme}")
     val colors = if (!useDarkTheme) {
         LightColors
     } else {
