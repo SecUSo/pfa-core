@@ -6,7 +6,7 @@ import org.secuso.privacyfriendlycore.ui.About
 
 class AboutActivity: BaseActivity() {
     @Composable
-    override fun content(application: PFApplication) {
+    override fun Content(application: PFApplication) {
         About(data = application.About)
     }
 }

@@ -14,8 +14,10 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.State
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
@@ -70,9 +72,11 @@ fun <T> Preference(
 fun SwitchPreference(
     data: SettingData<Boolean>,
     enabled: State<Boolean>,
-    checked: State<Boolean>,
     update: (Boolean) -> Unit
 ) {
+    val checked by remember {
+        derivedStateOf { data.state }
+    }
     Preference(data = data, state = enabled, onClick = { if (enabled.value) update(!checked.value) }) {
         Switch(checked = checked.value, onCheckedChange = update, enabled = enabled.value)
     }
@@ -82,11 +86,13 @@ fun SwitchPreference(
 fun <T> RadioPreference(
     data: SettingData<T>,
     enabled: State<Boolean>,
-    selected: State<T>,
     update: (T) -> Unit
 ) {
     val expanded = remember {
         mutableStateOf(false)
+    }
+    val selected by remember {
+        derivedStateOf { data.state }
     }
     Preference(data = data, state = selected, onClick = { if (enabled.value) {expanded.value = !expanded.value}}) {
         IconToggleButton(checked = expanded.value, onCheckedChange = {  if (enabled.value) {

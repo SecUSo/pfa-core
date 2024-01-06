@@ -7,7 +7,7 @@ import org.secuso.privacyfriendlycore.ui.SettingsMenu
 class SettingsActivity: BaseActivity() {
     
     @Composable
-    override fun content(application: PFApplication) {
+    override fun Content(application: PFApplication) {
         SettingsMenu(settings = application.Settings)
     }
 }

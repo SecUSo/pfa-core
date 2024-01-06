@@ -2,6 +2,7 @@ package org.secuso.privacyfriendlycore.ui.settings
 
 import android.content.Context
 import android.content.SharedPreferences
+import android.content.res.Resources
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
@@ -12,22 +13,26 @@ import org.secuso.privacyfriendlycore.ui.composables.SummaryText
 
 typealias Settings = HashMap<String, List<SettingData<*>>>
 
-class SettingsBuilder(context: Context) {
+class SettingsBuilder(private val context: Context) {
     internal val settings: Settings = hashMapOf()
     private val preferences = PreferenceManager.getDefaultSharedPreferences(context)
 
     fun category(category: String, initializer: SettingBuilder.() -> Unit) {
-        this.settings[category] = SettingBuilder(preferences = this.preferences).apply(initializer).settings
+        this.settings[category] = SettingBuilder(preferences = this.preferences, resources = context.resources).apply(initializer).settings
+    }
 
+    fun category(categoryId: Int, initializer: SettingBuilder.() -> Unit) {
+        this.settings[context.getString(categoryId)] = SettingBuilder(preferences = this.preferences, resources = context.resources).apply(initializer).settings
     }
 }
 
 class SettingBuilder(
     val settings: MutableList<SettingData<*>> = mutableListOf(),
-    private val preferences: SharedPreferences
+    private val preferences: SharedPreferences,
+    private val resources: Resources
 ) {
 
-    fun track(dependency: String?): MutableState<Boolean> {
+    private fun track(dependency: String?): MutableState<Boolean> {
         if (dependency == null) {
             return mutableStateOf(true)
         }
@@ -38,7 +43,7 @@ class SettingBuilder(
         return state as MutableState<Boolean>
     }
     fun switch(initializer: SettingDSL<Boolean>.() -> Unit) {
-        val setting = SettingDSL<Boolean>()
+        val setting = SettingDSL<Boolean>(resources)
             .apply(initializer)
             .compose(
                 state = { data ->
@@ -50,7 +55,6 @@ class SettingBuilder(
                     SwitchPreference(
                         data = data,
                         enabled = data.enable,
-                        checked = data.state,
                         update = {
                             preferences.edit().putBoolean(data.key, it).apply()
                             data.state.value = it
@@ -63,7 +67,7 @@ class SettingBuilder(
     }
 
     fun radioString(initializer: SettingDSL<String>.() -> Unit) {
-        val setting = SettingDSL<String>()
+        val setting = SettingDSL<String>(resources)
             .apply(initializer)
             .compose(state = { data ->
                 mutableStateOf(preferences.getString(data.key!!, data.default!!)!!)
@@ -74,7 +78,6 @@ class SettingBuilder(
                     RadioPreference(
                         data = data,
                         enabled = data.enable,
-                        selected = data.state,
                         update = {
                             preferences.edit().putString(data.key, it).apply()
                             data.state.value = it
@@ -87,7 +90,7 @@ class SettingBuilder(
     }
 
     fun radioInt(initializer: SettingDSL<Int>.() -> Unit) {
-        val setting = SettingDSL<Int>()
+        val setting = SettingDSL<Int>(resources)
             .apply(initializer)
             .compose(state = { data ->
                 mutableStateOf(preferences.getInt(data.key!!, data.default!!))
@@ -98,7 +101,6 @@ class SettingBuilder(
                     RadioPreference(
                         data = data,
                         enabled = data.enable,
-                        selected = data.state,
                         update = {
                             preferences.edit().putInt(data.key, it).apply()
                             data.state.value = it
@@ -112,6 +114,7 @@ class SettingBuilder(
 }
 
 class SettingDSL<T>(
+    private val resources: Resources,
     var key: String? = null,
     var default: T? = null,
     var depends: String? = null,
@@ -122,17 +125,17 @@ class SettingDSL<T>(
     private var summary: (@Composable (SettingData<T>, T, Modifier) -> Unit)? = null
 
     fun entries(initializer: SettingEntriesDSL<T>.() -> Unit) {
-        this.entries = SettingEntriesDSL<T>().apply(initializer).collect()
+        this.entries = SettingEntriesDSL<T>(resources).apply(initializer).collect()
     }
 
     fun title(initializer: SettingInfoDSL<T>.() -> Unit) {
-        this.title = SettingInfoDSL<T> { transformer ->
+        this.title = SettingInfoDSL<T>(resources) { transformer ->
             { data, value, modifier -> Text(text = transformer(data, value), modifier = modifier) }
         }.apply(initializer).build()
     }
 
     fun summary(initializer: SettingInfoDSL<T>.() -> Unit) {
-        this.summary = SettingInfoDSL<T> { transformer ->
+        this.summary = SettingInfoDSL<T>(resources) { transformer ->
             { data, value, modifier -> SummaryText(text = transformer(data, value), modifier = modifier) }
         }.apply(initializer).build()
     }
@@ -160,18 +163,35 @@ class SettingDSL<T>(
 }
 
 class SettingEntriesDSL<T>(
-    var entries: List<String>? = null,
-    var values: List<T>? = null
+    private val resources: Resources,
+    private var entries: List<String>? = null,
+    private var values: List<T>? = null
 ) {
     fun collect() = entries!!.zip(values!!).map { (entry, value) -> SettingEntry(entry, value)}.toList()
+    fun entries(entries: List<String>) {
+        this.entries = entries
+    }
+
+    fun entries(id: Int) {
+        this.entries = resources.getStringArray(id).toList()
+    }
+
+    fun values(values: List<T>) {
+        this.values = values
+    }
 }
 
 class SettingInfoDSL<T>(
+    private val resources: Resources,
     private val default: ((SettingData<T>, T) -> String) -> (@Composable (SettingData<T>, T, Modifier) -> Unit)
 ) {
     private var composable: (@Composable (SettingData<T>, T, Modifier) -> Unit)? = null
 
     fun build() = this.composable!!
+
+    fun resource(id: Int) {
+        this.composable = default { _, _ -> resources.getString(id)}
+    }
 
     fun literal(text: String) {
         this.composable = default { _,_ -> text }

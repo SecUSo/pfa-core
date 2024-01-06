@@ -31,7 +31,6 @@ class SettingsProvider: PreviewParameterProvider<Settings> {
                 _composable = @Composable { data -> SwitchPreference(
                     data = data,
                     enabled = state,
-                    checked = state,
                     update = {})}
             )
         ))
