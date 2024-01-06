@@ -30,8 +30,8 @@ data class SettingData<T>(
     var key: String,
     var state: MutableState<T>,
     var defaultValue: T,
-    var title: @Composable (SettingData<T>, modifier: Modifier) -> Unit,
-    var summary: @Composable (SettingData<T>, modifier: Modifier) -> Unit,
+    var title: @Composable (SettingData<T>, T, modifier: Modifier) -> Unit,
+    var summary: @Composable (SettingData<T>, T, modifier: Modifier) -> Unit,
     private var _composable: @Composable (SettingData<T>) -> Unit,
     var entries: List<SettingEntry<T>>? = null,
     var enable: State<Boolean>
@@ -47,6 +47,7 @@ val settingModifier = Modifier
 @Composable
 fun <T> Preference(
     data: SettingData<T>,
+    state: State<T>,
     onClick: () -> Unit,
     action: @Composable () -> Unit
 ) {
@@ -56,8 +57,8 @@ fun <T> Preference(
             .clickable { onClick() }
     ) {
         Column(Modifier.fillMaxWidth(0.8f)) {
-            data.title(data, Modifier)
-            data.summary(data, Modifier)
+            data.title(data, state.value, Modifier)
+            data.summary(data, state.value, Modifier)
         }
         Column(modifier = Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
             action()
@@ -72,7 +73,7 @@ fun SwitchPreference(
     checked: State<Boolean>,
     update: (Boolean) -> Unit
 ) {
-    Preference(data = data, onClick = { if (enabled.value) update(!checked.value) }) {
+    Preference(data = data, state = enabled, onClick = { if (enabled.value) update(!checked.value) }) {
         Switch(checked = checked.value, onCheckedChange = update, enabled = enabled.value)
     }
 }
@@ -87,7 +88,7 @@ fun <T> RadioPreference(
     val expanded = remember {
         mutableStateOf(false)
     }
-    Preference(data = data, onClick = { if (enabled.value) {expanded.value = !expanded.value}}) {
+    Preference(data = data, state = selected, onClick = { if (enabled.value) {expanded.value = !expanded.value}}) {
         IconToggleButton(checked = expanded.value, onCheckedChange = {  if (enabled.value) {
             expanded.value = !expanded.value
         }}) {

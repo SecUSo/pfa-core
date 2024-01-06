@@ -2,7 +2,6 @@ package org.secuso.privacyfriendlycore.ui.settings
 
 import android.content.Context
 import android.content.SharedPreferences
-import android.util.Log
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
@@ -94,23 +93,28 @@ class SettingBuilder(
 class SettingDSL<T>(
     var key: String? = null,
     var default: T? = null,
-    var title: String? = null,
-    var summary: String? = null,
-    var customTitle: (@Composable (SettingData<T>, Modifier) -> Unit)? = null,
-    var customSummary: (@Composable (SettingData<T>, Modifier) -> Unit)? = null,
-    private var entries: List<SettingEntry<T>>? = null,
     var depends: String? = null
 ) {
-    private val defaultTitle: (String) -> (@Composable (SettingData<T>, Modifier) -> Unit) = { text ->
-        { _, modifier -> Text(text = text, modifier = modifier) }
-    }
-    private val defaultSummary: (String) -> (@Composable (SettingData<T>, Modifier) -> Unit) = { text ->
-        { _, modifier -> SummaryText(text = text, modifier = modifier) }
-    }
+    private var entries: List<SettingEntry<T>>? = null
+    private var title: (@Composable (SettingData<T>, T, Modifier) -> Unit)? = null
+    private var summary: (@Composable (SettingData<T>, T, Modifier) -> Unit)? = null
 
     fun entries(initializer: SettingEntriesDSL<T>.() -> Unit) {
         this.entries = SettingEntriesDSL<T>().apply(initializer).collect()
     }
+
+    fun title(initializer: SettingInfoDSL<T>.() -> Unit) {
+        this.title = SettingInfoDSL<T> { transformer ->
+            { data, value, modifier -> Text(text = transformer(data, value), modifier = modifier) }
+        }.apply(initializer).build()
+    }
+
+    fun summary(initializer: SettingInfoDSL<T>.() -> Unit) {
+        this.summary = SettingInfoDSL<T> { transformer ->
+            { data, value, modifier -> SummaryText(text = transformer(data, value), modifier = modifier) }
+        }.apply(initializer).build()
+    }
+
     fun compose(
         state: (SettingDSL<T>) -> MutableState<T>,
         enabled: (String?) -> MutableState<Boolean>,
@@ -123,8 +127,8 @@ class SettingDSL<T>(
                 key = key!!,
                 state = state(this),
                 defaultValue = default!!,
-                title = customTitle ?: defaultTitle(title!!),
-                summary = customSummary ?: if (summary != null) { defaultSummary(summary!!) } else { { _, _ -> } },
+                title = this.title!!,
+                summary = this.summary ?: { _, _, _ -> },
                 _composable = composable,
                 entries = entries,
                 enable = enabled(depends)
@@ -138,6 +142,26 @@ class SettingEntriesDSL<T>(
     var values: List<T>? = null
 ) {
     fun collect() = entries!!.zip(values!!).map { (entry, value) -> SettingEntry(entry, value)}.toList()
+}
+
+class SettingInfoDSL<T>(
+    private val default: ((SettingData<T>, T) -> String) -> (@Composable (SettingData<T>, T, Modifier) -> Unit)
+) {
+    private var composable: (@Composable (SettingData<T>, T, Modifier) -> Unit)? = null
+
+    fun build() = this.composable!!
+
+    fun literal(text: String) {
+        this.composable = default { _,_ -> text }
+    }
+
+    fun transform(transformer: (SettingData<T>, T) -> String) {
+        this.composable = default(transformer)
+    }
+
+    fun custom(composable: (@Composable (SettingData<T>, T, Modifier) -> Unit)) {
+        this.composable = composable
+    }
 }
 
 fun settings(context: Context, initializer: SettingsBuilder.() -> Unit): Settings {

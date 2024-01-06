@@ -34,8 +34,8 @@ class SettingsProvider: PreviewParameterProvider<Settings> {
                 key = "Test",
                 state = state,
                 defaultValue = false,
-                title = @Composable { _, modifier -> Text(text = "Test", modifier = modifier) },
-                summary = @Composable { _, modifier -> Text(text = "Summary", modifier = modifier) },
+                title = @Composable { _, _, modifier -> Text(text = "Test", modifier = modifier) },
+                summary = @Composable { _, _, modifier -> Text(text = "Summary", modifier = modifier) },
                 enable = state,
                 _composable = @Composable { data -> SwitchPreference(
                     data = data,
