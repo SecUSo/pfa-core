@@ -4,7 +4,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.lazy.LazyColumn
@@ -64,25 +63,16 @@ class SettingsFragment(private val settings: Settings): Fragment() {
 }
 
 @Composable
-fun SettingGroup(group: String, settings: List<SettingData<*>>) {
-    Column(Modifier.fillMaxWidth()) {
-        PreferenceGroupHeader(text = group)
-        LazyColumn(Modifier.fillMaxWidth()) {
-            items(count = settings.size) {
-                val setting = settings.elementAt(it)
-                setting.composable()
-            }
-        }
-    }
-}
-
-@Composable
 fun SettingsMenu(settings: Settings) {
     PrivacyFriendlyCoreTheme {
         Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
-            Column(Modifier.fillMaxWidth()) {
-                for (key in settings.keys) {
-                    SettingGroup(group = key, settings = settings[key]!!)
+            LazyColumn(Modifier.fillMaxWidth()) {
+                items(count = settings.keys.size, key = { settings.keys.elementAt(it)}) {
+                    val group = settings.keys.elementAt(it)
+                    PreferenceGroupHeader(text = group)
+                    for (setting in settings[group]!!) {
+                        setting.composable()
+                    }
                 }
             }
         }
