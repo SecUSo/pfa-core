@@ -45,12 +45,19 @@ class SettingBuilder(
                     mutableStateOf(preferences.getBoolean(data.key!!, data.default!!))
                 },
                 enabled = { track(it) }
-            ) { data -> SwitchPreference(
-                    data = data,
-                    enabled = data.enable,
-                    checked = data.state,
-                    update = { preferences.edit().putBoolean(data.key, it).apply(); data.state.value = it }
-                )
+            ) { settingDSL ->
+                { data ->
+                    SwitchPreference(
+                        data = data,
+                        enabled = data.enable,
+                        checked = data.state,
+                        update = {
+                            preferences.edit().putBoolean(data.key, it).apply()
+                            data.state.value = it
+                            settingDSL.onUpdate?.let { onUpdate -> onUpdate(it) }
+                        }
+                    )
+                }
             }
         this.settings.add(setting)
     }
@@ -62,12 +69,19 @@ class SettingBuilder(
                 mutableStateOf(preferences.getString(data.key!!, data.default!!)!!)
             },
                 enabled = { track(it) }
-            ) { data -> RadioPreference(
-                    data = data,
-                    enabled = data.enable,
-                    selected = data.state,
-                    update = { preferences.edit().putString(data.key, it).apply(); data.state.value = it }
-                )
+            ) { settingDSL ->
+                { data ->
+                    RadioPreference(
+                        data = data,
+                        enabled = data.enable,
+                        selected = data.state,
+                        update = {
+                            preferences.edit().putString(data.key, it).apply()
+                            data.state.value = it
+                            settingDSL.onUpdate?.let { onUpdate -> onUpdate(it) }
+                        }
+                    )
+                }
             }
         this.settings.add(setting)
     }
@@ -79,12 +93,19 @@ class SettingBuilder(
                 mutableStateOf(preferences.getInt(data.key!!, data.default!!))
             },
                 enabled = { track(it) }
-            ) { data -> RadioPreference(
-                data = data,
-                enabled = data.enable,
-                selected = data.state,
-                update = { preferences.edit().putInt(data.key, it).apply(); data.state.value = it }
-            )
+            ) { settingDSL ->
+                { data ->
+                    RadioPreference(
+                        data = data,
+                        enabled = data.enable,
+                        selected = data.state,
+                        update = {
+                            preferences.edit().putInt(data.key, it).apply()
+                            data.state.value = it
+                            settingDSL.onUpdate?.let { onUpdate -> onUpdate(it) }
+                        }
+                    )
+                }
             }
         this.settings.add(setting)
     }
@@ -93,7 +114,8 @@ class SettingBuilder(
 class SettingDSL<T>(
     var key: String? = null,
     var default: T? = null,
-    var depends: String? = null
+    var depends: String? = null,
+    var onUpdate: ((T) -> Unit)? = null
 ) {
     private var entries: List<SettingEntry<T>>? = null
     private var title: (@Composable (SettingData<T>, T, Modifier) -> Unit)? = null
@@ -118,7 +140,7 @@ class SettingDSL<T>(
     fun compose(
         state: (SettingDSL<T>) -> MutableState<T>,
         enabled: (String?) -> MutableState<Boolean>,
-        composable: @Composable (data: SettingData<T>) -> Unit): SettingData<T> {
+        composable: (SettingDSL<T>) -> @Composable (data: SettingData<T>) -> Unit): SettingData<T> {
         return when {
             key === null -> throw IllegalStateException("A setting needs to have a key")
             default === null -> throw IllegalStateException("A setting needs to have a default value")
@@ -129,7 +151,7 @@ class SettingDSL<T>(
                 defaultValue = default!!,
                 title = this.title!!,
                 summary = this.summary ?: { _, _, _ -> },
-                _composable = composable,
+                _composable = composable(this),
                 entries = entries,
                 enable = enabled(depends)
             )
