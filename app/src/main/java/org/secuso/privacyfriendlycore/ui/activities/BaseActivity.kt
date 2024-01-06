@@ -19,6 +19,8 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.State
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
@@ -27,10 +29,12 @@ import org.secuso.privacyfriendlycore.model.PFApplication
 import org.secuso.privacyfriendlycore.ui.theme.PrivacyFriendlyCoreTheme
 import org.secuso.privacyfriendlycore.ui.theme.navbar
 
-abstract class BaseActivity: ComponentActivity() {
+abstract class BaseActivity : ComponentActivity() {
 
     @Composable
     abstract fun Content(application: PFApplication)
+
+    val title: State<String?> = mutableStateOf(null)
 
     @OptIn(ExperimentalMaterial3Api::class)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -38,13 +42,13 @@ abstract class BaseActivity: ComponentActivity() {
         val application = PFApplication.instance(this)
         setContent {
             PrivacyFriendlyCoreTheme(
-                useDarkTheme = isSystemInDarkTheme() && resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK  == Configuration.UI_MODE_NIGHT_YES && !application.LightMode
+                useDarkTheme = isSystemInDarkTheme() && resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK == Configuration.UI_MODE_NIGHT_YES && !application.LightMode
             ) {
                 window.statusBarColor = MaterialTheme.colorScheme.navbar.toArgb()
                 Scaffold(
                     topBar = {
                         TopAppBar(
-                            title = { Text(text = application.ApplicationName, maxLines = 1, overflow = TextOverflow.Ellipsis) },
+                            title = { Text(text = title.value ?: application.ApplicationName, maxLines = 1, overflow = TextOverflow.Ellipsis) },
                             navigationIcon = {
                                 IconButton(onClick = { finish() }) {
                                     Icon(imageVector = Icons.Filled.ArrowBack, contentDescription = "back")
