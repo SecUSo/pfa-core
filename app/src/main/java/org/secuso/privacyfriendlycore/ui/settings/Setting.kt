@@ -1,10 +1,13 @@
 package org.secuso.privacyfriendlycore.ui.settings
 
+import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Card
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconToggleButton
@@ -94,26 +97,36 @@ fun <T> RadioPreference(
     val selected by remember {
         derivedStateOf { data.state }
     }
-    Preference(data = data, state = selected, onClick = { if (enabled.value) {expanded.value = !expanded.value}}) {
-        IconToggleButton(checked = expanded.value, onCheckedChange = {  if (enabled.value) {
-            expanded.value = !expanded.value
-        }}) {
-            if (!expanded.value) {
-                Icon(painter = painterResource(id = R.drawable.baseline_expand_more_24), contentDescription = "Expand")
-            } else {
-                Icon(painter = painterResource(id = R.drawable.baseline_expand_less_24), contentDescription = "Collapse")
+    Column(modifier = Modifier
+        .fillMaxWidth()
+        .animateContentSize()) {
+        Preference(data = data, state = selected, onClick = { if (enabled.value) {expanded.value = !expanded.value}}) {
+            IconToggleButton(checked = expanded.value, onCheckedChange = {  if (enabled.value) {
+                expanded.value = !expanded.value
+            }}) {
+                if (!expanded.value) {
+                    Icon(painter = painterResource(id = R.drawable.baseline_expand_more_24), contentDescription = "Expand")
+                } else {
+                    Icon(painter = painterResource(id = R.drawable.baseline_expand_less_24), contentDescription = "Collapse")
+                }
             }
         }
-    }
-    if (expanded.value) {
-        Card(modifier = settingModifier) {
-            Column {
-                data.entries!!.forEach { (entry, value) ->
-                    Row(settingModifier.clickable { update(value) }, verticalAlignment = Alignment.CenterVertically) {
-                        RadioButton(selected = (value == selected.value), onClick = { update(value) })
-                        Text(text = entry)
+        if (expanded.value) {
+            Card(modifier = settingModifier) {
+                LazyColumn(Modifier.heightIn(max = 256.dp)) {
+                    items(count = data.entries!!.size, key = { data.entries!![it].entry }) {
+                        val (entry, value) = data.entries!![it]
+                        Row(settingModifier.clickable { update(value) }, verticalAlignment = Alignment.CenterVertically) {
+                            RadioButton(selected = (value == selected.value), onClick = { update(value) })
+                            Text(text = entry)
+                        }
                     }
                 }
+//                Column {
+//                    data.entries!!.forEach { (entry, value) ->
+//
+//                    }
+//                }
             }
         }
     }
