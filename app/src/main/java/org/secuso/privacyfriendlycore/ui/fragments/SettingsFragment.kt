@@ -1,8 +1,6 @@
 package org.secuso.privacyfriendlycore.ui.fragments
 
-import androidx.compose.runtime.Composable
 import org.secuso.privacyfriendlycore.R
-import org.secuso.privacyfriendlycore.ui.SettingsMenu
 import org.secuso.privacyfriendlycore.ui.settings.Settings
 
 class SettingsFragment(
@@ -14,6 +12,7 @@ class SettingsFragment(
     override val component: Int
         get() = R.id.compose_view
 
-    override fun content() = @Composable { SettingsMenu(settings = settings) }
+
+    override fun content() = settings.composable
 
 }

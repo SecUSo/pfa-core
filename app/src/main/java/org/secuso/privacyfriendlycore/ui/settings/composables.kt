@@ -1,4 +1,4 @@
-package org.secuso.privacyfriendlycore.ui
+package org.secuso.privacyfriendlycore.ui.settings
 
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -12,14 +12,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import org.secuso.privacyfriendlycore.ui.composables.PreferenceGroupHeader
-import org.secuso.privacyfriendlycore.ui.settings.SettingData
-import org.secuso.privacyfriendlycore.ui.settings.Settings
-import org.secuso.privacyfriendlycore.ui.settings.SwitchPreference
 import org.secuso.privacyfriendlycore.ui.theme.PrivacyFriendlyCoreTheme
 
-class SettingsProvider : PreviewParameterProvider<Settings> {
+class SettingsProvider : PreviewParameterProvider<SettingCategoryMapping> {
     private val state = mutableStateOf(false)
-    override val values: Sequence<Settings> = listOf(
+    override val values: Sequence<SettingCategoryMapping> = listOf(
         hashMapOf<String, List<SettingData<*>>>("General" to listOf(
             SettingData(
                 key = "Test",
@@ -40,7 +37,7 @@ class SettingsProvider : PreviewParameterProvider<Settings> {
 }
 
 @Composable
-fun SettingsMenu(settings: Settings) {
+fun SettingsMenu(settings: SettingCategoryMapping) {
     LazyColumn(Modifier.fillMaxWidth()) {
         items(count = settings.keys.size, key = { settings.keys.elementAt(it) }) {
             val group = settings.keys.elementAt(it)

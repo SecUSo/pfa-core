@@ -51,7 +51,7 @@ abstract class BaseActivity : ComponentActivity() {
                             title = { Text(text = title.value ?: application.ApplicationName, maxLines = 1, overflow = TextOverflow.Ellipsis) },
                             navigationIcon = {
                                 IconButton(onClick = { finish() }) {
-                                    Icon(imageVector = Icons.Filled.ArrowBack, contentDescription = "back")
+                                    Icon(imageVector = Icons.Filled.ArrowBack, contentDescription = "back", tint = Color.White)
                                 }
                             },
                             colors = TopAppBarDefaults.smallTopAppBarColors(
