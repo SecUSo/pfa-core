@@ -77,6 +77,8 @@ private val DarkColors = darkColorScheme(
 
 val ColorScheme.navbar: Color
     get() = Color(0xFF024265)
+val ColorScheme.secuso: Color
+    get() = Color(0xFF024265)
 
 @Composable
 fun PrivacyFriendlyCoreTheme(

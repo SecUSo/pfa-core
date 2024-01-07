@@ -15,6 +15,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.painterResource
@@ -34,6 +35,7 @@ import org.secuso.privacyfriendlycore.R
 import org.secuso.privacyfriendlycore.ui.composables.CenterLines
 import org.secuso.privacyfriendlycore.ui.composables.CenterText
 import org.secuso.privacyfriendlycore.ui.theme.PrivacyFriendlyCoreTheme
+import org.secuso.privacyfriendlycore.ui.theme.secuso
 
 data class AboutData(
     val name: String,
@@ -58,8 +60,7 @@ fun Authors(authors: String) {
     CenterLines(
         sentences = listOf(
             stringResource(id = R.string.about_author),
-            authors,
-            stringResource(id = R.string.about_author_contributors)
+            "$authors ${stringResource(id = R.string.about_author_contributors)}\n"
         ), modifier = Modifier.padding(top = 2.dp, bottom = 2.dp)
     )
 }
@@ -71,8 +72,12 @@ fun PfaLogo() {
 
 @Composable
 fun SecusoLogo() {
-    CenterText(text = stringResource(id = R.string.about_affiliation))
-    Image(painter = painterResource(id = R.drawable.secuso_logo_blau_blau), contentDescription = "SECUSO - Security, Usability and Society")
+    CenterText(text = stringResource(id = R.string.about_affiliation), style = TextStyle(fontWeight = FontWeight.Bold))
+    Image(
+        painter = painterResource(id = R.drawable.secuso_logo_blau_blau),
+        contentDescription = "SECUSO - Security, Usability and Society",
+        colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.secuso)
+    )
 }
 
 @Composable
@@ -99,7 +104,15 @@ fun Footer(repo: String) {
                 tag = "URL", annotation = "https://secuso.org"
             )
             append(stringResource(id = R.string.about_url))
-            append(System.lineSeparator())
+        }
+        append(System.lineSeparator())
+        withStyle(
+            style = SpanStyle(
+                color = MaterialTheme.colorScheme.primary,
+                fontWeight = FontWeight.Bold,
+                textDecoration = TextDecoration.Underline
+            )
+        ) {
             pushStringAnnotation(
                 tag = "URL", annotation = repo
             )
@@ -110,11 +123,14 @@ fun Footer(repo: String) {
 
     Column(Modifier.fillMaxWidth()) {
         CenterLines(
-            sentences = listOf(stringResource(id = R.string.about_privacy_friendly), stringResource(id = R.string.about_more_info))
+            sentences = listOf(stringResource(id = R.string.about_privacy_friendly), stringResource(id = R.string.about_more_info)),
+            style = MaterialTheme.typography.bodyMedium
+
         )
         ClickableText(
             text = links,
-            style = TextStyle(textAlign = TextAlign.Center),
+            style = MaterialTheme.typography.bodyMedium.plus(TextStyle(textAlign = TextAlign.Center)),
+            modifier = Modifier.fillMaxWidth(),
             onClick = { offset ->
                 links.getStringAnnotations(tag = "URL", start = offset, end = offset).firstOrNull()?.let { url ->
                     uriHandler.openUri(url.item)
