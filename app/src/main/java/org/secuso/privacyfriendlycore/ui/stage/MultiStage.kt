@@ -4,7 +4,6 @@ import androidx.compose.runtime.Composable
 
 abstract class MultiStage<S : Stage> : Stage {
     abstract val stages: List<SingleStage<S>>
-    override val composable: @Composable () -> Unit = { MultiStageMenu(stages = stages) }
 
     abstract class Builder<S : Stage, M : MultiStage<S>, B : Stage.Builder<S>> {
         internal var _builder: (() -> B)? = null

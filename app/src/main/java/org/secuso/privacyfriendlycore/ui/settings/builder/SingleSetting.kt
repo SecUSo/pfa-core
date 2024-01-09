@@ -5,6 +5,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.ui.Modifier
+import org.secuso.privacyfriendlycore.ui.TransformableInfo
 import org.secuso.privacyfriendlycore.ui.composables.SummaryText
 import org.secuso.privacyfriendlycore.ui.settings.SettingData
 import org.secuso.privacyfriendlycore.ui.settings.SettingEntry
@@ -26,16 +27,16 @@ class SingleSetting<T>(
     }
 
     @Suppress("Unused")
-    fun title(initializer: Info<T>.() -> Unit) {
-        this.title = Info<T>(resources) { transformer ->
+    fun title(initializer: TransformableInfo<SettingData<T>, T>.() -> Unit) {
+        this.title = TransformableInfo<SettingData<T>, T>(resources) { transformer ->
             { data, value, modifier -> Text(text = transformer(data, value), modifier = modifier) }
         }.apply(initializer).build()
     }
 
     @Suppress("Unused")
-    fun summary(initializer: Info<T>.() -> Unit) {
-        this.summary = Info<T>(resources) { transformer ->
-            { data, value, modifier -> SummaryText(text = transformer(data, value), modifier = modifier) }
+    fun summary(initializer: TransformableInfo<SettingData<T>, T>.() -> Unit) {
+        this.summary = TransformableInfo<SettingData<T>, T>(resources) { transformer ->
+            { data, state, modifier -> SummaryText(text = transformer(data, state), modifier = modifier) }
         }.apply(initializer).build()
     }
 
@@ -81,35 +82,6 @@ class SingleSetting<T>(
         @Suppress("Unused")
         fun values(values: List<T>) {
             this.values = values
-        }
-    }
-
-    class Info<T>(
-        private val resources: Resources,
-        private val default: ((SettingData<T>, T) -> String) -> (@Composable (SettingData<T>, T, Modifier) -> Unit)
-    ) {
-        private var composable: (@Composable (SettingData<T>, T, Modifier) -> Unit)? = null
-
-        fun build() = this.composable!!
-
-        @Suppress("Unused")
-        fun resource(id: Int) {
-            this.composable = default { _, _ -> resources.getString(id) }
-        }
-
-        @Suppress("Unused")
-        fun literal(text: String) {
-            this.composable = default { _, _ -> text }
-        }
-
-        @Suppress("Unused")
-        fun transform(transformer: (SettingData<T>, T) -> String) {
-            this.composable = default(transformer)
-        }
-
-        @Suppress("Unused")
-        fun custom(composable: (@Composable (SettingData<T>, T, Modifier) -> Unit)) {
-            this.composable = composable
         }
     }
 }
