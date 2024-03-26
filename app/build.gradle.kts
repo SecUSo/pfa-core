@@ -56,4 +56,16 @@ dependencies {
     androidTestImplementation("androidx.compose.ui:ui-test-junit4")
     debugImplementation("androidx.compose.ui:ui-tooling")
     debugImplementation("androidx.compose.ui:ui-test-manifest")
+
+    implementation(project(path = ":backup-api"))
+    val workVersion = "2.8.1"
+    implementation("androidx.work:work-runtime:$workVersion")
+    implementation("androidx.work:work-runtime-ktx:$workVersion")
+    androidTestImplementation("androidx.work:work-testing:$workVersion")
+
+    val roomVersion = "2.5.2"
+    implementation("androidx.room:room-runtime:$roomVersion")
+    annotationProcessor("androidx.room:room-compiler:$roomVersion")
+    implementation("androidx.room:room-ktx:$roomVersion")
+
 }

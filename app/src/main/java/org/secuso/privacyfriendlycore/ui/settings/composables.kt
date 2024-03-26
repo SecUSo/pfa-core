@@ -11,26 +11,31 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
+import org.secuso.privacyfriendlycore.backup.booleanRestorer
 import org.secuso.privacyfriendlycore.ui.composables.PreferenceGroupHeader
 import org.secuso.privacyfriendlycore.ui.theme.PrivacyFriendlyCoreTheme
 
 class SettingsProvider : PreviewParameterProvider<SettingCategoryMapping> {
     private val state = mutableStateOf(false)
     override val values: Sequence<SettingCategoryMapping> = listOf(
-        hashMapOf<String, List<SettingData<*>>>("General" to listOf(
-            SettingData(
-                key = "Test",
-                state = state,
-                defaultValue = false,
-                title = @Composable { _, _, modifier -> Text(text = "Test", modifier = modifier) },
-                summary = @Composable { _, _, modifier -> Text(text = "Summary", modifier = modifier) },
-                enable = state,
-                _composable = @Composable { data ->
-                    SwitchPreference(
-                        data = data,
-                        enabled = state,
-                        update = {})
-                }
+        hashMapOf<String, List<Setting<*>>>("General" to listOf(
+            Setting(
+                data = SettingData(
+                    key = "Test",
+                    state = state,
+                    defaultValue = false,
+                    title = @Composable { _, _, modifier -> Text(text = "Test", modifier = modifier) },
+                    summary = @Composable { _, _, modifier -> Text(text = "Summary", modifier = modifier) },
+                    enable = state,
+                    _composable = @Composable { data ->
+                        SwitchPreference(
+                            data = data,
+                            enabled = state,
+                            update = {})
+                    }
+                ),
+                backupable = true,
+                restorer = booleanRestorer
             )
         ))
     ).asSequence()
@@ -43,7 +48,7 @@ fun SettingsMenu(settings: SettingCategoryMapping) {
             val group = settings.keys.elementAt(it)
             PreferenceGroupHeader(text = group)
             for (setting in settings[group]!!) {
-                setting.composable()
+                setting.data.composable()
             }
         }
     }

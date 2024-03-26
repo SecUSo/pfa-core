@@ -1,5 +1,6 @@
 package org.secuso.privacyfriendlycore.ui.settings
 
+import android.util.JsonReader
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
@@ -26,6 +27,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import org.secuso.privacyfriendlycore.R
+import org.secuso.privacyfriendlycore.backup.Restorer
 
 data class SettingEntry<T>(
     var entry: String,
@@ -40,11 +42,22 @@ data class SettingData<T>(
     var summary: @Composable (SettingData<T>, T, modifier: Modifier) -> Unit,
     private var _composable: @Composable (SettingData<T>) -> Unit,
     var entries: List<SettingEntry<T>>? = null,
-    var enable: State<Boolean>
+    var enable: State<Boolean>,
 ) {
     val composable = @Composable { this._composable(this) }
     val value = state.value
 }
+
+class Setting<T>(
+    val data: SettingData<T>,
+    val backupable: Boolean,
+    private val restorer: Restorer<T>
+) {
+    fun restore(reader: JsonReader) {
+        data.state.value = restorer(reader)
+    }
+}
+
 
 val settingModifier = Modifier
     .fillMaxWidth()

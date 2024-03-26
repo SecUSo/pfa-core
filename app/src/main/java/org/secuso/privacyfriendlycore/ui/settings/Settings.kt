@@ -6,11 +6,11 @@ import androidx.compose.runtime.Composable
 import androidx.preference.PreferenceManager
 import org.secuso.privacyfriendlycore.ui.stage.Stage
 
-typealias SettingCategoryMapping = HashMap<String, List<SettingData<*>>>
+typealias SettingCategoryMapping = HashMap<String, List<Setting<*>>>
 
 open class Settings(private val settings: SettingCategoryMapping) : ISettings {
     override val composable = @Composable { SettingsMenu(this.settings) }
-    override val all: List<SettingData<*>>
+    override val all: List<Setting<*>>
         get() = settings.values.flatten()
 
     class Category(private val context: Context) : Stage.Builder<Settings> {

@@ -15,3 +15,6 @@ dependencyResolutionManagement {
 
 rootProject.name = "PrivacyFriendlyCore"
 include(":app")
+
+include(":backup-api")
+project(":backup-api").projectDir = File("libs/privacy-friendly-backup-api/BackupAPI")

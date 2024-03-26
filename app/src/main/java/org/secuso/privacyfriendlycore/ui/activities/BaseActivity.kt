@@ -39,7 +39,7 @@ abstract class BaseActivity : ComponentActivity() {
     @OptIn(ExperimentalMaterial3Api::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val application = PFApplication.instance(this)
+        val application = PFApplication.instance
         setContent {
             PrivacyFriendlyCoreTheme(
                 useDarkTheme = isSystemInDarkTheme() && resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK == Configuration.UI_MODE_NIGHT_YES && !application.LightMode

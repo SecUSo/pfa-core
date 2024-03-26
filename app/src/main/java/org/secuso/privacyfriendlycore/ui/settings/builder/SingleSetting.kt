@@ -5,8 +5,10 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.ui.Modifier
+import org.secuso.privacyfriendlycore.backup.Restorer
 import org.secuso.privacyfriendlycore.ui.TransformableInfo
 import org.secuso.privacyfriendlycore.ui.composables.SummaryText
+import org.secuso.privacyfriendlycore.ui.settings.Setting
 import org.secuso.privacyfriendlycore.ui.settings.SettingData
 import org.secuso.privacyfriendlycore.ui.settings.SettingEntry
 
@@ -15,7 +17,8 @@ class SingleSetting<T>(
     var key: String? = null,
     var default: T? = null,
     var depends: String? = null,
-    var onUpdate: ((T) -> Unit)? = null
+    var onUpdate: ((T) -> Unit)? = null,
+    var backup: Boolean = true,
 ) {
     private var entries: List<SettingEntry<T>>? = null
     private var title: (@Composable (SettingData<T>, T, Modifier) -> Unit)? = null
@@ -43,9 +46,10 @@ class SingleSetting<T>(
     fun compose(
         state: (SingleSetting<T>) -> MutableState<T>,
         enabled: (String?) -> MutableState<Boolean>,
+        restorer: Restorer<T>,
         composable: (SingleSetting<T>) -> @Composable (data: SettingData<T>) -> Unit
-    ): SettingData<T> {
-        return when {
+    ): Setting<T> {
+        val data = when {
             key === null -> throw IllegalStateException("A setting needs to have a key")
             default === null -> throw IllegalStateException("A setting needs to have a default value")
             title === null -> throw IllegalStateException("A setting needs a title")
@@ -60,6 +64,7 @@ class SingleSetting<T>(
                 enable = enabled(depends)
             )
         }
+        return Setting(data, backup, restorer)
     }
 
     class Entries<T>(

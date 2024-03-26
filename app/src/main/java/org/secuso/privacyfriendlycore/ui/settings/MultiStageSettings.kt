@@ -11,7 +11,7 @@ class MultiStageSettings(
 ) : MultiStage<Settings>(), ISettings {
     override val composable: @Composable () -> Unit = { MultiStageMenu(stages = stages) }
 
-    override val all: List<SettingData<*>>
+    override val all: List<Setting<*>>
         get() = stages.flatMap { it.stage.all }
 
     companion object {

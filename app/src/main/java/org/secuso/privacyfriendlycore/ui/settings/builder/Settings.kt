@@ -4,12 +4,16 @@ import android.content.SharedPreferences
 import android.content.res.Resources
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
+import org.secuso.privacyfriendlycore.backup.booleanRestorer
+import org.secuso.privacyfriendlycore.backup.intRestorer
+import org.secuso.privacyfriendlycore.backup.stringRestorer
 import org.secuso.privacyfriendlycore.ui.settings.RadioPreference
+import org.secuso.privacyfriendlycore.ui.settings.Setting
 import org.secuso.privacyfriendlycore.ui.settings.SettingData
 import org.secuso.privacyfriendlycore.ui.settings.SwitchPreference
 
 class Settings(
-    val settings: MutableList<SettingData<*>> = mutableListOf(),
+    val settings: MutableList<Setting<*>> = mutableListOf(),
     private val preferences: SharedPreferences,
     private val resources: Resources
 ) {
@@ -18,7 +22,7 @@ class Settings(
         if (dependency == null) {
             return mutableStateOf(true)
         }
-        val state = settings.find { it.key == dependency }?.state
+        val state = settings.map { it.data }.find { it.key == dependency }?.state
             ?: throw IllegalStateException("Dependency $dependency not found. Dependencies must be in the same category and precede the setting")
         if (state.value !is Boolean) {
             throw IllegalStateException("A Setting can only depend on Boolean-Settings")
@@ -34,7 +38,8 @@ class Settings(
                 state = { data ->
                     mutableStateOf(preferences.getBoolean(data.key!!, data.default!!))
                 },
-                enabled = { track(it) }
+                enabled = { track(it) },
+                restorer = booleanRestorer
             ) { settingDSL ->
                 { data ->
                     SwitchPreference(
@@ -58,7 +63,8 @@ class Settings(
             .compose(state = { data ->
                 mutableStateOf(preferences.getString(data.key!!, data.default!!)!!)
             },
-                enabled = { track(it) }
+                enabled = { track(it) },
+                restorer = stringRestorer
             ) { settingDSL ->
                 { data ->
                     RadioPreference(
@@ -82,7 +88,8 @@ class Settings(
             .compose(state = { data ->
                 mutableStateOf(preferences.getInt(data.key!!, data.default!!))
             },
-                enabled = { track(it) }
+                enabled = { track(it) },
+                restorer = intRestorer
             ) { settingDSL ->
                 { data ->
                     RadioPreference(
