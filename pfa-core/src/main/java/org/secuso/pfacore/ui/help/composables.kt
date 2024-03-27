@@ -68,7 +68,7 @@ fun HelpMenuItem(
 }
 
 @Composable
-fun HelpMenu(items: List<Help.Item>) {
+fun HelpMenu(items: List<HelpData.Item>) {
     LazyColumn(Modifier.fillMaxWidth()) {
         items(count = items.size) {
             val (title, description, composable) = items[it]

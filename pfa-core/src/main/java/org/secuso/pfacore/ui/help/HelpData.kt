@@ -9,12 +9,12 @@ import kotlin.IllegalStateException
 
 typealias HelpItemComposable = @Composable (@Composable (Modifier) -> Unit, @Composable (Modifier) -> Unit, Modifier) -> Unit
 
-class Help(
+class HelpData(
     private val items: List<Item>
 ): Stage {
 
     override val composable = @Composable { HelpMenu(items) }
-    class HelpItem(private val context: Context): Stage.Builder<Help> {
+    class HelpItem(private val context: Context): Stage.Builder<HelpData> {
         private val items: MutableList<Item> = mutableListOf()
         internal var composable: HelpItemComposable = @Composable { title, description, modifier ->
             HelpMenuItem(
@@ -23,7 +23,7 @@ class Help(
                 modifier
             )
         }
-        override fun build() = Help(items)
+        override fun build() = HelpData(items)
 
         fun item(composable: HelpItemComposable = this.composable, initializer: Item.Builder.() -> Unit) {
             this.items.add(Item.Builder(context, composable).apply(initializer).build())
@@ -63,7 +63,7 @@ class Help(
     }
 
     companion object {
-        fun build(context: Context, initializer: HelpItem.() -> Unit): Help {
+        fun build(context: Context, initializer: HelpItem.() -> Unit): HelpData {
             return HelpItem(context).apply(initializer).build()
         }
     }
