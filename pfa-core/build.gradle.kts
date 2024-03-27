@@ -5,7 +5,7 @@ plugins {
 
 group = "org.secuso"
 android {
-    namespace = "org.secuso.pfa-core"
+    namespace = "org.secuso.pfacore"
     compileSdk = 34
 
     defaultConfig {
