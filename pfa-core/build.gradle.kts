@@ -3,6 +3,7 @@ plugins {
     id("org.jetbrains.kotlin.android")
 }
 
+group = "org.secuso"
 android {
     namespace = "org.secuso.pfa-core"
     compileSdk = 34
