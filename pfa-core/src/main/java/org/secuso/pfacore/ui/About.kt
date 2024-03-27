@@ -14,6 +14,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.platform.LocalConfiguration
@@ -76,7 +77,7 @@ fun SecusoLogo() {
     Image(
         painter = painterResource(id = R.drawable.secuso_logo_blau_blau),
         contentDescription = "SECUSO - Security, Usability and Society",
-        colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.secuso)
+        modifier = Modifier.fillMaxWidth()
     )
 }
 
