@@ -23,14 +23,14 @@ open class Settings(private val settings: SettingCategoryMapping) : ISettings {
         }
 
         @Suppress("Unused")
-        fun category(category: String, initializer: org.secuso.pfacore.ui.settings.builder.Settings.() -> Unit) {
+        fun category(category: String, initializer: org.secuso.pfacore.ui.settings.builder.SettingsBuilder.() -> Unit) {
             this.settings[category] =
-                org.secuso.pfacore.ui.settings.builder.Settings(preferences = this.preferences, resources = context.resources).apply(initializer).settings
+                org.secuso.pfacore.ui.settings.builder.SettingsBuilder(preferences = this.preferences, resources = context.resources).apply(initializer).settings
         }
 
         @Suppress("Unused")
-        fun category(categoryId: Int, initializer: org.secuso.pfacore.ui.settings.builder.Settings.() -> Unit) {
-            this.settings[context.getString(categoryId)] = org.secuso.pfacore.ui.settings.builder.Settings(
+        fun category(categoryId: Int, initializer: org.secuso.pfacore.ui.settings.builder.SettingsBuilder.() -> Unit) {
+            this.settings[context.getString(categoryId)] = org.secuso.pfacore.ui.settings.builder.SettingsBuilder(
                 preferences = this.preferences,
                 resources = context.resources
             ).apply(initializer).settings

@@ -8,4 +8,11 @@
     <string name="about_more_info">More information can be found on:</string>
     <string name="about_url" translatable="false">SECUSO-Website</string>
     <string name="about_github" translatable="false">Github-Repo</string>
+
+    <string name="select_day_night_theme">Design</string>
+    <string-array name="array_day_night_theme">
+        <item>System</item>
+        <item>Light</item>
+        <item>Dark</item>
+    </string-array>
 </resources>

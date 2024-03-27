@@ -11,7 +11,7 @@ import org.secuso.pfacore.ui.settings.RadioPreference
 import org.secuso.pfacore.ui.settings.Setting
 import org.secuso.pfacore.ui.settings.SwitchPreference
 
-class Settings(
+class SettingsBuilder(
     val settings: MutableList<Setting<*>> = mutableListOf(),
     private val preferences: SharedPreferences,
     private val resources: Resources
