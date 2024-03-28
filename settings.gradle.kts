@@ -18,3 +18,5 @@ include(":pfa-core")
 
 include(":backup-api")
 project(":backup-api").projectDir = File("libs/privacy-friendly-backup-api/BackupAPI")
+include(":ui-common")
+include(":ui-compose")
