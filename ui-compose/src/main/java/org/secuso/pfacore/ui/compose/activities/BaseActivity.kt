@@ -42,7 +42,7 @@ abstract class BaseActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         val application = PFApplication.instance
         setContent {
-            val lightMode = application.lightMode.observeAsState(false)
+            val lightMode = application.data.lightMode.observeAsState(false)
             PrivacyFriendlyCoreTheme(
                 useDarkTheme = isSystemInDarkTheme() && resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK == Configuration.UI_MODE_NIGHT_YES && !lightMode.value
             ) {
@@ -50,7 +50,7 @@ abstract class BaseActivity : ComponentActivity() {
                 Scaffold(
                     topBar = {
                         TopAppBar(
-                            title = { Text(text = title.value ?: application.applicationName, maxLines = 1, overflow = TextOverflow.Ellipsis) },
+                            title = { Text(text = title.value ?: application.name, maxLines = 1, overflow = TextOverflow.Ellipsis) },
                             navigationIcon = {
                                 IconButton(onClick = { finish() }) {
                                     Icon(imageVector = Icons.Filled.ArrowBack, contentDescription = "back", tint = Color.White)

@@ -15,11 +15,8 @@ import org.secuso.privacyfriendlybackup.api.pfa.BackupManager.backupCreator
 import org.secuso.privacyfriendlybackup.api.pfa.BackupManager.backupRestorer
 
 abstract class PFApplication : Application(), Configuration.Provider {
-    abstract val about: About
-    abstract val help: Help<*>
-    abstract val settings: ISettings<*>
-    abstract val applicationName: String
-    abstract val lightMode: LiveData<Boolean>
+    abstract val name: String
+    abstract val data: PFData
     abstract val database: PFDatabase
     val backup = object : PFAppBackup {}
 

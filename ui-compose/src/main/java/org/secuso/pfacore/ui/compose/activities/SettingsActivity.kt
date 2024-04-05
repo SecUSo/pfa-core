@@ -7,6 +7,6 @@ import org.secuso.pfacore.ui.compose.Displayable
 class SettingsActivity : BaseActivity() {
 
     @Composable
-    override fun Content(application: PFApplication) = (application.settings as Displayable).Display()
+    override fun Content(application: PFApplication) = (application.data.settings as Displayable).Display()
 
 }

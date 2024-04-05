@@ -8,6 +8,6 @@ class AboutActivity : BaseActivity() {
 
     @Composable
     override fun Content(application: PFApplication) {
-        About(data = application.about)
+        About(data = application.data.about)
     }
 }
