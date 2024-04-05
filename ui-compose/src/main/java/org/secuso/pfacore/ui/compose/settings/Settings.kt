@@ -51,7 +51,7 @@ class Settings(
             return SingleSetting<T>(resources) { data, backup, restorer -> RadioSetting(data, backup, restorer) }.apply(initializer).create(preferences)
         }
 
-        inline fun <reified T> menu(initializer: SingleSetting<Unit>.() -> Unit): SettingDecorator<Any> {
+        fun menu(initializer: SingleSetting<Unit>.() -> Unit): SettingDecorator<Any> {
             return SingleSetting(resources) { data, _, _ -> MenuSetting(data) }.apply(initializer).create(preferences)
         }
     }
