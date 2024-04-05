@@ -2,6 +2,7 @@ package org.secuso.pfacore.model.settings
 
 import android.util.JsonReader
 import org.secuso.pfacore.backup.Restorer
+import org.secuso.pfacore.backup.noRestorer
 
 interface SettingHierarchy<S : ISetting<*, S>> {
     fun all(): List<S>
@@ -44,3 +45,4 @@ open class SettingMenu<S : ISetting<*, S>>(
 
 abstract class SwitchSetting<S : ISetting<Boolean, S>>(data: SettingData<Boolean>, backup: Boolean, restorer: Restorer<Boolean>) : Setting<Boolean, S>(data, backup, restorer)
 abstract class RadioSetting<T, S : ISetting<T, S>>(data: SettingData<T>, backup: Boolean, restorer: Restorer<T>) : Setting<T, S>(data, backup, restorer)
+abstract class MenuSetting<S : ISetting<Unit, S>>(data: SettingData<Unit>) : Setting<Unit, S>(data, false, noRestorer)

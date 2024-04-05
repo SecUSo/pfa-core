@@ -19,7 +19,7 @@ interface DisplayableInnerSetting<T, S : ISetting<T, S>> : ISetting<T, S> {
 }
 
 class SettingDecorator<T>(
-    private val setting: DisplayableInnerSetting<T, SettingDecorator<T>>,
+    val setting: DisplayableInnerSetting<T, SettingDecorator<T>>,
     val title: @Composable (SettingData<T>, T, Modifier) -> Unit,
     val summary: @Composable (SettingData<T>, T, Modifier) -> Unit,
 ) : Displayable, ISetting<T, SettingDecorator<T>> {

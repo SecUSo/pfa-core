@@ -1,15 +1,20 @@
 package org.secuso.pfacore.ui.compose.settings
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.SharedPreferences
 import android.content.res.Resources
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.State
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Modifier
 import androidx.preference.PreferenceManager
 import org.secuso.pfacore.backup.Restorer
+import org.secuso.pfacore.model.settings.MenuSetting as MMenuSetting
 import org.secuso.pfacore.model.settings.SettingData
 import org.secuso.pfacore.ui.compose.Displayable
+import org.secuso.pfacore.ui.compose.settings.composables.MenuPreference
 import org.secuso.pfacore.ui.compose.settings.composables.RadioPreference
 import org.secuso.pfacore.ui.compose.settings.composables.SettingsMenu
 import org.secuso.pfacore.ui.compose.settings.composables.SwitchPreference
@@ -44,6 +49,10 @@ class Settings(
 
         inline fun <reified T> radio(initializer: SingleSetting<T>.() -> Unit): SettingDecorator<Any> {
             return SingleSetting<T>(resources) { data, backup, restorer -> RadioSetting(data, backup, restorer) }.apply(initializer).create(preferences)
+        }
+
+        inline fun <reified T> menu(initializer: SingleSetting<Unit>.() -> Unit): SettingDecorator<Any> {
+            return SingleSetting(resources) { data, _, _ -> MenuSetting(data) }.apply(initializer).create(preferences)
         }
     }
 
@@ -82,7 +91,7 @@ class SwitchSetting(data: SettingData<Boolean>, backup: Boolean, restorer: Resto
         summary: @Composable (SettingData<Boolean>, Boolean, Modifier) -> Unit,
         onClick: (() -> Unit)?
     ) {
-        SwitchPreference(this, super.data.enable.observeAsState(false), { super.data.value = it }, title, summary, onClick)
+        SwitchPreference(this, this.data.state.observeAsState(initial = this.data.defaultValue), super.data.enable.observeAsState(false), { super.data.value = it }, title, summary, onClick)
     }
 }
 
@@ -94,6 +103,18 @@ class RadioSetting<T>(data: SettingData<T>, backup: Boolean, restorer: Restorer<
         summary: @Composable (SettingData<T>, T, Modifier) -> Unit,
         onClick: (() -> Unit)?
     ) {
-        RadioPreference(this, super.data.enable.observeAsState(false), { super.data.value = it }, title, summary, onClick)
+        RadioPreference(this, this.data.state.observeAsState(initial = this.data.defaultValue), super.data.enable.observeAsState(false), { super.data.value = it }, title, summary, onClick)
+    }
+}
+
+class MenuSetting(data: SettingData<Unit>): MMenuSetting<SettingDecorator<Unit>>(data), DisplayableInnerSetting<Unit, SettingDecorator<Unit>> {
+    @SuppressLint("UnrememberedMutableState")
+    @Composable
+    override fun Display(
+        title: @Composable (SettingData<Unit>, Unit, Modifier) -> Unit,
+        summary: @Composable (SettingData<Unit>, Unit, Modifier) -> Unit,
+        onClick: (() -> Unit)?
+    ) {
+        MenuPreference(this, mutableStateOf(Unit), mutableStateOf(true), { super.data.value = it }, title, summary, onClick)
     }
 }

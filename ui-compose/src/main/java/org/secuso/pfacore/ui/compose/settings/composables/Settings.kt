@@ -1,5 +1,6 @@
 package org.secuso.pfacore.ui.compose.settings.composables
 
+import android.graphics.drawable.VectorDrawable
 import android.util.Log
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.clickable
@@ -9,6 +10,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.KeyboardArrowRight
 import androidx.compose.material3.Card
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconToggleButton
@@ -60,6 +63,7 @@ fun <T> Preference(
 @Composable
 fun SwitchPreference(
     data: ISetting<Boolean, SettingDecorator<Boolean>>,
+    state: State<Boolean>,
     enabled: State<Boolean>,
     update: (Boolean) -> Unit,
     title: @Composable (SettingData<Boolean>, Boolean, Modifier) -> Unit,
@@ -79,6 +83,7 @@ fun SwitchPreference(
 @Composable
 fun <T> RadioPreference(
     data: ISetting<T, SettingDecorator<T>>,
+    state: State<T>,
     enabled: State<Boolean>,
     update: (T) -> Unit,
     title: @Composable (SettingData<T>, T, Modifier) -> Unit,
@@ -88,13 +93,12 @@ fun <T> RadioPreference(
     val expanded = remember {
         mutableStateOf(false)
     }
-    val selected = data.data.state.observeAsState(data.data.defaultValue)
     Column(
         modifier = Modifier
             .fillMaxWidth()
             .animateContentSize()
     ) {
-        Preference(data = data, state = selected, onClick = {
+        Preference(data = data, state = state, onClick = {
             if (enabled.value) {
                 onClick?.let { it() }
             }
@@ -117,7 +121,7 @@ fun <T> RadioPreference(
                     items(count = data.data.entries!!.size, key = { data.data.entries!![it].entry }) {
                         val (entry, value) = data.data.entries!![it]
                         Row(settingModifier.clickable { update(value) }, verticalAlignment = Alignment.CenterVertically) {
-                            RadioButton(selected = (value == selected.value), onClick = { update(value) })
+                            RadioButton(selected = (value == state.value), onClick = { update(value) })
                             Text(text = entry)
                         }
                     }
@@ -125,5 +129,21 @@ fun <T> RadioPreference(
             }
         }
     }
+}
 
+@Composable
+fun MenuPreference(
+    data: ISetting<Unit, SettingDecorator<Unit>>,
+    state: State<Unit>,
+    enabled: State<Boolean>,
+    update: (Unit) -> Unit,
+    title: @Composable (SettingData<Unit>, Unit, Modifier) -> Unit,
+    summary: @Composable (SettingData<Unit>, Unit, Modifier) -> Unit,
+    onClick: (() -> Unit)? = null
+) {
+    Preference(data = data, state = state, onClick = {
+        onClick?.let { it() }
+    }, title = title, summary = summary) {
+        Icon(imageVector = Icons.Filled.KeyboardArrowRight, contentDescription = "")
+    }
 }

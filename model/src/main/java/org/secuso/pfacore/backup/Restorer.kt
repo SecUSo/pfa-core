@@ -4,6 +4,7 @@ import android.util.JsonReader
 
 typealias Restorer<T> = (JsonReader) -> T
 
+val noRestorer: Restorer<Unit> = { }
 val stringRestorer: Restorer<String> = { it.nextString() }
 val booleanRestorer: Restorer<Boolean> = { it.nextBoolean() }
 val doubleRestorer: Restorer<Double> = { it.nextDouble() }
