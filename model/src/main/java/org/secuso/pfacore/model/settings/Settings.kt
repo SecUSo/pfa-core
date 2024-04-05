@@ -5,14 +5,11 @@ import android.content.SharedPreferences
 import android.content.res.Resources
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
-import kotlinx.serialization.encodeToString
-import kotlinx.serialization.json.Json
 import org.secuso.pfacore.backup.Restorer
 import org.secuso.pfacore.backup.booleanRestorer
 import org.secuso.pfacore.backup.doubleRestorer
 import org.secuso.pfacore.backup.floatRestorer
 import org.secuso.pfacore.backup.intRestorer
-import org.secuso.pfacore.backup.serializableRestorer
 import org.secuso.pfacore.backup.stringRestorer
 
 interface ISettings<S : ISetting<*, S>> {
@@ -70,7 +67,7 @@ abstract class Settings<I : ISetting<*, I>, SHC : SettingCategory<I>, SHM : Sett
                 is Int -> intRestorer
                 is Float -> floatRestorer
                 is Double -> doubleRestorer
-                else -> serializableRestorer()
+                else -> throw UnsupportedOperationException("The given type ${this.default!!::class.java} is no valid setting type")
             } as Restorer<T>
             val state: (String, T) -> MutableLiveData<T> = { key, default ->
                 MutableLiveData(
@@ -80,7 +77,7 @@ abstract class Settings<I : ISetting<*, I>, SHC : SettingCategory<I>, SHM : Sett
                         is Int -> preferences.getInt(key, default!! as Int)
                         is Float -> preferences.getFloat(key, default!! as Float)
                         is Double -> Double.fromBits(preferences.getLong(key, (default!! as Double).toRawBits()))
-                        else -> preferences.getString(key, null)?.let { Json.decodeFromString(it) } ?: default!!
+                        else -> throw UnsupportedOperationException("The given type ${default!!::class.java} is no valid setting type")
                     } as T
                 )
             }
@@ -93,7 +90,7 @@ abstract class Settings<I : ISetting<*, I>, SHC : SettingCategory<I>, SHM : Sett
                         is Int -> putInt(key, value as Int)
                         is Float -> putFloat(key, value as Float)
                         is Double -> putLong(key, (value as Double).toRawBits())
-                        else -> putString(key, Json.encodeToString(value))
+                        else -> throw UnsupportedOperationException("The given type ${default!!::class.java} is no valid setting type")
                     }
                 }.apply()
             }
