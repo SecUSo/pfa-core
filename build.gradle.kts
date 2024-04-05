@@ -4,13 +4,13 @@ plugins {
     id("org.jetbrains.kotlin.android") version "1.9.0" apply false
 }
 
-group = "org.secuso.pfa-core"
-
 subprojects {
 
     if (this.name.contains("backup-api")) {
         return@subprojects
     }
+
+    group = "org.secuso.pfa-core"
 
     apply {
         plugin("com.android.library")

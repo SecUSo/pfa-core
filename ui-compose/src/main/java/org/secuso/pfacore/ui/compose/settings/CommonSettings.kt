@@ -8,15 +8,19 @@ object CommonSettings {
 
     fun themeSelector(context: Context): Settings.Setting.() -> Unit {
         return {
-            radio<Int> {
+            radio<String> {
                 key = themeSelectorKey
-                default = AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM
-                onUpdate = { AppCompatDelegate.setDefaultNightMode(it) }
+                default = "System"
+                onUpdate = { when(it) {
+                    "System" -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM)
+                    "Light" -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+                    "Dark" -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+                } }
                 title { resource(R.string.select_day_night_theme) }
                 summary {transform { state, value -> state.entries!!.find { it.value == value}!!.entry }}
                 entries {
                     entries(R.array.array_day_night_theme)
-                    values(context.resources.getStringArray(R.array.array_day_night_theme_values).map { it.toInt() })
+                    values(listOf("System", "Light", "Dark"))
                 }
             }
         }
