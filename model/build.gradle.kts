@@ -1,4 +1,3 @@
-
 group = "org.secuso.pfa-core"
 android {
     namespace = "org.secuso.pfacore"

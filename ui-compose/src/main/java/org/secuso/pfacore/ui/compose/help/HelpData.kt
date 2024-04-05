@@ -8,7 +8,7 @@ import org.secuso.pfacore.ui.compose.Displayable
 class HelpData(
     internal val title: @Composable (Modifier) -> Unit,
     internal val description: @Composable (Modifier) -> Unit,
-): IHelpData<HelpData>, Displayable {
+) : IHelpData<HelpData>, Displayable {
     @Composable
     override fun Display(onClick: (() -> Unit)?) {
         HelpMenuItem(title, description, Modifier)

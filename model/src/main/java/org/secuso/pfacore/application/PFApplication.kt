@@ -6,9 +6,9 @@ import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.multidex.MultiDex
 import androidx.work.Configuration
-import org.secuso.pfacore.model.about.About
 import org.secuso.pfacore.backup.BackupCreator
 import org.secuso.pfacore.backup.BackupRestorer
+import org.secuso.pfacore.model.about.About
 import org.secuso.pfacore.model.help.Help
 import org.secuso.pfacore.model.settings.ISettings
 import org.secuso.privacyfriendlybackup.api.pfa.BackupManager.backupCreator

@@ -13,9 +13,9 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
@@ -37,7 +37,7 @@ fun HelpMenuItem(
     title: @Composable (Modifier) -> Unit,
     description: @Composable (Modifier) -> Unit,
     modifier: Modifier
-)  {
+) {
     var expanded by remember {
         mutableStateOf(false)
     }
@@ -48,7 +48,8 @@ fun HelpMenuItem(
         Row(
             Modifier
                 .fillMaxWidth()
-                .height(40.dp)) {
+                .height(40.dp)
+        ) {
             Icon(
                 imageVector = Icons.Filled.KeyboardArrowDown,
                 contentDescription = "",
@@ -59,13 +60,15 @@ fun HelpMenuItem(
             title(
                 modifier
                     .fillMaxWidth()
-                    .padding(end = 16.dp, top = 8.dp, bottom = 8.dp))
+                    .padding(end = 16.dp, top = 8.dp, bottom = 8.dp)
+            )
         }
         if (expanded) {
             description(
                 modifier
                     .fillMaxWidth()
-                    .padding(start = 40.dp))
+                    .padding(start = 40.dp)
+            )
         }
     }
 }

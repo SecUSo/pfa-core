@@ -8,14 +8,14 @@ import org.secuso.pfacore.ui.compose.BasicInfo
 import org.secuso.pfacore.ui.compose.Displayable
 import org.secuso.pfacore.model.help.Help as MHelp
 
-class Help(items: List<HelpData>): MHelp<HelpData>(items), Displayable {
+class Help(items: List<HelpData>) : MHelp<HelpData>(items), Displayable {
 
     @Composable
     override fun Display(onClick: (() -> Unit)?) {
         HelpMenu(items = items)
     }
 
-    class Item(val resources: Resources): MHelp.Item<HelpData>() {
+    class Item(val resources: Resources) : MHelp.Item<HelpData>() {
         internal var title: (@Composable (Modifier) -> Unit)? = null
         internal var description: (@Composable (Modifier) -> Unit)? = null
 
@@ -24,7 +24,7 @@ class Help(items: List<HelpData>): MHelp<HelpData>(items), Displayable {
                 title === null -> throw IllegalStateException("A HelpItem needs a title.")
                 description === null -> throw IllegalStateException("A HelpItem needs a summary.")
                 else -> {
-                   HelpData(title!!, description!!)
+                    HelpData(title!!, description!!)
                 }
             }
         }
