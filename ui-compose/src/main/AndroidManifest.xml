@@ -1,4 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest>
-
+<manifest xmlns:tools="http://schemas.android.com/tools" xmlns:android="http://schemas.android.com/apk/res/android">
+    <application>
+<!--        <activity-->
+<!--            android:name="org.secuso.pfacore.ui.activities.AboutActivity"-->
+<!--            android:label="@string/about">-->
+<!--            <meta-data-->
+<!--                android:name="android.support.PARENT_ACTIVITY"-->
+<!--                android:value="org.secuso.privacyfriendlyexample.ui.MainActivity" />-->
+<!--        </activity>-->
+<!--        <activity-->
+<!--            android:name="org.secuso.pfacore.ui.activities.HelpActivity"-->
+<!--            android:label="@string/help"-->
+<!--            android:parentActivityName="org.secuso.privacyfriendlyexample.ui.MainActivity"-->
+<!--            android:theme="@style/AppTheme.NoActionBar">-->
+<!--            <meta-data-->
+<!--                android:name="android.support.PARENT_ACTIVITY"-->
+<!--                android:value="org.secuso.privacyfriendlyexample.ui.MainActivity" />-->
+<!--        </activity>-->
+        <activity
+            android:name="org.secuso.pfacore.ui.compose.activities.SettingsActivity"
+            android:label="@string/title_activity_settings">
+        </activity>
+    </application>
 </manifest>

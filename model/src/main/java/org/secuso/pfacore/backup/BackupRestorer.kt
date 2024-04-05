@@ -53,7 +53,7 @@ class BackupRestorer : IBackupRestorer {
         }
 
         // create new restore database
-        val restoreDatabase = Room.databaseBuilder(context.applicationContext, PFApplication.instance.Database::class.java, restoreDatabaseName).build()
+        val restoreDatabase = Room.databaseBuilder(context.applicationContext, PFApplication.instance.database::class.java, restoreDatabaseName).build()
         val db = restoreDatabase.openHelper.writableDatabase
 
         db.beginTransaction()
@@ -72,9 +72,9 @@ class BackupRestorer : IBackupRestorer {
         reader.endObject()
 
         // copy file to correct location
-        val actualDatabaseFile = context.getDatabasePath(PFApplication.instance.Database.name)
+        val actualDatabaseFile = context.getDatabasePath(PFApplication.instance.database.name)
 
-        DatabaseUtil.deleteRoomDatabase(context, PFApplication.instance.Database.name)
+        DatabaseUtil.deleteRoomDatabase(context, PFApplication.instance.database.name)
 
         FileUtil.copyFile(restoreDatabaseFile, actualDatabaseFile)
         Log.d("NoteRestore", "Backup Restored")
@@ -91,7 +91,7 @@ class BackupRestorer : IBackupRestorer {
 
         while (reader.hasNext()) {
             val name = reader.nextName()
-            val pref = PFApplication.instance.Settings.all.firstOrNull { it.data.key == name }
+            val pref = PFApplication.instance.settings.all.firstOrNull { it.data.key == name }
             if (pref == null) {
                 throw RuntimeException("Unknown preference $name")
             } else {
@@ -116,7 +116,7 @@ class BackupRestorer : IBackupRestorer {
                 when (val type = reader.nextName()) {
                     "database" -> readDatabase(reader, context)
                     "preferences" -> readPreferences(reader, context)
-                    else -> PFApplication.instance.Backup.restore(type, reader, context)
+                    else -> PFApplication.instance.backup.restore(type, reader, context)
                 }
             }
 

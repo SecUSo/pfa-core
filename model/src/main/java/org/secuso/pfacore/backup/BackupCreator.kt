@@ -40,7 +40,7 @@ class BackupCreator : IBackupCreator {
         try {
             writer.beginObject()
 
-            val dataBase = DatabaseUtil.getSupportSQLiteOpenHelper(context, PFApplication.instance.Database.name).writableDatabase
+            val dataBase = DatabaseUtil.getSupportSQLiteOpenHelper(context, PFApplication.instance.database.name).writableDatabase
 
             Log.d("PFA BackupCreator", "Writing database")
             writer.name("database")
@@ -54,7 +54,7 @@ class BackupCreator : IBackupCreator {
 
             // Do other, app-specific backups
             Log.d("PFA BackupCreator", "Writing app-specific backups")
-            PFApplication.instance.Backup.backup(writer)
+            PFApplication.instance.backup.backup(writer)
             Log.d("PFA BackupCreator", "finished app-specific backups")
 
             writer.endObject()

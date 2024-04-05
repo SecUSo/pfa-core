@@ -1,10 +1,5 @@
-plugins {
-    id("com.android.library")
-    id("org.jetbrains.kotlin.android")
-}
-
 android {
-    namespace = "org.secuso.pfacore.ui.common"
+    namespace = "org.secuso.pfacore"
     compileSdk = 34
 
     defaultConfig {
@@ -12,6 +7,7 @@ android {
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles("consumer-rules.pro")
+        multiDexEnabled = true
     }
 
     buildTypes {
@@ -40,13 +36,12 @@ dependencies {
     implementation("androidx.preference:preference-ktx:1.2.1")
 
     implementation(project(":backup-api"))
-    val workVersion = "2.8.1"
-    implementation("androidx.work:work-runtime:$workVersion")
-    implementation("androidx.work:work-runtime-ktx:$workVersion")
-    androidTestImplementation("androidx.work:work-testing:$workVersion")
 
     val roomVersion = "2.5.2"
     implementation("androidx.room:room-runtime:$roomVersion")
     annotationProcessor("androidx.room:room-compiler:$roomVersion")
     implementation("androidx.room:room-ktx:$roomVersion")
+
+    val multidexVersion = "2.0.1"
+    implementation("androidx.multidex:multidex:$multidexVersion")
 }
