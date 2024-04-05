@@ -1,14 +1,12 @@
-package org.secuso.pfacore.ui
+package org.secuso.pfacore.ui.compose
 
 import android.content.res.Resources
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
 
 class BasicInfo(
     private val resources: Resources,
-    private val default: (String) -> @Composable (Modifier) -> Unit
+    private val default: (String) -> (@Composable (Modifier) -> Unit)
 ) {
     private var composable: (@Composable (Modifier) -> Unit)? = null
 
@@ -40,12 +38,12 @@ class TransformableInfo<D, S>(
 
     @Suppress("Unused")
     fun resource(id: Int) {
-        this.composable = default { _, _ -> resources.getString(id)}
+        this.composable = default { _, _ -> resources.getString(id) }
     }
 
     @Suppress("Unused")
     fun literal(text: String) {
-        this.composable = default { _, _ -> text}
+        this.composable = default { _, _ -> text }
     }
 
     @Suppress("Unused")
