@@ -30,7 +30,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import androidx.compose.ui.unit.dp
-import org.secuso.pfacore.about.About
+import org.secuso.pfacore.model.about.About
 import org.secuso.pfacore.R
 import org.secuso.pfacore.ui.composables.CenterLines
 import org.secuso.pfacore.ui.composables.CenterText

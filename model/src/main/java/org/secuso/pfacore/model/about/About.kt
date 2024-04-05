@@ -1,4 +1,4 @@
-package org.secuso.pfacore.about
+package org.secuso.pfacore.model.about
 
 data class About(
     val name: String,
