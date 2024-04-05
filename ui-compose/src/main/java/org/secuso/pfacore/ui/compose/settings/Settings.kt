@@ -9,6 +9,7 @@ import androidx.compose.ui.Modifier
 import androidx.preference.PreferenceManager
 import org.secuso.pfacore.backup.Restorer
 import org.secuso.pfacore.model.settings.SettingData
+import org.secuso.pfacore.ui.compose.Displayable
 import org.secuso.pfacore.ui.compose.settings.composables.RadioPreference
 import org.secuso.pfacore.ui.compose.settings.composables.SettingsMenu
 import org.secuso.pfacore.ui.compose.settings.composables.SwitchPreference
@@ -21,8 +22,13 @@ import org.secuso.pfacore.model.settings.SwitchSetting as MSwitchSetting
 
 class Settings(
     settings: List<SettingCategory>,
-    val Display: @Composable () -> Unit = @Composable { SettingsMenu(settings) }
-) : MSettings<SettingDecorator<Any>, SettingCategory, SettingMenu>(settings) {
+    private val display: @Composable () -> Unit = @Composable { SettingsMenu(settings) }
+) : MSettings<SettingDecorator<Any>, SettingCategory, SettingMenu>(settings), Displayable {
+
+    @Composable
+    override fun Display(onClick: (() -> Unit)?) {
+        display()
+    }
 
     class Setting(
         val preferences: SharedPreferences,
