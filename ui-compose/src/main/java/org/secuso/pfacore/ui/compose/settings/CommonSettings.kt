@@ -1,9 +1,12 @@
 package org.secuso.pfacore.ui.compose.settings
 
 import androidx.appcompat.app.AppCompatDelegate
+import kotlinx.serialization.Serializable
 import org.secuso.pfacore.R
 
 class SettingThemeSelector() {
+
+    @Serializable
     enum class Mode {
         SYSTEM,
         LIGHT,
