@@ -20,6 +20,8 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.State
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -41,8 +43,9 @@ abstract class BaseActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         val application = PFApplication.instance
         setContent {
+            val lightMode = application.lightMode.observeAsState(false)
             PrivacyFriendlyCoreTheme(
-                useDarkTheme = isSystemInDarkTheme() && resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK == Configuration.UI_MODE_NIGHT_YES && !application.lightMode
+                useDarkTheme = isSystemInDarkTheme() && resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK == Configuration.UI_MODE_NIGHT_YES && !lightMode.value
             ) {
                 window.statusBarColor = MaterialTheme.colorScheme.navbar.toArgb()
                 Scaffold(

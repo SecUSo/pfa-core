@@ -1,11 +1,10 @@
 package org.secuso.pfacore.application
 
-//import org.secuso.pfacore.ui.help.HelpData
-//import org.secuso.pfacore.ui.settings.ISettings
-
 import android.app.Application
 import android.content.Context
 import android.util.Log
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.multidex.MultiDex
 import androidx.work.Configuration
 import org.secuso.pfacore.about.About
@@ -20,7 +19,7 @@ abstract class PFApplication : Application(), Configuration.Provider {
 //    abstract val Help: HelpData
     abstract val settings: ISettings<*>
     abstract val applicationName: String
-    abstract val lightMode: Boolean
+    abstract val lightMode: LiveData<Boolean>
     abstract val database: PFDatabase
     val backup = object : PFAppBackup {}
 
