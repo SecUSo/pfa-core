@@ -23,8 +23,8 @@ abstract class SingleSetting<T, S : ISetting<T, S>>(
     abstract fun adapt(setting: Setting<T, S>): S
 
     fun compose(
-        state: (SingleSetting<T, S>) -> MutableLiveData<T>,
-        update: (SingleSetting<T, S>, T) -> Unit,
+        state: (String, T) -> MutableLiveData<T>,
+        update: (String, T, T) -> Unit,
         enabled: (String?) -> MutableLiveData<Boolean>,
         restorer: Restorer<T>,
     ): S {
@@ -33,10 +33,10 @@ abstract class SingleSetting<T, S : ISetting<T, S>>(
             default === null -> throw IllegalStateException("A setting needs to have a default value")
             else -> SettingData(
                 key = key!!,
-                state = state(this),
+                state = state(key!!, default!!),
                 defaultValue = default!!,
                 entries = entries,
-                onUpdate = { value -> update(this, value); onUpdate?.let { it(value) } },
+                onUpdate = { value -> update(key!!, default!!, value); onUpdate?.let { it(value) } },
                 enable = enabled(depends)
             )
         }

@@ -1,8 +1,4 @@
-plugins {
-    id("com.android.library")
-    id("org.jetbrains.kotlin.android")
-}
-
+group = "org.secuso.pfa-core"
 android {
     namespace = "org.secuso.ui.compose"
     compileSdk = 34

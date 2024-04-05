@@ -69,28 +69,28 @@ abstract class Settings<I : ISetting<*, I>, SHC : SettingCategory<I>, SHM : Sett
                 is Double -> doubleRestorer
                 else -> throw UnsupportedOperationException("The given type ${this.default!!::class.java} is no valid setting type")
             } as Restorer<T>
-            val state: (SingleSetting<T, IS>) -> MutableLiveData<T> = {
+            val state: (String, T) -> MutableLiveData<T> = { key, default ->
                 MutableLiveData(
                     when (this.default) {
-                        is Boolean -> preferences.getBoolean(it.key!!, it.default!! as Boolean)
-                        is String -> preferences.getString(it.key!!, it.default!! as String)
-                        is Int -> preferences.getInt(it.key!!, it.default!! as Int)
-                        is Float -> preferences.getFloat(it.key!!, it.default!! as Float)
-                        is Double -> Double.fromBits(preferences.getLong(it.key!!, (it.default!! as Double).toRawBits()))
-                        else -> throw UnsupportedOperationException("The given type ${this.default!!::class.java} is no valid setting type")
+                        is Boolean -> preferences.getBoolean(key, default!! as Boolean)
+                        is String -> preferences.getString(key, default!! as String)
+                        is Int -> preferences.getInt(key, default!! as Int)
+                        is Float -> preferences.getFloat(key, default!! as Float)
+                        is Double -> Double.fromBits(preferences.getLong(key, (default!! as Double).toRawBits()))
+                        else -> throw UnsupportedOperationException("The given type ${default!!::class.java} is no valid setting type")
                     } as T
                 )
             }
-            val update: (SingleSetting<T, IS>, T) -> Unit = { it, value ->
+            val update: (String, T, T) -> Unit = { key, default, value ->
                 preferences.edit().apply {
-                    Log.d("Saving setting", "key: ${it.key}, value: $value")
-                    when (it.default) {
-                        is Boolean -> putBoolean(it.key!!, value as Boolean)
-                        is String -> putString(it.key!!, value as String)
-                        is Int -> putInt(it.key!!, value as Int)
-                        is Float -> putFloat(it.key!!, value as Float)
-                        is Double -> putLong(it.key!!, (value as Double).toRawBits())
-                        else -> throw UnsupportedOperationException("The given type ${it.default!!::class.java} is no valid setting type")
+                    Log.d("Saving setting", "key: ${key}, value: $value")
+                    when (default) {
+                        is Boolean -> putBoolean(key, value as Boolean)
+                        is String -> putString(key, value as String)
+                        is Int -> putInt(key, value as Int)
+                        is Float -> putFloat(key, value as Float)
+                        is Double -> putLong(key, (value as Double).toRawBits())
+                        else -> throw UnsupportedOperationException("The given type ${default!!::class.java} is no valid setting type")
                     }
                 }.apply()
             }
