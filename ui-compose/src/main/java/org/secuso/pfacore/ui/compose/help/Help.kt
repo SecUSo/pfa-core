@@ -17,14 +17,14 @@ class Help(items: List<HelpData>): MHelp<HelpData>(items), Displayable {
 
     class Item(val resources: Resources): MHelp.Item<HelpData>() {
         internal var title: (@Composable (Modifier) -> Unit)? = null
-        internal var summary: (@Composable (Modifier) -> Unit)? = null
+        internal var description: (@Composable (Modifier) -> Unit)? = null
 
         override fun adapt(): HelpData {
             return when {
                 title === null -> throw IllegalStateException("A HelpItem needs a title.")
-                summary === null -> throw IllegalStateException("A HelpItem needs a summary.")
+                description === null -> throw IllegalStateException("A HelpItem needs a summary.")
                 else -> {
-                   HelpData(title!!, summary!!)
+                   HelpData(title!!, description!!)
                 }
             }
         }
@@ -33,8 +33,8 @@ class Help(items: List<HelpData>): MHelp<HelpData>(items), Displayable {
             title = BasicInfo(resources) { text -> { modifier -> HelpTitle(text = text, modifier = modifier) } }.apply(initializer).build()
         }
 
-        fun summary(initializer: BasicInfo.() -> Unit) {
-            summary = BasicInfo(resources) { text -> { modifier -> HelpDescription(text = text, modifier = modifier) } }.apply(initializer).build()
+        fun description(initializer: BasicInfo.() -> Unit) {
+            description = BasicInfo(resources) { text -> { modifier -> HelpDescription(text = text, modifier = modifier) } }.apply(initializer).build()
         }
     }
 
