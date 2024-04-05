@@ -10,6 +10,7 @@ import org.secuso.pfacore.backup.booleanRestorer
 import org.secuso.pfacore.backup.doubleRestorer
 import org.secuso.pfacore.backup.floatRestorer
 import org.secuso.pfacore.backup.intRestorer
+import org.secuso.pfacore.backup.noRestorer
 import org.secuso.pfacore.backup.stringRestorer
 
 interface ISettings<S : ISetting<*, S>> {
@@ -67,11 +68,14 @@ abstract class Settings<I : ISetting<*, I>, SHC : SettingCategory<I>, SHM : Sett
                 is Int -> intRestorer
                 is Float -> floatRestorer
                 is Double -> doubleRestorer
+                is Unit -> noRestorer
                 else -> throw UnsupportedOperationException("The given type ${this.default!!::class.java} is no valid setting type")
             } as Restorer<T>
             val state: (String, T) -> MutableLiveData<T> = { key, default ->
+                @Suppress("IMPLICIT_CAST_TO_ANY")
                 MutableLiveData(
                     when (this.default) {
+                        is Unit -> Unit
                         is Boolean -> preferences.getBoolean(key, default!! as Boolean)
                         is String -> preferences.getString(key, default!! as String)
                         is Int -> preferences.getInt(key, default!! as Int)
@@ -90,6 +94,7 @@ abstract class Settings<I : ISetting<*, I>, SHC : SettingCategory<I>, SHM : Sett
                         is Int -> putInt(key, value as Int)
                         is Float -> putFloat(key, value as Float)
                         is Double -> putLong(key, (value as Double).toRawBits())
+                        is Unit -> {}
                         else -> throw UnsupportedOperationException("The given type ${default!!::class.java} is no valid setting type")
                     }
                 }.apply()
