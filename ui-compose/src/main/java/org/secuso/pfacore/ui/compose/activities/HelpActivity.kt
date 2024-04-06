@@ -8,6 +8,6 @@ class HelpActivity : BaseActivity() {
 
     @Composable
     override fun Content(application: PFApplication) {
-        (application.data.help as Displayable).Display()
+        (application.data.help as Displayable).Display {}
     }
 }

@@ -25,9 +25,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import org.secuso.pfacore.model.settings.ISetting
-import org.secuso.pfacore.model.settings.SettingData
-import org.secuso.pfacore.ui.compose.settings.SettingDecorator
+import org.secuso.pfacore.model.ISettingData
+import org.secuso.pfacore.ui.compose.settings.RadioSetting
+import org.secuso.pfacore.ui.compose.settings.SwitchSetting
 import org.secuso.ui.compose.R
 
 val settingModifier = Modifier
@@ -35,12 +35,10 @@ val settingModifier = Modifier
     .padding(start = 16.dp, end = 16.dp)
 
 @Composable
-fun <T> Preference(
-    data: ISetting<T, SettingDecorator<T>>,
-    state: State<T>,
+fun PreferenceLayout(
+    title: @Composable (Modifier) -> Unit,
+    summary: (@Composable (Modifier) -> Unit)?,
     onClick: () -> Unit,
-    title: @Composable (SettingData<T>, T, Modifier) -> Unit,
-    summary: @Composable (SettingData<T>, T, Modifier) -> Unit,
     action: @Composable () -> Unit,
 ) {
     Row(
@@ -49,8 +47,8 @@ fun <T> Preference(
             .clickable { onClick() }
     ) {
         Column(Modifier.fillMaxWidth(0.8f)) {
-            title(data.data, state.value, Modifier)
-            summary(data.data, state.value, Modifier)
+            title(Modifier)
+            summary?.let { it(Modifier) }
         }
         Column(modifier = Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
             action()
@@ -59,33 +57,48 @@ fun <T> Preference(
 }
 
 @Composable
+fun <T, SD: ISettingData<T>> Preference(
+    data: SD,
+    state: State<T>,
+    onClick: () -> Unit,
+    title: @Composable (SD, T, Modifier) -> Unit,
+    summary: @Composable (SD, T, Modifier) -> Unit,
+    action: @Composable () -> Unit,
+) {
+    PreferenceLayout(
+        title = { title(data, state.value, it) },
+        summary = { summary(data, state.value, it) },
+        onClick = onClick
+    ) { action() }
+}
+
+@Composable
 fun SwitchPreference(
-    data: ISetting<Boolean, SettingDecorator<Boolean>>,
+    data: SwitchSetting.SwitchData,
     state: State<Boolean>,
     enabled: State<Boolean>,
     update: (Boolean) -> Unit,
-    title: @Composable (SettingData<Boolean>, Boolean, Modifier) -> Unit,
-    summary: @Composable (SettingData<Boolean>, Boolean, Modifier) -> Unit,
+    title: @Composable (SwitchSetting.SwitchData, Boolean, Modifier) -> Unit,
+    summary: @Composable (SwitchSetting.SwitchData, Boolean, Modifier) -> Unit,
     onClick: (() -> Unit)? = null
 ) {
-    val checked = data.data.state.observeAsState()
-    Preference(data = data, state = enabled, onClick = {
+    Preference(data = data, state = state, onClick = {
         if (enabled.value) {
             onClick?.let { it() }
         }
     }, title = title, summary = summary) {
-        Switch(checked = checked.value!!, onCheckedChange = update, enabled = enabled.value)
+        Switch(checked = state.value, onCheckedChange = update, enabled = enabled.value)
     }
 }
 
 @Composable
 fun <T> RadioPreference(
-    data: ISetting<T, SettingDecorator<T>>,
+    data: RadioSetting.RadioData<T>,
     state: State<T>,
     enabled: State<Boolean>,
     update: (T) -> Unit,
-    title: @Composable (SettingData<T>, T, Modifier) -> Unit,
-    summary: @Composable (SettingData<T>, T, Modifier) -> Unit,
+    title: @Composable (RadioSetting.RadioData<T>, T, Modifier) -> Unit,
+    summary: @Composable (RadioSetting.RadioData<T>, T, Modifier) -> Unit,
     onClick: (() -> Unit)? = null
 ) {
     val expanded = remember {
@@ -116,8 +129,8 @@ fun <T> RadioPreference(
         if (expanded.value) {
             Card(modifier = settingModifier) {
                 LazyColumn(Modifier.heightIn(max = 256.dp)) {
-                    items(count = data.data.entries!!.size, key = { data.data.entries!![it].entry }) {
-                        val (entry, value) = data.data.entries!![it]
+                    items(count = data.entries.size, key = { data.entries[it].entry }) {
+                        val (entry, value) = data.entries[it]
                         Row(settingModifier.clickable { update(value) }, verticalAlignment = Alignment.CenterVertically) {
                             RadioButton(selected = (value == state.value), onClick = { update(value) })
                             Text(text = entry)
@@ -131,17 +144,11 @@ fun <T> RadioPreference(
 
 @Composable
 fun MenuPreference(
-    data: ISetting<Unit, SettingDecorator<Unit>>,
-    state: State<Unit>,
-    enabled: State<Boolean>,
-    update: (Unit) -> Unit,
-    title: @Composable (SettingData<Unit>, Unit, Modifier) -> Unit,
-    summary: @Composable (SettingData<Unit>, Unit, Modifier) -> Unit,
+    title: @Composable (Modifier) -> Unit,
+    summary: (@Composable (Modifier) -> Unit)?,
     onClick: (() -> Unit)? = null
 ) {
-    Preference(data = data, state = state, onClick = {
-        onClick?.let { it() }
-    }, title = title, summary = summary) {
+    PreferenceLayout(title = title, summary = summary, onClick = { onClick?.let { it() } }) {
         Icon(imageVector = Icons.Filled.KeyboardArrowRight, contentDescription = "")
     }
 }

@@ -77,7 +77,7 @@ fun HelpMenuItem(
 fun HelpMenu(items: List<HelpData>) {
     LazyColumn(Modifier.fillMaxWidth()) {
         items(count = items.size) {
-            items[it].Display()
+            items[it].Display {}
         }
     }
 }

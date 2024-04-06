@@ -19,6 +19,7 @@ import android.util.Log
 import androidx.preference.PreferenceManager
 import androidx.room.Room
 import org.secuso.pfacore.application.PFApplication
+import org.secuso.pfacore.model.Preferable
 import org.secuso.privacyfriendlybackup.api.backup.DatabaseUtil
 import org.secuso.privacyfriendlybackup.api.backup.FileUtil
 import org.secuso.privacyfriendlybackup.api.pfa.IBackupRestorer
@@ -91,7 +92,7 @@ class BackupRestorer : IBackupRestorer {
 
         while (reader.hasNext()) {
             val name = reader.nextName()
-            val pref = PFApplication.instance.settings.all.firstOrNull { it.data.key == name }
+            val pref = PFApplication.instance.data.settings.all.filterIsInstance<Preferable<*>>().firstOrNull { it.key == name }
             if (pref == null) {
                 throw RuntimeException("Unknown preference $name")
             } else {
