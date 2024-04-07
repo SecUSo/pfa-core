@@ -43,11 +43,13 @@ open class SettingData<T>(
 
 typealias EnabledByDependency = (String?) -> LiveData<Boolean>
 typealias DeriveState<T> = (String, T) -> MutableLiveData<T>
+typealias DataSaverUpdater<T> = (String, T, (T) -> Unit) -> (T) -> Unit
 
 fun <T, BI: ISettingDataBuildInfo<T>, SI: ISettingData<T>> settingDataFactory(
     state: DeriveState<T>,
     enabled: EnabledByDependency,
     restorer: (T) -> Restorer<T>,
+    onUpdate: DataSaverUpdater<T>,
     adapt: (BI, SettingData<T>) -> SI
 ): SettingInfoFactory<BI, SI> {
     return SettingInfoFactory<BI, SI> { info ->
@@ -57,7 +59,7 @@ fun <T, BI: ISettingDataBuildInfo<T>, SI: ISettingData<T>> settingDataFactory(
             info.key!!,
             info.backup,
             restorer(info.default!!),
-            info.onUpdate,
+            onUpdate(info.key!!, info.default!!, info.onUpdate),
             enabled(info.dependency)
         )) }
     }

@@ -11,6 +11,7 @@ import org.secuso.pfacore.backup.floatRestorer
 import org.secuso.pfacore.backup.intRestorer
 import org.secuso.pfacore.backup.noRestorer
 import org.secuso.pfacore.backup.stringRestorer
+import org.secuso.pfacore.model.DataSaverUpdater
 import org.secuso.pfacore.model.EnabledByDependency
 import org.secuso.pfacore.model.ISettingData
 import org.secuso.pfacore.model.SettingBuildInfo
@@ -89,20 +90,21 @@ abstract class Settings<SI: SettingInfo, I : SettingComposite<SI>, SHC : Setting
                     } as T
                 )
             }
-            val update = { key: String, default: T, value: T, onUpdate: (T) -> Unit ->
-                preferences.edit().apply {
-                    Log.d("Saving setting", "key: ${key}, value: $value")
-                    when (default) {
-                        is Boolean -> putBoolean(key, value as Boolean)
-                        is String -> putString(key, value as String)
-                        is Int -> putInt(key, value as Int)
-                        is Float -> putFloat(key, value as Float)
-                        is Double -> putLong(key, (value as Double).toRawBits())
-                        is Unit -> {}
-                        else -> throw UnsupportedOperationException("The given type ${default!!::class.java} is no valid setting type")
-                    }
-                }.apply()
-                onUpdate(value)
+            val update: DataSaverUpdater<T> = { key: String, default: T, onUpdate: (T) -> Unit -> { value: T ->
+                    preferences.edit().apply {
+                        Log.d("Saving setting", "key: ${key}, value: $value")
+                        when (default) {
+                            is Boolean -> putBoolean(key, value as Boolean)
+                            is String -> putString(key, value as String)
+                            is Int -> putInt(key, value as Int)
+                            is Float -> putFloat(key, value as Float)
+                            is Double -> putLong(key, (value as Double).toRawBits())
+                            is Unit -> {}
+                            else -> throw UnsupportedOperationException("The given type ${default!!::class.java} is no valid setting type")
+                        }
+                    }.apply()
+                    onUpdate(value)
+                }
             }
             val restorer = { value: T ->
                 when (value) {
@@ -115,7 +117,7 @@ abstract class Settings<SI: SettingInfo, I : SettingComposite<SI>, SHC : Setting
                     else -> throw UnsupportedOperationException("The given type ${value!!::class.java} cannot be restored")
                 } as Restorer<T>
             }
-            return factory(state, enabled, restorer).build(this).invoke()
+            return factory(state, enabled, restorer, update).build(this).invoke()
         }
         protected fun <S: SettingComposite<*>> S.register() = this.apply { this@Setting.settings.add(this as SettingHierarchy<I>); this.data }
 
