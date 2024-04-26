@@ -16,8 +16,9 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import org.secuso.pfacore.model.settings.SettingComposite
+import org.secuso.pfacore.ui.compose.settings.DisplayableSettingInfo
 import org.secuso.pfacore.ui.compose.settings.SettingCategory
-import org.secuso.pfacore.ui.compose.settings.SettingDecorator
 import org.secuso.pfacore.ui.compose.settings.SettingMenu
 import org.secuso.pfacore.ui.compose.settings.Settings
 import org.secuso.pfacore.ui.compose.theme.PrivacyFriendlyCoreTheme
@@ -47,11 +48,11 @@ fun SettingsMenu(settings: List<SettingCategory>) {
                     for (setting in category.settings) {
                         when (setting) {
                             is SettingMenu -> {
-                                setting.menu.setting!!.Display { navController.navigate("_${setting.name}") }
+                                (setting.menu.setting!! as DisplayableSettingInfo).Display { navController.navigate("_${setting.name}") }
                             }
 
-                            is SettingDecorator<*> -> {
-                                setting.Display()
+                            is SettingComposite -> {
+                                (setting as DisplayableSettingInfo).Display {}
                             }
 
                             is SettingCategory -> {
@@ -82,7 +83,7 @@ fun SettingsMenuPreview() {
                 title { literal("Test setting") }
                 summary { literal("Test summary") }
             }
-            radio {
+            radio<Int> {
                 key = "test2"
                 default = 1
                 backup = true
@@ -132,12 +133,19 @@ fun SettingsMenuPreview() {
                     values(listOf("Z", "Y", "X"))
                 }
             }
+            menu("Empty Menu") {
+                setting {
+                    menu {
+                        title { literal("This is an empty menu without subtitle") }
+                    }
+                }
+            }
         }
     }
 
     PrivacyFriendlyCoreTheme {
         Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
-            setting.Display()
+            setting.Display {}
         }
     }
 }

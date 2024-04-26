@@ -18,4 +18,3 @@ fun <T> restoreList(restorer: Restorer<T>): Restorer<List<T>> = {
     }
     list
 }
-

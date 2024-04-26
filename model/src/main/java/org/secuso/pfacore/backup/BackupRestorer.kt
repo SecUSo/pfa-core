@@ -13,12 +13,14 @@
  */
 package org.secuso.pfacore.backup
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.util.JsonReader
 import android.util.Log
 import androidx.preference.PreferenceManager
 import androidx.room.Room
 import org.secuso.pfacore.application.PFApplication
+import org.secuso.pfacore.model.Preferable
 import org.secuso.privacyfriendlybackup.api.backup.DatabaseUtil
 import org.secuso.privacyfriendlybackup.api.backup.FileUtil
 import org.secuso.privacyfriendlybackup.api.pfa.IBackupRestorer
@@ -53,7 +55,7 @@ class BackupRestorer : IBackupRestorer {
         }
 
         // create new restore database
-        val restoreDatabase = Room.databaseBuilder(context.applicationContext, PFApplication.instance.database::class.java, restoreDatabaseName).build()
+        val restoreDatabase = Room.databaseBuilder(context.applicationContext, PFApplication.instance.database, restoreDatabaseName).build()
         val db = restoreDatabase.openHelper.writableDatabase
 
         db.beginTransaction()
@@ -83,6 +85,7 @@ class BackupRestorer : IBackupRestorer {
         DatabaseUtil.deleteRoomDatabase(context, restoreDatabaseName)
     }
 
+    @SuppressLint("ApplySharedPref")
     @Throws(IOException::class)
     private fun readPreferences(reader: JsonReader, context: Context) {
         reader.beginObject()
@@ -91,7 +94,7 @@ class BackupRestorer : IBackupRestorer {
 
         while (reader.hasNext()) {
             val name = reader.nextName()
-            val pref = PFApplication.instance.settings.all.firstOrNull { it.data.key == name }
+            val pref = PFApplication.instance.data.settings.all.map { it.data }.filterIsInstance<Preferable<*>>().firstOrNull { it.key == name }
             if (pref == null) {
                 throw RuntimeException("Unknown preference $name")
             } else {
@@ -99,7 +102,9 @@ class BackupRestorer : IBackupRestorer {
             }
         }
 
-        editor.apply()
+        // To ensure that the changes made by the restoration are persisted,
+        // commit the changes directly to disk instead of using apply to defer that write.
+        editor.commit()
 
         reader.endObject()
     }
@@ -128,6 +133,7 @@ class BackupRestorer : IBackupRestorer {
             Log.d("NoteRestore", "Restore completed successfully.")
             exitProcess(0)
         } catch (e: Exception) {
+            e.printStackTrace()
             return false
         }
     }

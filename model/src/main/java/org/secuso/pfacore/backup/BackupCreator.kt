@@ -40,7 +40,7 @@ class BackupCreator : IBackupCreator {
         try {
             writer.beginObject()
 
-            val dataBase = DatabaseUtil.getSupportSQLiteOpenHelper(context, PFApplication.instance.database.name).writableDatabase
+            val dataBase = DatabaseUtil.getSupportSQLiteOpenHelper(context, PFApplication.instance.databaseName).writableDatabase
 
             Log.d("PFA BackupCreator", "Writing database")
             writer.name("database")
