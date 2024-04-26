@@ -5,6 +5,7 @@ import android.content.Context
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.multidex.MultiDex
+import androidx.room.RoomDatabase
 import androidx.work.Configuration
 import org.secuso.pfacore.backup.BackupCreator
 import org.secuso.pfacore.backup.BackupRestorer
@@ -17,7 +18,8 @@ import org.secuso.privacyfriendlybackup.api.pfa.BackupManager.backupRestorer
 abstract class PFApplication : Application(), Configuration.Provider {
     abstract val name: String
     abstract val data: PFData
-    abstract val database: PFDatabase
+    abstract val databaseName: String
+    abstract val database: Class<out RoomDatabase>
     val backup = object : PFAppBackup {}
 
     override fun onCreate() {

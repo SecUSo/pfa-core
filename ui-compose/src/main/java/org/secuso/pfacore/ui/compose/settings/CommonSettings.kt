@@ -3,7 +3,7 @@ package org.secuso.pfacore.ui.compose.settings
 import androidx.appcompat.app.AppCompatDelegate
 import org.secuso.pfacore.R
 
-class SettingThemeSelector() {
+class SettingThemeSelector {
 
     enum class Mode {
         SYSTEM,
@@ -15,7 +15,7 @@ class SettingThemeSelector() {
         const val themeSelectorKey = "settings_day_night_theme"
     }
 
-    fun build(): Settings.Setting.() -> Unit {
+    fun build(): Settings.Setting.() -> RadioSetting.RadioData<String> {
         return {
             radio<String> {
                 key = themeSelectorKey
