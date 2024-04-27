@@ -1,4 +1,4 @@
-package org.secuso.ui.view
+package org.secuso.pfacore.ui.view
 
 import android.content.res.Resources
 

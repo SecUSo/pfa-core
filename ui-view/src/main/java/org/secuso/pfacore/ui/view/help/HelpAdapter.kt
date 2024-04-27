@@ -1,11 +1,10 @@
-package org.secuso.ui.view.help
+package org.secuso.pfacore.ui.view.help
 
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import org.secuso.ui.view.databinding.SimpleExpandableItemBinding
-import org.secuso.ui.view.replace
+import org.secuso.pfacore.ui.view.replace
 
 class HelpAdapter(private val items: List<HelpData>, private val inflater: LayoutInflater): RecyclerView.Adapter<HelpAdapter.ViewHolder>() {
 

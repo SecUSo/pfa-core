@@ -1,13 +1,11 @@
-package org.secuso.ui.view.help
+package org.secuso.pfacore.ui.view.help
 
 import android.content.Context
 import android.content.res.Resources
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import android.widget.TextView
-import org.secuso.ui.view.BasicInfo
-import org.secuso.ui.view.Inflatable
-import org.secuso.ui.view.R
+import org.secuso.pfacore.ui.view.BasicInfo
+import org.secuso.pfacore.ui.view.Inflatable
 import org.secuso.ui.view.databinding.SimpleDescriptionBinding
 import org.secuso.ui.view.databinding.SimpleTitleBinding
 import org.secuso.pfacore.model.help.Help as MHelp

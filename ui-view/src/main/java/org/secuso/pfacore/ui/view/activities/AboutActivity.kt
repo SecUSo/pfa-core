@@ -11,7 +11,7 @@
  You should have received a copy of the GNU General Public License
  along with Privacy Friendly Notes. If not, see <http://www.gnu.org/licenses/>.
  */
-package org.secuso.ui.view.activities
+package org.secuso.pfacore.ui.view.activities
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
