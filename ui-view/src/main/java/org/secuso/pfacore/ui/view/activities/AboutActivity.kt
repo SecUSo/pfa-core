@@ -14,9 +14,16 @@
 package org.secuso.pfacore.ui.view.activities
 
 import android.os.Bundle
+import android.text.SpannableString
+import android.text.Spanned
+import android.text.method.LinkMovementMethod
+import android.text.style.URLSpan
+import android.text.util.Linkify
 import androidx.appcompat.app.AppCompatActivity
+import org.secuso.pfacore.R
 import org.secuso.pfacore.application.PFApplication
 import org.secuso.ui.view.databinding.ActivityAboutBinding
+import java.util.regex.Pattern
 
 /**
  * Activity that gives information about the developers.
@@ -27,6 +34,11 @@ class AboutActivity : AppCompatActivity() {
 
         val binding = ActivityAboutBinding.inflate(layoutInflater)
         binding.data = PFApplication.instance.data.about
+        binding.repo = SpannableString(getString(R.string.about_github)).apply {
+            setSpan(URLSpan(PFApplication.instance.data.about.repo), 0, this.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+        }
+        binding.aboutGithubUrl.movementMethod = LinkMovementMethod.getInstance()
+        binding.aboutSecusoWebsite.movementMethod = LinkMovementMethod.getInstance()
         setContentView(binding.root)
     }
 }

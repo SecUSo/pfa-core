@@ -6,8 +6,11 @@
     <string name="about_affiliation">In affiliation with</string>
     <string name="about_privacy_friendly">This application belongs to the group of Privacy Friendly Apps developed by Karlsruhe Institute of Technology (KIT). Sourcecode licensed under GPLv3. Images copyright KIT and Google Inc.</string>
     <string name="about_more_info">More information can be found on:</string>
+    <string name="about_secuso_website" translatable="false"><a href="https://secuso.org/pfa">SECUSO-Website</a></string>
     <string name="about_url" translatable="false">SECUSO-Website</string>
+    <string name="secuso_website" translatable="false">https://secuso.org/pfa</string>
     <string name="about_github" translatable="false">Github-Repo</string>
+
 
     <string name="select_day_night_theme">Appearance</string>
     <string-array name="array_day_night_theme">

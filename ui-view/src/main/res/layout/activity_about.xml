@@ -1,11 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android">
     <data>
         <variable
             name="data"
             type="org.secuso.pfacore.model.about.About" />
+        <variable
+            name="repo"
+            type="android.text.SpannableString" />
     </data>
-    <?xml version="1.0" encoding="utf-8"?>
-    <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    <ScrollView
         xmlns:tools="http://schemas.android.com/tools"
         android:layout_height="fill_parent"
         android:layout_width="match_parent"
@@ -142,8 +145,10 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/about_secuso_website"
-                android:text="@string/about_url"
+                android:text="@string/about_secuso_website"
                 android:textStyle="bold"
+                android:linksClickable="true"
+                android:autoLink="web"
                 android:layout_gravity="center_horizontal" />
 
             <TextView
@@ -152,7 +157,9 @@
                 android:id="@+id/about_github_url"
                 android:layout_gravity="center_horizontal"
                 android:gravity="center_horizontal"
-                android:text='@{"<a href=" + data.repo + ">" + @string/about_github + "</a>"}'
+                android:text="@{repo}"
+                android:linksClickable="true"
+                android:autoLink="web"
                 android:textStyle="bold" />
         </LinearLayout>
     </ScrollView>
