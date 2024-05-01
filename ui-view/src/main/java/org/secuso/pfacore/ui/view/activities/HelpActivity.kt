@@ -15,5 +15,6 @@ class HelpActivity: AppCompatActivity() {
         }
         val binding = ActivityHelpBinding.inflate(layoutInflater)
         binding.recyclerView.adapter = data.build(layoutInflater)
+        setContentView(binding.root)
     }
 }

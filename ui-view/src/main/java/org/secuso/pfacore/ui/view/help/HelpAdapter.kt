@@ -11,7 +11,7 @@ class HelpAdapter(private val items: List<HelpData>, private val inflater: Layou
     override fun getItemCount() = items.count()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        return ViewHolder(SimpleExpandableItemBinding.inflate(inflater, parent, true))
+        return ViewHolder(SimpleExpandableItemBinding.inflate(inflater, parent, false))
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
@@ -21,7 +21,8 @@ class HelpAdapter(private val items: List<HelpData>, private val inflater: Layou
 
     class ViewHolder(val binding: SimpleExpandableItemBinding): RecyclerView.ViewHolder(binding.root) {
         init {
-            binding.toggle.setOnClickListener { binding.expanded = !binding.expanded }
+            binding.toggle.setOnClickListener { binding.expanded = !(binding.expanded) }
+            binding.expanded = false
         }
     }
 }

@@ -34,7 +34,7 @@ class AboutActivity : AppCompatActivity() {
 
         val binding = ActivityAboutBinding.inflate(layoutInflater)
         binding.data = PFApplication.instance.data.about
-        binding.repo = SpannableString(getString(R.string.about_github)).apply {
+        binding.aboutGithubUrl.text = SpannableString(getString(R.string.about_github)).apply {
             setSpan(URLSpan(PFApplication.instance.data.about.repo), 0, this.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
         }
         binding.aboutGithubUrl.movementMethod = LinkMovementMethod.getInstance()

@@ -4,9 +4,6 @@
         <variable
             name="data"
             type="org.secuso.pfacore.model.about.About" />
-        <variable
-            name="repo"
-            type="android.text.SpannableString" />
     </data>
     <ScrollView
         xmlns:tools="http://schemas.android.com/tools"
@@ -157,7 +154,6 @@
                 android:id="@+id/about_github_url"
                 android:layout_gravity="center_horizontal"
                 android:gravity="center_horizontal"
-                android:text="@{repo}"
                 android:linksClickable="true"
                 android:autoLink="web"
                 android:textStyle="bold" />
