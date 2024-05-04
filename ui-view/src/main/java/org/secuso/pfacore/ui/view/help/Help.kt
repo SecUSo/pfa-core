@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.res.Resources
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.lifecycle.LifecycleOwner
 import org.secuso.pfacore.ui.view.BasicInfo
 import org.secuso.pfacore.ui.view.Inflatable
 import org.secuso.ui.view.databinding.SimpleDescriptionBinding
@@ -12,7 +13,7 @@ import org.secuso.pfacore.model.help.Help as MHelp
 
 class Help(override val items: List<HelpData>) : MHelp<HelpData>(items) {
 
-    fun build(layoutInflater: LayoutInflater) = HelpAdapter(items, layoutInflater)
+    fun build(layoutInflater: LayoutInflater, owner: LifecycleOwner) = HelpAdapter(items, layoutInflater, owner)
 
     class Item(val resources: Resources): MHelp.Item<HelpData>() {
         internal var title: Inflatable? = null
@@ -29,13 +30,13 @@ class Help(override val items: List<HelpData>) : MHelp<HelpData>(items) {
         }
 
         fun title(initializer: BasicInfo.() -> Unit) {
-            title = BasicInfo(resources) { text -> Inflatable { inflater: LayoutInflater, root: ViewGroup? ->
+            title = BasicInfo(resources) { text -> Inflatable { inflater: LayoutInflater, root: ViewGroup?, _ ->
                 SimpleTitleBinding.inflate(inflater, root, false).apply { this.text = text }.root
             } }.apply(initializer).build()
         }
 
         fun description(initializer: BasicInfo.() -> Unit) {
-            description = BasicInfo(resources) { text -> Inflatable { inflater: LayoutInflater, root: ViewGroup? ->
+            description = BasicInfo(resources) { text -> Inflatable { inflater: LayoutInflater, root: ViewGroup?, _ ->
                 SimpleDescriptionBinding.inflate(inflater, root, false).apply { this.text = text }.root
             } }.apply(initializer).build()
         }

@@ -17,7 +17,7 @@ class Settings(
     private val settings: List<SettingCategory>,
 ) : MSettings<InflatableSetting, SettingComposite<InflatableSetting>, SettingCategory, SettingMenu>(settings) {
 
-    fun build() = SettingsMenuFragment().apply { categories = settings }
+    fun build(viewId: Int) = SettingsMenuFragment().apply { categories = settings; this.viewId = viewId }
 
     class Setting(
         preferences: SharedPreferences,

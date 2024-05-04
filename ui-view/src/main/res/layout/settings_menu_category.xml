@@ -13,8 +13,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@{title, default=Title}"/>
-        <ListView
+        <LinearLayout
             android:id="@+id/settings"
+            android:orientation="vertical"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
     </LinearLayout>

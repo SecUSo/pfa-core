@@ -14,7 +14,7 @@ class HelpActivity: AppCompatActivity() {
             throw IllegalStateException("The application help data is of type ${data::class.java} but expected ${Help::class.java}")
         }
         val binding = ActivityHelpBinding.inflate(layoutInflater)
-        binding.recyclerView.adapter = data.build(layoutInflater)
+        binding.recyclerView.adapter = data.build(layoutInflater, this)
         setContentView(binding.root)
     }
 }
