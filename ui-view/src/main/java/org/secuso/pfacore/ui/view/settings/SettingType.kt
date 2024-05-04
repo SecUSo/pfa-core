@@ -130,6 +130,7 @@ class RadioSetting<T>(data: RadioData<T>) : MRadioSetting<T,RadioSetting.RadioDa
             data.enabled.observe(owner) { enabled = it }
             title.replace(inflater, owner, data.title(data,  data.state.value ?: data.default))
             description.replace(inflater, owner, data.summary(data, data.state.value ?: data.default))
+            toggle.setOnClickListener { expanded = !expanded }
             action.replace(inflater = inflater, owner = owner, inflatable = Inflatable { inflater, root, _ ->
                 PreferenceActionListBinding.inflate(inflater, root, false).apply {
                     list.adapter = RadioAdapter(inflater, data.entries, data.value ?: data.default) { data.value = it }
