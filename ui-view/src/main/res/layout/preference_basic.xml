@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
+    <data>
+        <variable
+            name="enabled"
+            type="boolean" />
+        <variable
+            name="expanded"
+            type="boolean" />
+        <import type="android.view.View"/>
+    </data>
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <LinearLayout
+                android:layout_weight="1"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+                <TextView
+                    android:enabled="@{enabled}"
+                    android:id="@+id/title"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+                <TextView
+                    android:enabled="@{enabled}"
+                    android:id="@+id/description"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="32dp"
+                android:layout_height="32dp">
+                <ImageView
+                    android:id="@+id/toggle"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    xmlns:app="http://schemas.android.com/apk/res-auto"
+                    app:tint="@color/white"
+                    android:src="@{expanded ? @drawable/baseline_expand_less_24 : @drawable/baseline_expand_more_24}"/>
+            </LinearLayout>
+        </LinearLayout>
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="@{expanded ? View.VISIBLE : View.GONE}">
+            <View
+                android:id="@+id/action"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+        </androidx.cardview.widget.CardView>
+    </LinearLayout>
+</layout>
