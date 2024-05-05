@@ -4,7 +4,8 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:maxHeight="200dp">
-        <androidx.recyclerview.widget.RecyclerView
+        <androidx.recyclerview.widget.RecyclerView xmlns:app="http://schemas.android.com/apk/res-auto"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
             android:id="@+id/list"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"/>

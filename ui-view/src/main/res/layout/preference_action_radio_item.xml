@@ -13,6 +13,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
         <com.google.android.material.radiobutton.MaterialRadioButton xmlns:app="http://schemas.android.com/apk/res-auto"
+            android:onClick="@{() -> element.callOnClick()}"
             android:checked="@{checked}"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
