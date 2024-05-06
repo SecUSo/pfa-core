@@ -2,6 +2,9 @@ package org.secuso.pfacore.ui.view.settings
 
 import android.content.Context
 import android.content.SharedPreferences
+import android.view.View
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.preference.PreferenceManager
 import org.secuso.pfacore.model.SettingEntry
 import org.secuso.pfacore.model.SettingInfo
@@ -67,4 +70,18 @@ class Settings(
     }
 }
 
-interface InflatableSetting: SettingInfo, Inflatable
+interface InflatableSetting: SettingInfo {
+
+    val enabled: LiveData<Boolean>
+        get() = MutableLiveData(true)
+    val expandable: Boolean
+    val action: Inflatable?
+        get() = null
+    val title: Inflatable
+    val description: Inflatable?
+
+    /**
+     * Use another icon to display the expand-toggle state. Returning null uses the default icons.
+     */
+    fun expandableIcon(expanded: Boolean): Int? = null
+}

@@ -18,32 +18,15 @@ class SettingsMenuFragment: Fragment() {
     var viewId: Int = -1
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
-        binding = FragmentPreferenceMenuBinding.inflate(inflater, container, false)
-        return binding!!.root
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-
-        for (category in categories) {
-            val catBinding = SettingsMenuCategoryBinding.inflate(layoutInflater)
-            for (setting in category.settings) {
-                when (setting) {
-                    is SettingComposite -> {
-                        catBinding.settings.addView((setting as InflatableSetting).inflate(layoutInflater, catBinding.settings, this))
-                    }
-                    is SettingMenu -> {
-                        val setView = (setting.menu.setting as InflatableSetting).inflate(layoutInflater, catBinding.settings, this)
-                        setView.setOnClickListener {
-                            val fragment = SettingsMenuFragment().apply { categories = setting.settings as List<SettingCategory> }
-                            parentFragmentManager.beginTransaction().replace(viewId, fragment).addToBackStack(null).commit()
-                        }
-                    }
-                    is SettingCategory -> throw IllegalStateException("Category ${category.name} cannot contain another Category ${setting.name}")
+        binding = FragmentPreferenceMenuBinding.inflate(inflater, container, false).apply {
+            settings.adapter = SettingsMenuAdapter(inflater, this@SettingsMenuFragment) {
+                SettingsMenuFragment().apply {
+                    categories = it.settings as List<SettingCategory>
+                    viewId = this@SettingsMenuFragment.viewId
+                    parentFragmentManager.beginTransaction().replace(viewId, this).addToBackStack(null).commit()
                 }
             }
-            catBinding.title = category.name
-            binding!!.categories.addView(catBinding.root)
         }
+        return binding!!.root
     }
 }

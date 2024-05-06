@@ -5,6 +5,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import androidx.work.impl.utils.LiveDataUtils
 import org.secuso.pfacore.model.ISettingData
 import org.secuso.pfacore.model.ISettingDataBuildInfo
 import org.secuso.pfacore.model.SettingData
@@ -94,15 +97,21 @@ class SwitchSetting(data: SwitchData) : MSwitchSetting<SwitchSetting.SwitchData,
     class SwitchBuildInfo(resources: Resources, data: SettingDataBuildInfo<Boolean> = SettingDataBuildInfo()):
         DisplaySetting<Boolean, SwitchData>(resources), MSwitchSetting.SwitchBuildInfo, ISettingDataBuildInfo<Boolean> by data
 
-    override fun inflate(inflater: LayoutInflater, root: ViewGroup, owner: LifecycleOwner): View {
-        return PreferenceSwitchBinding.inflate(inflater, root, false).apply {
-            data.enabled.observe(owner) { enabled = it }
-            title.replace(inflater, owner, data.title(data, data.state.value ?: data.default))
-            description.replace(inflater, owner, data.summary(data, data.state.value ?: data.default))
-            action.isEnabled = data.state.value ?: data.default
-            action.setOnClickListener { data.value = it.isEnabled }
-        }.root
-    }
+    override val enabled: LiveData<Boolean>
+        get() = data.enabled
+    override val expandable: Boolean
+        get() = false
+    override val title: Inflatable
+        get() = data.title(data, data.state.value ?: data.default)
+    override val description: Inflatable
+        get() = data.summary(data, data.state.value ?: data.default)
+    override val action: Inflatable
+        get() = Inflatable { inflater, root, owner ->
+            PreferenceSwitchBinding.inflate(inflater, root, false).apply {
+                data.enabled.observe(owner) { enabled = it }
+                enabled = data.enabled.value ?: true
+            }.root
+        }
 }
 
 class RadioSetting<T>(data: RadioData<T>) : MRadioSetting<T,RadioSetting.RadioData<T>, RadioSetting<T>>(data), InflatableSetting {
@@ -125,19 +134,20 @@ class RadioSetting<T>(data: RadioData<T>) : MRadioSetting<T,RadioSetting.RadioDa
         }
     }
 
-    override fun inflate(inflater: LayoutInflater, root: ViewGroup, owner: LifecycleOwner): View {
-        return PreferenceBasicBinding.inflate(inflater, root, false).apply {
-            data.enabled.observe(owner) { enabled = it }
-            title.replace(inflater, owner, data.title(data,  data.state.value ?: data.default))
-            description.replace(inflater, owner, data.summary(data, data.state.value ?: data.default))
-            toggle.setOnClickListener { expanded = !expanded }
-            action.replace(inflater = inflater, owner = owner, inflatable = Inflatable { inflater, root, _ ->
-                PreferenceActionListBinding.inflate(inflater, root, false).apply {
-                    list.adapter = RadioAdapter(inflater, data.entries, data.value ?: data.default) { data.value = it }
-                }.root
-            })
-        }.root
-    }
+    override val enabled: LiveData<Boolean>
+        get() = data.enabled
+    override val expandable: Boolean
+        get() = true
+    override val title: Inflatable
+        get() = data.title(data, data.state.value ?: data.default)
+    override val description: Inflatable
+        get() = data.summary(data, data.state.value ?: data.default)
+    override val action: Inflatable
+        get() = Inflatable { inflater, root, _ ->
+            PreferenceActionListBinding.inflate(inflater, root, false).apply {
+                list.adapter = RadioAdapter(inflater, data.entries, data.value ?: data.default) { data.value = it }
+            }.root
+        }
 }
 
 class MenuSetting(data: MenuData) : MMenuSetting<MenuSetting.MenuData, MenuSetting>(data), InflatableSetting {
@@ -152,16 +162,14 @@ class MenuSetting(data: MenuData) : MMenuSetting<MenuSetting.MenuData, MenuSetti
     }
     class MenuBuildInfo(resources: Resources): BasicDisplaySetting(resources), MMenuSetting.MenuBuildInfo
 
-    override fun inflate(inflater: LayoutInflater, root: ViewGroup, owner: LifecycleOwner): View {
-        return PreferenceBasicBinding.inflate(inflater, root, false).apply {
-            enabled = true
-            expanded = false
-            title.replace(inflater, owner, data.title)
-            if (data.summary != null) {
-                description.replace(inflater, owner, data.summary!!)
-            }
-            toggle.setImageResource(R.drawable.baseline_keyboard_arrow_right_24)
-        }.root
+    override val expandable: Boolean
+        get() = true
+    override val title: Inflatable
+        get() = data.title
+    override val description: Inflatable?
+        get() = data.summary
+    override fun expandableIcon(expanded: Boolean): Int {
+        return R.drawable.baseline_keyboard_arrow_right_24
     }
 
 }
