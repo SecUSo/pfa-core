@@ -108,7 +108,10 @@ class SwitchSetting(data: SwitchData) : MSwitchSetting<SwitchSetting.SwitchData,
     override val action: Inflatable
         get() = Inflatable { inflater, root, owner ->
             PreferenceSwitchBinding.inflate(inflater, root, false).apply {
+                action.setOnClickListener { data.value = !(data.value ?: data.default) }
+                action.isChecked = data.value ?: data.default
                 data.enabled.observe(owner) { enabled = it }
+                data.state.observe(owner) { action.isEnabled = it }
                 enabled = data.enabled.value ?: true
             }.root
         }
@@ -163,7 +166,7 @@ class MenuSetting(data: MenuData) : MMenuSetting<MenuSetting.MenuData, MenuSetti
     class MenuBuildInfo(resources: Resources): BasicDisplaySetting(resources), MMenuSetting.MenuBuildInfo
 
     override val expandable: Boolean
-        get() = true
+        get() = false
     override val title: Inflatable
         get() = data.title
     override val description: Inflatable?

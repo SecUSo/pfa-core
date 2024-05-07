@@ -26,7 +26,7 @@ class RadioAdapter<T>(private val inflater: LayoutInflater, private val items: L
         holder.binding.checked = (position == selected)
         holder.binding.text = items[position].entry
         holder.binding.element.setOnClickListener {
-            holder.binding.checked = false
+            selectedHolder!!.binding.checked = false
             selected = holder.adapterPosition
             selectedHolder = holder
             holder.binding.checked = true

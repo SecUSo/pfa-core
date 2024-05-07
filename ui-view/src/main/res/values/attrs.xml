@@ -4,7 +4,7 @@
     <attr name="colorOnSecuso" format="color" />
     <attr name="colorSecusoContainer" format="color" />
     <attr name="colorOnSecusoContainer" format="color" />
-    <declare-styleable name="AppTheme">
+    <declare-styleable name="PrivacyFriendlyCoreTheme">
         <attr name="colorSurfaceSecondary" format="color" />
         <attr name="colorBackground" format="color" />
         <attr name="colorNavbarHeaderBackground" format="color" />
@@ -37,6 +37,12 @@
         <attr name="colorOnSurfaceInverse" format="color" />
         <attr name="colorSurfaceInverse" format="color" />
         <attr name="colorPrimaryInverse" format="color" />
+
+        <attr name="stylePreferenceCategoryHeader" format="reference" />
+        <attr name="stylePreference" format="reference" />
+    </declare-styleable>
+    <declare-styleable name="PrivacyFriendlyCoreTheme.Preference">
+        <attr name="stylePreferenceCategoryHeader" format="reference" />
     </declare-styleable>
     <drawable name="splash_screen" />
 </resources>

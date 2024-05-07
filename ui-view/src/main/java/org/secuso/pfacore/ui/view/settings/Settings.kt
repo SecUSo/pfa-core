@@ -3,6 +3,8 @@ package org.secuso.pfacore.ui.view.settings
 import android.content.Context
 import android.content.SharedPreferences
 import android.view.View
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.preference.PreferenceManager
@@ -20,8 +22,10 @@ class Settings(
     private val settings: List<SettingCategory>,
 ) : MSettings<InflatableSetting, SettingComposite<InflatableSetting>, SettingCategory, SettingMenu>(settings) {
 
-    fun build(viewId: Int) = SettingsMenuFragment().apply { categories = settings; this.viewId = viewId }
-
+    fun build(viewId: Int, fragmentManager: FragmentManager) = SettingsMenuFragment().apply {
+        categories = settings;
+        openMenu = { fragmentManager.beginTransaction().replace(viewId, it).addToBackStack(null).commit() }
+    }
     class Setting(
         preferences: SharedPreferences,
         val context: Context,

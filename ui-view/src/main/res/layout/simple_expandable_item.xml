@@ -15,7 +15,7 @@
             android:layout_width="32dp"
             android:layout_height="32dp"
             xmlns:app="http://schemas.android.com/apk/res-auto"
-            app:tint="@color/white"
+            app:tint="?attr/colorOnBackground"
             android:src="@{expanded ? @drawable/baseline_expand_less_24 : @drawable/baseline_expand_more_24}"/>
         <LinearLayout
             android:layout_width="match_parent"

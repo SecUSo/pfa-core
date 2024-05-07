@@ -14,6 +14,6 @@ class SettingsActivity: AppCompatActivity() {
         if (settings !is Settings) {
             throw IllegalStateException("The application setting is of type ${settings::class.java} but expected ${Settings::class.java}")
         }
-        supportFragmentManager.beginTransaction().add(R.id.fragment, settings.build(R.id.fragment), null).commit()
+        supportFragmentManager.beginTransaction().add(R.id.fragment, settings.build(R.id.fragment, supportFragmentManager), null).commit()
     }
 }

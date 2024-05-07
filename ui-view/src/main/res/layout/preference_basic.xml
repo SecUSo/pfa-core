@@ -13,25 +13,26 @@
     <LinearLayout
         android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        style="?attr/stylePreference">
         <LinearLayout
             android:orientation="horizontal"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:minHeight="60dp">
+            android:minHeight="48dp">
             <LinearLayout
                 android:layout_weight="1"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
                 android:layout_gravity="center">
-                <TextView
+                <com.google.android.material.textview.MaterialTextView
                     android:enabled="@{enabled}"
                     android:id="@+id/title"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="Title"/>
-                <TextView
+                <com.google.android.material.textview.MaterialTextView
                     android:enabled="@{enabled}"
                     android:id="@+id/description"
                     android:layout_width="match_parent"
@@ -46,8 +47,7 @@
                     android:id="@+id/toggle"
                     android:layout_width="32dp"
                     android:layout_height="32dp"
-                    app:tint="@color/white"
-                    android:src="@{expanded ? @drawable/baseline_expand_less_24 : @drawable/baseline_expand_more_24}"/>
+                    app:tint="?attr/colorOnBackground" />
             </LinearLayout>
         </LinearLayout>
         <androidx.cardview.widget.CardView

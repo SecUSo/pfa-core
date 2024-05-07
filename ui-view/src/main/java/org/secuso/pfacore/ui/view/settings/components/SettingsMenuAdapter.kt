@@ -1,9 +1,11 @@
 package org.secuso.pfacore.ui.view.settings.components
 
+import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.lifecycle.LifecycleOwner
 import androidx.recyclerview.widget.RecyclerView
+import org.secuso.pfacore.R
 import org.secuso.pfacore.model.settings.SettingComposite
 import org.secuso.pfacore.model.settings.SettingHierarchy
 import org.secuso.pfacore.ui.view.replace
@@ -26,13 +28,16 @@ class SettingsMenuAdapter(private val inflater: LayoutInflater, private val owne
         }
 
     override fun getItemCount() = items.count()
-    override fun getItemViewType(position: Int) = items[position]::class.hashCode()
+    override fun getItemViewType(position: Int) = when (items[position]) {
+        is SettingCategory -> CATEGORY
+        is SettingComposite, is SettingMenu -> SETTING
+        else -> throw IllegalStateException("Class ${items[position]::class.java} is not a valid setting class")
+    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return when (viewType) {
-            SettingCategory::class.hashCode() -> CategoryViewHolder(PreferenceCategoryBinding.inflate(inflater, parent, false))
-            SettingMenu::class.hashCode(),
-            SettingComposite::class.hashCode() -> SettingViewHolder(PreferenceBasicBinding.inflate(inflater, parent, false))
+            CATEGORY -> CategoryViewHolder(PreferenceCategoryBinding.inflate(inflater, parent, false))
+            SETTING -> SettingViewHolder(PreferenceBasicBinding.inflate(inflater, parent, false))
             else -> throw IllegalStateException("ViewType $viewType is not known")
         }
     }
@@ -49,6 +54,18 @@ class SettingsMenuAdapter(private val inflater: LayoutInflater, private val owne
                     else -> throw IllegalStateException("A category cannot contain another category.")
                 }
                 holder.binding.apply {
+                    fun doToggle(state: Boolean? = null) {
+                        expanded = state ?: !expanded
+                        when (val icon = setting.expandableIcon(expanded)) {
+                            null -> toggle.setImageResource(if (expanded) { R.drawable.baseline_expand_less_24} else { R.drawable.baseline_expand_more_24})
+                            else -> toggle.setImageResource(icon)
+                        }
+                        val color = TypedValue().apply {
+                            toggle.context.theme.resolveAttribute(org.secuso.ui.view.R.attr.colorOnSurface, this, true)
+                        }
+                        toggle.setColorFilter(color.data)
+                    }
+
                     title.replace(inflater, owner, setting.title)
                     if (setting.description != null) {
                         description.replace(inflater, owner, setting.description!!)
@@ -58,37 +75,21 @@ class SettingsMenuAdapter(private val inflater: LayoutInflater, private val owne
                             toggle.replace(inflater, owner, setting.action!!)
                         } else {
                             toggle.setOnClickListener {
-                                expanded = !expanded
-                                when (val icon = setting.expandableIcon(expanded)) {
-                                    null -> {}
-                                    else -> toggle.setImageResource(icon)
-                                }
+                                doToggle()
                                 when (val item = items[holder.adapterPosition]) {
                                     is SettingMenu -> openMenu(item)
                                     else -> {}
                                 }
                             }
-                            expanded = false
-                            when (val icon = setting.expandableIcon(expanded)) {
-                                null -> {}
-                                else -> toggle.setImageResource(icon)
-                            }
+                            doToggle(false)
                         }
                     } else {
                         if (setting.action != null) {
                             action.replace(inflater, owner, setting.action!!)
                             toggle.setOnClickListener {
-                                expanded = !expanded
-                                when (val icon = setting.expandableIcon(expanded)) {
-                                    null -> {}
-                                    else -> toggle.setImageResource(icon)
-                                }
+                                doToggle()
                             }
-                            expanded = false
-                            when (val icon = setting.expandableIcon(expanded)) {
-                                null -> {}
-                                else -> toggle.setImageResource(icon)
-                            }
+                            doToggle(false)
                         }
                     }
 
@@ -101,4 +102,9 @@ class SettingsMenuAdapter(private val inflater: LayoutInflater, private val owne
 
     class CategoryViewHolder(val binding: PreferenceCategoryBinding): RecyclerView.ViewHolder(binding.root)
     class SettingViewHolder(val binding: PreferenceBasicBinding): RecyclerView.ViewHolder(binding.root)
+
+    companion object {
+        val CATEGORY = 1
+        val SETTING = 2
+    }
 }
