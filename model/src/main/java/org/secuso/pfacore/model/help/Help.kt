@@ -1,6 +1,6 @@
 package org.secuso.pfacore.model.help
 
-open class Help<H : IHelpData<H>>(protected val items: List<H>) {
+open class Help<H : IHelpData<H>>(protected open val items: List<H>) {
 
     class HelpItem<H : IHelpData<H>, I : Item<H>>(
         private val builder: () -> I

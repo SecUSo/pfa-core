@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
+    <data>
+        <variable
+            name="enabled"
+            type="boolean" />
+    </data>
+    <com.google.android.material.materialswitch.MaterialSwitch
+        android:enabled="@{enabled}"
+        android:id="@+id/action"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:scaleX="0.8"
+        android:scaleY="0.8"
+        android:focusable="false"
+        android:clickable="false"
+        android:background="@null" />
+</layout>

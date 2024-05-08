@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
+    <data>
+        <variable
+            name="text"
+            type="String" />
+        <variable
+            name="checked"
+            type="boolean" />
+    </data>
+    <LinearLayout
+        android:id="@+id/element"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <com.google.android.material.radiobutton.MaterialRadioButton xmlns:app="http://schemas.android.com/apk/res-auto"
+            android:onClick="@{() -> element.callOnClick()}"
+            android:checked="@{checked}"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@{text}" />
+    </LinearLayout>
+</layout>
