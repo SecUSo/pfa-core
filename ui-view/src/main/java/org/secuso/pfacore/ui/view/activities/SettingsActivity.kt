@@ -6,7 +6,7 @@ import org.secuso.pfacore.application.PFApplication
 import org.secuso.pfacore.ui.view.settings.Settings
 import org.secuso.ui.view.R
 
-class SettingsActivity: BaseActivity() {
+class SettingsActivity: AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_settings)
