@@ -110,9 +110,9 @@ class SwitchSetting(data: SwitchData) : MSwitchSetting<SwitchSetting.SwitchData,
             PreferenceSwitchBinding.inflate(inflater, root, false).apply {
                 action.setOnClickListener { data.value = !(data.value ?: data.default) }
                 action.isChecked = data.value ?: data.default
-                data.enabled.observe(owner) { enabled = it }
-                data.state.observe(owner) { action.isEnabled = it }
+                data.state.observe(owner) { action.isChecked = it }
                 enabled = data.enabled.value ?: true
+                data.enabled.observe(owner) { enabled = it }
             }.root
         }
 }
