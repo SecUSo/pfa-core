@@ -2,15 +2,9 @@ package org.secuso.pfacore.ui.view.settings
 
 import androidx.appcompat.app.AppCompatDelegate
 import org.secuso.pfacore.R
+import org.secuso.pfacore.model.Theme
 
 class SettingThemeSelector {
-
-    enum class Mode {
-        SYSTEM,
-        LIGHT,
-        DARK;
-    }
-
     companion object {
         const val themeSelectorKey = "settings_day_night_theme"
     }
@@ -19,19 +13,13 @@ class SettingThemeSelector {
         return {
             radio<String> {
                 key = themeSelectorKey
-                default = Mode.SYSTEM.toString()
-                onUpdate = {
-                    when (Mode.valueOf(it)) {
-                        Mode.SYSTEM -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM)
-                        Mode.LIGHT -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
-                        Mode.DARK -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
-                    }
-                }
+                default = Theme.SYSTEM.toString()
+                onUpdate = { Theme.valueOf(it).apply() }
                 title { resource(R.string.select_day_night_theme) }
                 summary { transform { state, value -> state.entries.find { it.value == value }!!.entry } }
                 entries {
                     entries(R.array.array_day_night_theme)
-                    values(SettingThemeSelector.Mode.entries.map { it.toString() })
+                    values(Theme.entries.map { it.toString() })
                 }
             }
         }
