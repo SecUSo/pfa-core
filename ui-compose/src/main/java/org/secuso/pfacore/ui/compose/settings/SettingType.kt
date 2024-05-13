@@ -12,12 +12,10 @@ import org.secuso.pfacore.model.SettingData
 import org.secuso.pfacore.model.SettingDataBuildInfo
 import org.secuso.pfacore.model.SettingEntry
 import org.secuso.pfacore.model.settings.Entries
-import org.secuso.pfacore.model.settings.SettingComposite
 import org.secuso.pfacore.model.settings.SettingFactory
 import org.secuso.pfacore.ui.compose.BasicInfo
 import org.secuso.pfacore.model.settings.MenuSetting as MMenuSetting
 import org.secuso.pfacore.model.settings.RadioSetting as MRadioSetting
-import org.secuso.pfacore.ui.compose.Displayable
 import org.secuso.pfacore.ui.compose.TransformableInfo
 import org.secuso.pfacore.model.settings.SwitchSetting as MSwitchSetting
 import org.secuso.pfacore.ui.compose.settings.composables.MenuPreference
@@ -57,7 +55,7 @@ open class BasicDisplaySetting(private val resources: Resources) {
 }
 
 
-class SwitchSetting(data: SwitchData) : MSwitchSetting<SwitchSetting.SwitchData, SwitchSetting>(data), DisplayableSettingInfo {
+class SwitchSetting(data: SwitchData) : MSwitchSetting<SwitchSetting.SwitchData>(data), DisplayableSettingInfo {
     companion object {
         fun factory(): SettingFactory<Boolean, SwitchBuildInfo, SwitchData> = factory { info, data -> SwitchData(data.data, info.requireTitle(), info.requireSummary()) }
     }
@@ -79,9 +77,9 @@ class SwitchSetting(data: SwitchData) : MSwitchSetting<SwitchSetting.SwitchData,
     ) {
         SwitchPreference(
             data,
-            data.state.observeAsState(initial = this.data.default!!),
+            data.state.observeAsState(initial = data.default),
             data.enabled.observeAsState(false),
-            { super.data.value = it },
+            { data.value = it },
             data.title,
             data.summary,
             onClick
@@ -89,7 +87,7 @@ class SwitchSetting(data: SwitchData) : MSwitchSetting<SwitchSetting.SwitchData,
     }
 }
 
-class RadioSetting<T>(data: RadioData<T>) : MRadioSetting<T,RadioSetting.RadioData<T>, RadioSetting<T>>(data), DisplayableSettingInfo {
+class RadioSetting<T>(data: RadioData<T>) : MRadioSetting<T,RadioSetting.RadioData<T>>(data), DisplayableSettingInfo {
     companion object {
         fun <T> factory(): SettingFactory<T, RadioBuildInfo<T>, RadioData<T>> = factory() { info, data -> RadioData(data.data, info.entries, info.requireTitle(), info.requireSummary()) }
     }
@@ -115,9 +113,9 @@ class RadioSetting<T>(data: RadioData<T>) : MRadioSetting<T,RadioSetting.RadioDa
     ) {
         RadioPreference(
             data,
-            data.state.observeAsState(initial = this.data.default!!),
+            data.state.observeAsState(initial = data.default!!),
             data.enabled.observeAsState(false),
-            { super.data.value = it },
+            { data.value = it },
             data.title,
             data.summary,
             onClick
@@ -125,7 +123,7 @@ class RadioSetting<T>(data: RadioData<T>) : MRadioSetting<T,RadioSetting.RadioDa
     }
 }
 
-class MenuSetting(data: MenuData) : MMenuSetting<MenuSetting.MenuData, MenuSetting>(data), DisplayableSettingInfo {
+class MenuSetting(data: MenuData) : MMenuSetting<MenuSetting.MenuData>(data), DisplayableSettingInfo {
     companion object {
         fun factory(): SettingFactory<Unit, MenuBuildInfo, MenuData> = factory() { info, data -> MenuData(info.requireTitle(), info.summary) }
     }

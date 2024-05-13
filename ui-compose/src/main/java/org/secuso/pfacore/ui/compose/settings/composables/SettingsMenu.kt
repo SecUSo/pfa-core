@@ -48,11 +48,11 @@ fun SettingsMenu(settings: List<SettingCategory>) {
                     for (setting in category.settings) {
                         when (setting) {
                             is SettingMenu -> {
-                                (setting.menu.setting!! as DisplayableSettingInfo).Display { navController.navigate("_${setting.name}") }
+                                (setting.menu.setting!!.setting as DisplayableSettingInfo).Display { navController.navigate("_${setting.name}") }
                             }
 
-                            is SettingComposite -> {
-                                (setting as DisplayableSettingInfo).Display {}
+                            is SettingComposite<DisplayableSettingInfo, *> -> {
+                                (setting.setting as DisplayableSettingInfo).Display {}
                             }
 
                             is SettingCategory -> {

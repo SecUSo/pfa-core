@@ -10,6 +10,10 @@ fun interface SettingInfoFactory<BI: SettingBuildInfo, SI: SettingInfo> {
     fun build(info: BI): () -> SI
 }
 
+interface Setting<SI: SettingInfo> {
+    val data: SI
+}
+
 data class SettingEntry<T>(
     var entry: String,
     var value: T
