@@ -7,7 +7,7 @@ import org.secuso.pfacore.model.help.Help
 import org.secuso.pfacore.model.settings.ISettings
 
 data class PFData(
-    val settings: ISettings<*,*>,
+    val settings: ISettings<*>,
     val about: About,
     val help: Help<*>,
     val theme: LiveData<Theme>
