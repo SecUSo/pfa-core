@@ -15,7 +15,6 @@ import org.secuso.pfacore.backup.stringRestorer
 import org.secuso.pfacore.model.DataSaverUpdater
 import org.secuso.pfacore.model.EnabledByDependency
 import org.secuso.pfacore.model.ISettingData
-import org.secuso.pfacore.model.Setting
 import org.secuso.pfacore.model.SettingBuildInfo
 import org.secuso.pfacore.model.SettingInfo
 
@@ -24,14 +23,14 @@ interface ISettings<SI: SettingInfo> {
     val all: List<SettingComposite<SI, *>>
 }
 
-abstract class Settings<SI: SettingInfo, SHC : SettingCategory<SI>, SHM : SettingMenu<SI>>(internal val settings: List<SHC>) : ISettings<SI> {
+abstract class Settings<SI: SettingInfo, SHC : SettingCategory<SI>, SHM : SettingMenu<SI, SHC>>(internal val settings: List<SHC>) : ISettings<SI> {
     override val all
         get() = settings.map { it.allSettings() }.flatten()
 
     data class SettingsBuilders<
             SI: SettingInfo,
             SHC : SettingCategory<SI>,
-            SHM : SettingMenu<SI>,
+            SHM : SettingMenu<SI, SHC>,
             S : Setting<SI, SHC, SHM, S, C, M>,
             C : Category<SI, SHC, SHM, S, C, M>,
             M : Menu<SI, SHC, SHM, S, C, M>,
@@ -39,7 +38,7 @@ abstract class Settings<SI: SettingInfo, SHC : SettingCategory<SI>, SHM : Settin
         private val _setting: (SettingsBuilders<SI, SHC, SHM, S, C, M>) -> S,
         private val _category: (SettingsBuilders<SI, SHC, SHM, S, C, M>) -> C,
         private val _menu: (SettingsBuilders<SI, SHC, SHM, S, C, M>) -> M,
-        val shc: (String, C) -> SHC,
+        val shc: (String, S) -> SHC,
         val shm: (String, M) -> SHM
     ) {
         val setting
@@ -53,13 +52,13 @@ abstract class Settings<SI: SettingInfo, SHC : SettingCategory<SI>, SHM : Settin
     abstract class Setting<
             SI: SettingInfo,
             SHC : SettingCategory<SI>,
-            SHM : SettingMenu<SI>,
+            SHM : SettingMenu<SI, SHC>,
             S : Setting<SI, SHC, SHM, S, C, M>,
             C : Category<SI, SHC, SHM, S, C, M>,
             M : Menu<SI, SHC, SHM, S, C, M>
             >(
         val preferences: SharedPreferences,
-        val settings: MutableList<SettingHierarchy<SI>> = mutableListOf(),
+        val settings: MutableList<CategoricalSettingHierarchy<SI>> = mutableListOf(),
         val builders: SettingsBuilders<SI, SHC, SHM, S, C, M>
     ) {
         protected val enabled: EnabledByDependency = { dependency ->
@@ -128,10 +127,10 @@ abstract class Settings<SI: SettingInfo, SHC : SettingCategory<SI>, SHM : Settin
         }
     }
 
-    abstract class Category<
+    open class Category<
             SI: SettingInfo,
             SHC : SettingCategory<SI>,
-            SHM : SettingMenu<SI>,
+            SHM : SettingMenu<SI, SHC>,
             S : Setting<SI, SHC, SHM, S, C, M>,
             C : Category<SI, SHC, SHM, S, C, M>,
             M : Menu<SI, SHC, SHM, S, C, M>
@@ -139,23 +138,23 @@ abstract class Settings<SI: SettingInfo, SHC : SettingCategory<SI>, SHM : Settin
         private val context: Context,
         private val builders: SettingsBuilders<SI, SHC, SHM, S, C, M>,
     ) {
-        val settings: MutableList<SettingHierarchy<SI>> = mutableListOf()
+        val categories: MutableList<SHC> = mutableListOf()
 
         @Suppress("Unused")
         fun category(category: String, initializer: S.() -> Unit) {
-            this.settings.add(builders.shc(category, builders.category.apply { settings.addAll(builders.setting.apply(initializer).settings) }))
+            this.categories.add(builders.shc(category, builders.setting.apply(initializer)))
         }
 
         @Suppress("Unused")
         fun category(categoryId: Int, initializer: S.() -> Unit) {
-            this.settings.add(builders.shc(context.getString(categoryId), builders.category.apply { settings.addAll(builders.setting.apply(initializer).settings) }))
+            this.categories.add(builders.shc(context.getString(categoryId), builders.setting.apply(initializer)))
         }
     }
 
-    abstract class Menu<
+    open class Menu<
             SI: SettingInfo,
             SHC : SettingCategory<SI>,
-            SHM : SettingMenu<SI>,
+            SHM : SettingMenu<SI, SHC>,
             S : Setting<SI, SHC, SHM, S, C, M>,
             C : Category<SI, SHC, SHM, S, C, M>,
             M : Menu<SI, SHC, SHM, S, C, M>
@@ -165,14 +164,14 @@ abstract class Settings<SI: SettingInfo, SHC : SettingCategory<SI>, SHM : Settin
         var setting: SettingComposite<SI, *>? = null
             private set
             get() = (field ?: throw IllegalStateException("A menu needs a setting to click on."))
-        val settings: MutableList<SettingHierarchy<SI>> = mutableListOf()
+        val settings: MutableList<SHC> = mutableListOf()
 
         fun setting(initializer: S.() -> Unit) {
-            this.setting = builders.setting.apply(initializer).settings.single().all().single() as SettingComposite<SI, *>
+            this.setting = builders.setting.apply(initializer).settings.single().allSettings().single()
         }
 
         fun content(initializer: C.() -> Unit) {
-            this.settings.addAll(builders.category.apply(initializer).settings)
+            this.settings.addAll(builders.category.apply(initializer).categories)
         }
     }
 
@@ -181,7 +180,7 @@ abstract class Settings<SI: SettingInfo, SHC : SettingCategory<SI>, SHM : Settin
         fun <
                 SI: SettingInfo,
                 SHC : SettingCategory<SI>,
-                SHM : SettingMenu<SI>,
+                SHM : SettingMenu<SI, SHC>,
                 S : Setting<SI, SHC, SHM, S, C, M>,
                 C : Category<SI, SHC, SHM, S, C, M>,
                 M : Menu<SI, SHC, SHM, S, C, M>,
@@ -191,7 +190,7 @@ abstract class Settings<SI: SettingInfo, SHC : SettingCategory<SI>, SHM : Settin
             builders: SettingsBuilders<SI, SHC, SHM, S, C, M>,
             initializer: C.() -> Unit,
         ): Set {
-            return builder(builders.category.apply(initializer).settings as List<SHC>)
+            return builder(builders.category.apply(initializer).categories)
         }
     }
 
