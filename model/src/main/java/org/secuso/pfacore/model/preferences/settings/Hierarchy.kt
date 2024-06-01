@@ -1,15 +1,17 @@
 package org.secuso.pfacore.model.preferences.settings
 
-interface SettingHierarchy<SI: SettingInfo> {
+import org.secuso.pfacore.model.preferences.Info
+
+interface SettingHierarchy<SI: Info> {
     fun all(): List<SettingHierarchy<SI>>
     fun allSettings(): List<SettingComposite<SI, *>>
 }
 
-interface CategoricalSettingHierarchy<SI: SettingInfo> : SettingHierarchy<SI> {
+interface CategoricalSettingHierarchy<SI: Info> : SettingHierarchy<SI> {
     fun setting(): Setting<*>
 }
 
-open class SettingComposite<SI: SettingInfo, S: Setting<SI>>(
+open class SettingComposite<SI: Info, S: Setting<SI>>(
     val setting: S,
 ) : CategoricalSettingHierarchy<SI>, Setting<SI> by setting {
 
@@ -19,7 +21,7 @@ open class SettingComposite<SI: SettingInfo, S: Setting<SI>>(
 
 }
 
-open class SettingCategory<SI: SettingInfo>(
+open class SettingCategory<SI: Info>(
     val name: String,
     val settings: List<CategoricalSettingHierarchy<SI>>
 ) : SettingHierarchy<SI> {
@@ -27,7 +29,7 @@ open class SettingCategory<SI: SettingInfo>(
     override fun allSettings(): List<SettingComposite<SI, *>> = settings.map { it.allSettings() }.flatten()
 }
 
-open class SettingMenu<SI: SettingInfo, SC: SettingCategory<SI>>(
+open class SettingMenu<SI: Info, SC: SettingCategory<SI>>(
     val name: String,
     val setting: SettingComposite<SI, *>,
     val settings: List<SC>

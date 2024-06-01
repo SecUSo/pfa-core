@@ -12,6 +12,7 @@ import org.secuso.pfacore.model.preferences.settings.SettingData
 import org.secuso.pfacore.model.preferences.settings.SettingDataBuildInfo
 import org.secuso.pfacore.model.preferences.settings.SettingEntry
 import org.secuso.pfacore.model.preferences.settings.Entries
+import org.secuso.pfacore.model.preferences.PreferenceFactory
 import org.secuso.pfacore.model.preferences.settings.SettingFactory
 import org.secuso.pfacore.ui.compose.BasicInfo
 import org.secuso.pfacore.model.preferences.settings.MenuSetting as MMenuSetting
@@ -57,7 +58,7 @@ open class BasicDisplaySetting(private val resources: Resources) {
 
 class SwitchSetting(data: SwitchData) : MSwitchSetting<SwitchSetting.SwitchData>(data), DisplayableSettingInfo {
     companion object {
-        fun factory(): SettingFactory<Boolean, SwitchBuildInfo, SwitchData> = factory { info, data -> SwitchData(data.data, info.requireTitle(), info.requireSummary()) }
+        fun factory(): SettingFactory<SwitchBuildInfo, SwitchData> = factory { info, data -> SwitchData(data.data, info.requireTitle(), info.requireSummary()) }
     }
 
     class SwitchData(
@@ -89,7 +90,7 @@ class SwitchSetting(data: SwitchData) : MSwitchSetting<SwitchSetting.SwitchData>
 
 class RadioSetting<T>(data: RadioData<T>) : MRadioSetting<T, RadioSetting.RadioData<T>>(data), DisplayableSettingInfo {
     companion object {
-        fun <T> factory(): SettingFactory<T, RadioBuildInfo<T>, RadioData<T>> = factory() { info, data -> RadioData(data.data, info.entries, info.requireTitle(), info.requireSummary()) }
+        fun <T> factory(): SettingFactory<RadioBuildInfo<T>, RadioData<T>> = factory() { info, data -> RadioData(data.data, info.entries, info.requireTitle(), info.requireSummary()) }
     }
     class RadioData<T>(
         data: SettingData<T>,
@@ -125,7 +126,7 @@ class RadioSetting<T>(data: RadioData<T>) : MRadioSetting<T, RadioSetting.RadioD
 
 class MenuSetting(data: MenuData) : MMenuSetting<MenuSetting.MenuData>(data), DisplayableSettingInfo {
     companion object {
-        fun factory(): SettingFactory<Unit, MenuBuildInfo, MenuData> = factory() { info, data -> MenuData(info.requireTitle(), info.summary) }
+        fun factory(): SettingFactory<MenuBuildInfo, MenuData> = factory() { info, data -> MenuData(info.requireTitle(), info.summary) }
     }
     class MenuData(
         val title: @Composable (Modifier) -> Unit,

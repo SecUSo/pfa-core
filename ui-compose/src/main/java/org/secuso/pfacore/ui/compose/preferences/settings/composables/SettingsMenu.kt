@@ -16,6 +16,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.preference.PreferenceManager
 import org.secuso.pfacore.ui.compose.preferences.settings.DisplayableSettingInfo
 import org.secuso.pfacore.ui.compose.preferences.settings.SettingCategory
 import org.secuso.pfacore.ui.compose.preferences.settings.SettingMenu
@@ -67,69 +68,79 @@ fun SettingsMenu(settings: List<SettingCategory>) {
 @Preview
 @Composable
 fun SettingsMenuPreview() {
-    val setting = Settings.build(LocalContext.current) {
-        category("General") {
-            switch {
+    val context = LocalContext.current
+    val preferences = org.secuso.pfacore.model.preferences.Preferences.build<Settings>(PreferenceManager.getDefaultSharedPreferences(LocalContext.current)) {
+        preferences {
+            preference<String> {
                 key = "test"
-                default = false
+                default = ""
                 backup = false
-                title { literal("Test setting") }
-                summary { literal("Test summary") }
             }
-            radio<Int> {
-                key = "test2"
-                default = 1
-                backup = true
-                title { literal("Test radio setting with int") }
-                summary { literal("Test summary") }
-                entries {
-                    entries(listOf("A", "B", "C"))
-                    values(listOf(1, 2, 3))
+        }
+        settings = Settings.build(context) {
+            category("General") {
+                switch {
+                    key = "test"
+                    default = false
+                    backup = false
+                    title { literal("Test setting") }
+                    summary { literal("Test summary") }
                 }
-            }
-            menu("Next Menu") {
-                setting {
-                    switch {
-                        key = "test5"
-                        default = false
-                        backup = false
-                        title { literal("Test Menu") }
-                        summary { literal("Click Me") }
+                radio<Int> {
+                    key = "test2"
+                    default = 1
+                    backup = true
+                    title { literal("Test radio setting with int") }
+                    summary { literal("Test summary") }
+                    entries {
+                        entries(listOf("A", "B", "C"))
+                        values(listOf(1, 2, 3))
                     }
                 }
-                content {
-                    category("First Category") {
-                        radio {
-                            key = "test3"
-                            default = "X"
-                            backup = true
-                            title { literal("Test radio setting") }
-                            summary { literal("Test summary") }
-                            entries {
-                                entries(listOf("A", "B", "C"))
-                                values(listOf("Z", "Y", "X"))
+                menu("Next Menu") {
+                    setting {
+                        switch {
+                            key = "test5"
+                            default = false
+                            backup = false
+                            title { literal("Test Menu") }
+                            summary { literal("Click Me") }
+                        }
+                    }
+                    content {
+                        category("First Category") {
+                            radio {
+                                key = "test3"
+                                default = "X"
+                                backup = true
+                                title { literal("Test radio setting") }
+                                summary { literal("Test summary") }
+                                entries {
+                                    entries(listOf("A", "B", "C"))
+                                    values(listOf("Z", "Y", "X"))
+                                }
                             }
                         }
                     }
                 }
             }
-        }
-        category("Appearance") {
-            radio {
-                key = "test7"
-                default = "Y"
-                backup = true
-                title { literal("Test radio setting") }
-                summary { literal("Test summary") }
-                entries {
-                    entries(listOf("A", "B", "C"))
-                    values(listOf("Z", "Y", "X"))
+            category("Appearance") {
+                radio {
+                    key = "test7"
+                    default = "Y"
+                    backup = true
+                    title { literal("Test radio setting") }
+                    summary { literal("Test summary") }
+                    entries {
+                        entries(listOf("A", "B", "C"))
+                        values(listOf("Z", "Y", "X"))
+                    }
                 }
-            }
-            menu("Empty Menu") {
-                setting {
-                    menu {
-                        title { literal("This is an empty menu without subtitle") }
+                menu("Empty Menu") {
+                    setting {
+                        menu {
+                            title { literal("This is an empty menu without subtitle") }
+                        }
                     }
                 }
             }
@@ -138,7 +149,7 @@ fun SettingsMenuPreview() {
 
     PrivacyFriendlyCoreTheme {
         Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
-            setting.Display {}
+            preferences.settings!!.Display {}
         }
     }
 }

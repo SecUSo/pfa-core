@@ -1,7 +1,11 @@
 package org.secuso.pfacore.model.preferences.settings
 
+import android.content.SharedPreferences
 import android.content.res.Resources
-import org.secuso.pfacore.backup.Restorer
+import org.secuso.pfacore.model.preferences.PreferenceFactory
+import org.secuso.pfacore.model.preferences.InfoFactory
+import org.secuso.pfacore.model.preferences.BuildInfo
+import org.secuso.pfacore.model.preferences.Info
 
 class Entries<T>(
     private val resources: Resources,
@@ -26,13 +30,12 @@ class Entries<T>(
     }
 }
 
-typealias SettingFactory<T, BI, SI> = (DeriveState<T>, EnabledByDependency, (T) -> Restorer<T>, DataSaverUpdater<T>) -> SettingInfoFactory<BI, SI>
 abstract class SwitchSetting<SD: SwitchSetting.SwitchData>(override val data: SD): Setting<SD> {
     open class SwitchData(val data: SettingData<Boolean>): ISettingData<Boolean> by data
     interface SwitchBuildInfo: ISettingDataBuildInfo<Boolean>
     companion object {
-        fun <SI: SwitchBuildInfo, SD: SwitchData> factory(adapt: (SI, SwitchData) -> SD): SettingFactory<Boolean, SI, SD> =
-            { state, enabled, restorer, onUpdate -> settingDataFactory(state, enabled, restorer, onUpdate) { info, it -> adapt(info, SwitchData(it)) } }
+        fun <SI: SwitchBuildInfo, SD: SwitchData> factory(adapt: (SI, SwitchData) -> SD): SettingFactory<SI, SD>
+            = settingDataFactory { info, it -> adapt(info, SwitchData(it)) }
     }
 }
 abstract class RadioSetting<T, SD: RadioSetting.RadioData<T>>(override val data: SD): Setting<SD> {
@@ -42,15 +45,14 @@ abstract class RadioSetting<T, SD: RadioSetting.RadioData<T>>(override val data:
         var entries: List<SettingEntry<T>>
     }
     companion object {
-        inline fun < T, SI: RadioBuildInfo<T>, SD: RadioData<T>> factory(crossinline adapt: (SI, RadioData<T>) -> SD): SettingFactory<T, SI, SD> =
-            { state, enabled, restorer, onUpdate -> settingDataFactory(state, enabled, restorer, onUpdate) { info, it -> adapt(info, RadioData(it, info.entries)) } }
+        inline fun < T, SI: RadioBuildInfo<T>, SD: RadioData<T>> factory(crossinline adapt: (SI, RadioData<T>) -> SD): SettingFactory<SI, SD>
+            = settingDataFactory { info, it -> adapt(info, RadioData(it, info.entries)) }
     }
 }
 abstract class MenuSetting<SD : MenuSetting.MenuData>(override val data: SD): Setting<SD> {
-    open class MenuData: SettingInfo
-    interface MenuBuildInfo: SettingBuildInfo
+    open class MenuData: Info
+    interface MenuBuildInfo: BuildInfo
     companion object {
-        fun <SI: MenuBuildInfo, SD: MenuData> factory(adapt: (SI, MenuData) -> SD): SettingFactory<Unit, SI, SD> =
-            { _, _, _, _ -> SettingInfoFactory { info -> { adapt(info, MenuData()) } } }
+        fun <SI: MenuBuildInfo, SD: MenuData> factory(adapt: (SI, MenuData) -> SD): SettingFactory<SI, SD> = { _, _ -> InfoFactory { info -> { adapt(info, MenuData()) } } }
     }
 }

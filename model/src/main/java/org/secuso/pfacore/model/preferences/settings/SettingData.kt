@@ -1,20 +1,19 @@
 package org.secuso.pfacore.model.preferences.settings
 
+import android.content.SharedPreferences
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import org.secuso.pfacore.backup.Restorer
+import org.secuso.pfacore.model.preferences.BuildInfo
+import org.secuso.pfacore.model.preferences.Info
+import org.secuso.pfacore.model.preferences.InfoFactory
 import org.secuso.pfacore.model.preferences.Preferable
 import org.secuso.pfacore.model.preferences.PreferableBuildInfo
 import org.secuso.pfacore.model.preferences.Preference
 import org.secuso.pfacore.model.preferences.PreferenceBuildInfo
+import org.secuso.pfacore.model.preferences.build
 
-interface SettingInfo
-interface SettingBuildInfo
-fun interface SettingInfoFactory<BI: SettingBuildInfo, SI: SettingInfo> {
-    fun build(info: BI): () -> SI
-}
-
-interface Setting<SI: SettingInfo> {
+interface Setting<SI : Info> {
     val data: SI
 }
 
@@ -23,20 +22,16 @@ data class SettingEntry<T>(
     var value: T
 )
 
-interface ISettingData<T>: SettingInfo, Preferable<T> {
-    val state: MutableLiveData<T>
+interface ISettingData<T> : Info, Preferable<T> {
     var enabled: LiveData<Boolean>
-    var onUpdate: (T) -> Unit
 }
 
-interface ISettingDataBuildInfo<T>: SettingBuildInfo, PreferableBuildInfo<T> {
+interface ISettingDataBuildInfo<T> : BuildInfo, PreferableBuildInfo<T> {
     var dependency: String?
-    var onUpdate: (T) -> Unit
 }
 
 open class SettingDataBuildInfo<T>: ISettingDataBuildInfo<T>, PreferenceBuildInfo<T>() {
     override var dependency: String? = null
-    override var onUpdate: (T) -> Unit = {}
 }
 
 open class SettingData<T>(
@@ -50,26 +45,31 @@ open class SettingData<T>(
 ): ISettingData<T>, Preference<T>(state, default, key, backup, restorer, onUpdate)
 
 typealias EnabledByDependency = (String?) -> LiveData<Boolean>
-typealias DeriveState<T> = (String, T) -> MutableLiveData<T>
-typealias DataSaverUpdater<T> = (String, T, (T) -> Unit) -> (T) -> Unit
+typealias SettingFactory<BI, SI> = (SharedPreferences, EnabledByDependency) -> InfoFactory<BI, SI>
 
 fun <T, BI: ISettingDataBuildInfo<T>, SI: ISettingData<T>> settingDataFactory(
-    state: DeriveState<T>,
-    enabled: EnabledByDependency,
-    restorer: (T) -> Restorer<T>,
-    onUpdate: DataSaverUpdater<T>,
     adapt: (BI, SettingData<T>) -> SI
-): SettingInfoFactory<BI, SI> {
-    return SettingInfoFactory<BI, SI> { info ->
-        { adapt(info, SettingData(
-            state(info.key!!, info.default!!),
-            info.default!!,
-            info.key!!,
-            info.backup,
-            restorer(info.default!!),
-            onUpdate(info.key!!, info.default!!, info.onUpdate),
-            enabled(info.dependency)
-        )
-        ) }
+): SettingFactory<BI, SI> {
+    return { preferences, enabled ->
+        InfoFactory { info ->
+            {
+                adapt(info, info.build<T, BI, SettingData<T>>(preferences) { state, restorer, onUpdate ->
+                    InfoFactory {
+                        {
+                            SettingData(
+                                state(info.key!!, info.default!!),
+                                info.default!!,
+                                info.key!!,
+                                info.backup,
+                                restorer(info.default!!),
+                                onUpdate(info.key!!, info.default!!, info.onUpdate),
+                                enabled(info.dependency)
+                            )
+                        }
+                    }
+                }
+                )
+            }
+        }
     }
 }

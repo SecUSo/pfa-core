@@ -7,7 +7,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.preference.PreferenceManager
 import org.secuso.pfacore.model.preferences.settings.SettingEntry
-import org.secuso.pfacore.model.preferences.settings.SettingInfo
+import org.secuso.pfacore.model.preferences.Info
 import org.secuso.pfacore.model.preferences.settings.Settings as MSettings
 import org.secuso.pfacore.model.preferences.settings.Settings.Category as MCategory
 import org.secuso.pfacore.model.preferences.settings.Settings.Menu as MMenu
@@ -71,7 +71,7 @@ class Settings(
     }
 }
 
-interface InflatableSetting: SettingInfo {
+interface InflatableSetting: Info {
 
     val enabled: LiveData<Boolean>
         get() = MutableLiveData(true)

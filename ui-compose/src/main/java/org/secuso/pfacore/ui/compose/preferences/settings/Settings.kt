@@ -5,7 +5,7 @@ import android.content.SharedPreferences
 import androidx.compose.runtime.Composable
 import androidx.preference.PreferenceManager
 import org.secuso.pfacore.model.preferences.settings.SettingEntry
-import org.secuso.pfacore.model.preferences.settings.SettingInfo
+import org.secuso.pfacore.model.preferences.Info
 import org.secuso.pfacore.ui.compose.Displayable
 import org.secuso.pfacore.ui.compose.preferences.settings.composables.SettingsMenu
 import org.secuso.pfacore.model.preferences.settings.Settings as MSettings
@@ -71,4 +71,4 @@ class Settings(
     }
 }
 
-interface DisplayableSettingInfo: SettingInfo, Displayable
+interface DisplayableSettingInfo: Info, Displayable
