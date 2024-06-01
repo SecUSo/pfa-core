@@ -1,11 +1,11 @@
-package org.secuso.pfacore.ui.view.settings.components
+package org.secuso.pfacore.ui.view.preferences.settings.components
 
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import org.secuso.pfacore.ui.view.settings.SettingCategory
+import org.secuso.pfacore.ui.view.preferences.settings.SettingCategory
 import org.secuso.ui.view.databinding.FragmentPreferenceMenuBinding
 
 class SettingsMenuFragment: Fragment() {

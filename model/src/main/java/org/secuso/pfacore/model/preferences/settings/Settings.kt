@@ -1,4 +1,4 @@
-package org.secuso.pfacore.model.settings
+package org.secuso.pfacore.model.preferences.settings
 
 import android.content.Context
 import android.content.SharedPreferences
@@ -12,11 +12,6 @@ import org.secuso.pfacore.backup.floatRestorer
 import org.secuso.pfacore.backup.intRestorer
 import org.secuso.pfacore.backup.noRestorer
 import org.secuso.pfacore.backup.stringRestorer
-import org.secuso.pfacore.model.DataSaverUpdater
-import org.secuso.pfacore.model.EnabledByDependency
-import org.secuso.pfacore.model.ISettingData
-import org.secuso.pfacore.model.SettingBuildInfo
-import org.secuso.pfacore.model.SettingInfo
 
 interface ISettings<SI: SettingInfo> {
     @Suppress("unused")
@@ -120,7 +115,7 @@ abstract class Settings<SI: SettingInfo, SHC : SettingCategory<SI>, SHM : Settin
             }
             return factory(state, enabled, restorer, update).build(this).invoke()
         }
-        protected fun <S: org.secuso.pfacore.model.Setting<*>> S.register(): S = this.apply { settings.add(SettingComposite(this as org.secuso.pfacore.model.Setting<SI>)) }
+        protected fun <S: org.secuso.pfacore.model.preferences.settings.Setting<*>> S.register(): S = this.apply { settings.add(SettingComposite(this as org.secuso.pfacore.model.preferences.settings.Setting<SI>)) }
 
         fun menu(menu: String, initializer: M.() -> Unit) {
             this.settings.add(builders.shm(menu, builders.menu.apply(initializer)))

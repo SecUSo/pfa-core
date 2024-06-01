@@ -1,8 +1,12 @@
-package org.secuso.pfacore.model
+package org.secuso.pfacore.model.preferences.settings
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import org.secuso.pfacore.backup.Restorer
+import org.secuso.pfacore.model.preferences.Preferable
+import org.secuso.pfacore.model.preferences.PreferableBuildInfo
+import org.secuso.pfacore.model.preferences.Preference
+import org.secuso.pfacore.model.preferences.PreferenceBuildInfo
 
 interface SettingInfo
 interface SettingBuildInfo
@@ -65,6 +69,7 @@ fun <T, BI: ISettingDataBuildInfo<T>, SI: ISettingData<T>> settingDataFactory(
             restorer(info.default!!),
             onUpdate(info.key!!, info.default!!, info.onUpdate),
             enabled(info.dependency)
-        )) }
+        )
+        ) }
     }
 }

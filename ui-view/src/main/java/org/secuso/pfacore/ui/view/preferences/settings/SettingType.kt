@@ -1,21 +1,21 @@
-package org.secuso.pfacore.ui.view.settings
+package org.secuso.pfacore.ui.view.preferences.settings
 
 import android.content.res.Resources
 import androidx.lifecycle.LiveData
-import org.secuso.pfacore.model.ISettingData
-import org.secuso.pfacore.model.ISettingDataBuildInfo
-import org.secuso.pfacore.model.SettingData
-import org.secuso.pfacore.model.SettingDataBuildInfo
-import org.secuso.pfacore.model.SettingEntry
-import org.secuso.pfacore.model.settings.Entries
-import org.secuso.pfacore.model.settings.SettingFactory
-import org.secuso.pfacore.model.settings.MenuSetting as MMenuSetting
-import org.secuso.pfacore.model.settings.RadioSetting as MRadioSetting
-import org.secuso.pfacore.model.settings.SwitchSetting as MSwitchSetting
+import org.secuso.pfacore.model.preferences.settings.ISettingData
+import org.secuso.pfacore.model.preferences.settings.ISettingDataBuildInfo
+import org.secuso.pfacore.model.preferences.settings.SettingData
+import org.secuso.pfacore.model.preferences.settings.SettingDataBuildInfo
+import org.secuso.pfacore.model.preferences.settings.SettingEntry
+import org.secuso.pfacore.model.preferences.settings.Entries
+import org.secuso.pfacore.model.preferences.settings.SettingFactory
+import org.secuso.pfacore.model.preferences.settings.MenuSetting as MMenuSetting
+import org.secuso.pfacore.model.preferences.settings.RadioSetting as MRadioSetting
+import org.secuso.pfacore.model.preferences.settings.SwitchSetting as MSwitchSetting
 import org.secuso.pfacore.ui.view.BasicInfo
 import org.secuso.pfacore.ui.view.Inflatable
 import org.secuso.pfacore.ui.view.TransformableInfo
-import org.secuso.pfacore.ui.view.settings.components.RadioAdapter
+import org.secuso.pfacore.ui.view.preferences.settings.components.RadioAdapter
 import org.secuso.ui.view.R
 import org.secuso.ui.view.databinding.PreferenceActionListBinding
 import org.secuso.ui.view.databinding.PreferenceSwitchBinding
@@ -109,7 +109,7 @@ class SwitchSetting(data: SwitchData) : MSwitchSetting<SwitchSetting.SwitchData>
         }
 }
 
-class RadioSetting<T>(data: RadioData<T>) : MRadioSetting<T,RadioSetting.RadioData<T>>(data), InflatableSetting {
+class RadioSetting<T>(data: RadioData<T>) : MRadioSetting<T, RadioSetting.RadioData<T>>(data), InflatableSetting {
     companion object {
         fun <T> factory(): SettingFactory<T, RadioBuildInfo<T>, RadioData<T>> = factory() { info, data -> RadioData(data.data, info.entries, info.requireTitle(), info.requireSummary()) }
     }

@@ -1,19 +1,7 @@
-package org.secuso.pfacore.model.settings
+package org.secuso.pfacore.model.preferences.settings
 
 import android.content.res.Resources
 import org.secuso.pfacore.backup.Restorer
-import org.secuso.pfacore.model.DataSaverUpdater
-import org.secuso.pfacore.model.DeriveState
-import org.secuso.pfacore.model.EnabledByDependency
-import org.secuso.pfacore.model.ISettingData
-import org.secuso.pfacore.model.ISettingDataBuildInfo
-import org.secuso.pfacore.model.Setting
-import org.secuso.pfacore.model.SettingBuildInfo
-import org.secuso.pfacore.model.SettingData
-import org.secuso.pfacore.model.SettingEntry
-import org.secuso.pfacore.model.SettingInfo
-import org.secuso.pfacore.model.SettingInfoFactory
-import org.secuso.pfacore.model.settingDataFactory
 
 class Entries<T>(
     private val resources: Resources,
@@ -38,7 +26,7 @@ class Entries<T>(
     }
 }
 
-typealias SettingFactory<T, BI, SI> = (DeriveState<T>, EnabledByDependency, (T) -> Restorer<T>,  DataSaverUpdater<T>) -> SettingInfoFactory<BI,SI>
+typealias SettingFactory<T, BI, SI> = (DeriveState<T>, EnabledByDependency, (T) -> Restorer<T>, DataSaverUpdater<T>) -> SettingInfoFactory<BI, SI>
 abstract class SwitchSetting<SD: SwitchSetting.SwitchData>(override val data: SD): Setting<SD> {
     open class SwitchData(val data: SettingData<Boolean>): ISettingData<Boolean> by data
     interface SwitchBuildInfo: ISettingDataBuildInfo<Boolean>

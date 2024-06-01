@@ -1,4 +1,4 @@
-package org.secuso.pfacore.ui.compose.settings.composables
+package org.secuso.pfacore.ui.compose.preferences.settings.composables
 
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -16,10 +16,10 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import org.secuso.pfacore.ui.compose.settings.DisplayableSettingInfo
-import org.secuso.pfacore.ui.compose.settings.SettingCategory
-import org.secuso.pfacore.ui.compose.settings.SettingMenu
-import org.secuso.pfacore.ui.compose.settings.Settings
+import org.secuso.pfacore.ui.compose.preferences.settings.DisplayableSettingInfo
+import org.secuso.pfacore.ui.compose.preferences.settings.SettingCategory
+import org.secuso.pfacore.ui.compose.preferences.settings.SettingMenu
+import org.secuso.pfacore.ui.compose.preferences.settings.Settings
 import org.secuso.pfacore.ui.compose.theme.PrivacyFriendlyCoreTheme
 
 @Composable

@@ -1,4 +1,4 @@
-package org.secuso.pfacore.model
+package org.secuso.pfacore.model.preferences
 
 import android.util.JsonReader
 import androidx.lifecycle.MutableLiveData
@@ -23,13 +23,13 @@ interface Preferable<T> {
     fun restore(reader: JsonReader)
 }
 
-sealed class PreferenceBuildInfo<T>: PreferableBuildInfo<T> {
+open class PreferenceBuildInfo<T>: PreferableBuildInfo<T> {
     override var default: T? = null
     override var key: String? = null
     override var backup: Boolean = false
 }
 
-sealed class Preference<T>(
+open class Preference<T>(
     val state: MutableLiveData<T>,
     override val default: T,
     override val key: String,

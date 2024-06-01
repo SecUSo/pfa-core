@@ -20,7 +20,7 @@ import android.util.Log
 import androidx.preference.PreferenceManager
 import androidx.room.Room
 import org.secuso.pfacore.application.PFApplication
-import org.secuso.pfacore.model.Preferable
+import org.secuso.pfacore.model.preferences.Preferable
 import org.secuso.privacyfriendlybackup.api.backup.DatabaseUtil
 import org.secuso.privacyfriendlybackup.api.backup.FileUtil
 import org.secuso.privacyfriendlybackup.api.pfa.IBackupRestorer

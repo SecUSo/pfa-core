@@ -1,4 +1,4 @@
-package org.secuso.pfacore.ui.compose.settings.composables
+package org.secuso.pfacore.ui.compose.preferences.settings.composables
 
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.clickable
@@ -18,16 +18,15 @@ import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.State
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import org.secuso.pfacore.model.ISettingData
-import org.secuso.pfacore.ui.compose.settings.RadioSetting
-import org.secuso.pfacore.ui.compose.settings.SwitchSetting
+import org.secuso.pfacore.model.preferences.settings.ISettingData
+import org.secuso.pfacore.ui.compose.preferences.settings.RadioSetting
+import org.secuso.pfacore.ui.compose.preferences.settings.SwitchSetting
 import org.secuso.ui.compose.R
 
 val settingModifier = Modifier

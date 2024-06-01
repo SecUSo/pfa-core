@@ -1,7 +1,4 @@
-package org.secuso.pfacore.model.settings
-
-import org.secuso.pfacore.model.Setting
-import org.secuso.pfacore.model.SettingInfo
+package org.secuso.pfacore.model.preferences.settings
 
 interface SettingHierarchy<SI: SettingInfo> {
     fun all(): List<SettingHierarchy<SI>>
