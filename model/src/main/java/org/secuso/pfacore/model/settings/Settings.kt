@@ -4,7 +4,6 @@ import android.content.Context
 import android.content.SharedPreferences
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.map
 import org.secuso.pfacore.backup.Restorer
 import org.secuso.pfacore.backup.booleanRestorer
 import org.secuso.pfacore.backup.doubleRestorer
@@ -18,27 +17,28 @@ import org.secuso.pfacore.model.ISettingData
 import org.secuso.pfacore.model.SettingBuildInfo
 import org.secuso.pfacore.model.SettingInfo
 
-interface ISettings<SI: SettingInfo> {
+interface ISettings<SI: SettingInfo, S : SettingComposite<SI>> {
     @Suppress("unused")
-    val all: List<SettingComposite<SI, *>>
+    val all: List<S>
 }
 
-abstract class Settings<SI: SettingInfo, SHC : SettingCategory<SI>, SHM : SettingMenu<SI, SHC>>(internal val settings: List<SHC>) : ISettings<SI> {
-    override val all
-        get() = settings.map { it.allSettings() }.flatten()
+abstract class Settings<SI: SettingInfo, I : SettingComposite<SI>, SHC : SettingCategory<SI, I>, SHM : SettingMenu<SI, I>>(internal val settings: List<SHC>) : ISettings<SI, I> {
+    override val all: List<I>
+        get() = settings.map { it.all() }.flatten()
 
     data class SettingsBuilders<
             SI: SettingInfo,
-            SHC : SettingCategory<SI>,
-            SHM : SettingMenu<SI, SHC>,
-            S : Setting<SI, SHC, SHM, S, C, M>,
-            C : Category<SI, SHC, SHM, S, C, M>,
-            M : Menu<SI, SHC, SHM, S, C, M>,
+            I : SettingComposite<SI>,
+            SHC : SettingCategory<SI, I>,
+            SHM : SettingMenu<SI, I>,
+            S : Setting<SI, I, SHC, SHM, S, C, M>,
+            C : Category<SI, I, SHC, SHM, S, C, M>,
+            M : Menu<SI, I, SHC, SHM, S, C, M>,
             >(
-        private val _setting: (SettingsBuilders<SI, SHC, SHM, S, C, M>) -> S,
-        private val _category: (SettingsBuilders<SI, SHC, SHM, S, C, M>) -> C,
-        private val _menu: (SettingsBuilders<SI, SHC, SHM, S, C, M>) -> M,
-        val shc: (String, S) -> SHC,
+        private val _setting: (SettingsBuilders<SI, I, SHC, SHM, S, C, M>) -> S,
+        private val _category: (SettingsBuilders<SI, I, SHC, SHM, S, C, M>) -> C,
+        private val _menu: (SettingsBuilders<SI, I, SHC, SHM, S, C, M>) -> M,
+        val shc: (String, C) -> SHC,
         val shm: (String, M) -> SHM
     ) {
         val setting
@@ -51,15 +51,16 @@ abstract class Settings<SI: SettingInfo, SHC : SettingCategory<SI>, SHM : Settin
 
     abstract class Setting<
             SI: SettingInfo,
-            SHC : SettingCategory<SI>,
-            SHM : SettingMenu<SI, SHC>,
-            S : Setting<SI, SHC, SHM, S, C, M>,
-            C : Category<SI, SHC, SHM, S, C, M>,
-            M : Menu<SI, SHC, SHM, S, C, M>
+            I : SettingComposite<SI>,
+            SHC : SettingCategory<SI, I>,
+            SHM : SettingMenu<SI, I>,
+            S : Setting<SI,I, SHC, SHM, S, C, M>,
+            C : Category<SI, I, SHC, SHM, S, C, M>,
+            M : Menu<SI, I, SHC, SHM, S, C, M>
             >(
         val preferences: SharedPreferences,
-        val settings: MutableList<CategoricalSettingHierarchy<SI>> = mutableListOf(),
-        val builders: SettingsBuilders<SI, SHC, SHM, S, C, M>
+        val settings: MutableList<SettingHierarchy<I>> = mutableListOf(),
+        val builders: SettingsBuilders<SI, I, SHC, SHM, S, C, M>
     ) {
         protected val enabled: EnabledByDependency = { dependency ->
             if (dependency == null) {
@@ -67,12 +68,10 @@ abstract class Settings<SI: SettingInfo, SHC : SettingCategory<SI>, SHM : Settin
             } else {
                 val state = settings.filterIsInstance<ISettingData<Any>>().find { it.key == dependency }?.state
                     ?: throw IllegalStateException("Dependency $dependency not found. Dependencies must be in the same category and precede the setting")
-                state.map {
-                    if (it !is Boolean) {
-                        throw IllegalStateException("A Setting can currently only depend on Boolean-Settings")
-                    }
-                    it
+                if (state.value !is Boolean) {
+                    throw IllegalStateException("A Setting can currently only depend on Boolean-Settings")
                 }
+                state as MutableLiveData<Boolean>
             }
         }
 
@@ -120,58 +119,60 @@ abstract class Settings<SI: SettingInfo, SHC : SettingCategory<SI>, SHM : Settin
             }
             return factory(state, enabled, restorer, update).build(this).invoke()
         }
-        protected fun <S: org.secuso.pfacore.model.Setting<*>> S.register(): S = this.apply { settings.add(SettingComposite(this as org.secuso.pfacore.model.Setting<SI>)) }
+        protected fun <S: SettingComposite<*>> S.register() = this.apply { this@Setting.settings.add(this as SettingHierarchy<I>); this.data }
 
         fun menu(menu: String, initializer: M.() -> Unit) {
             this.settings.add(builders.shm(menu, builders.menu.apply(initializer)))
         }
     }
 
-    open class Category<
+    abstract class Category<
             SI: SettingInfo,
-            SHC : SettingCategory<SI>,
-            SHM : SettingMenu<SI, SHC>,
-            S : Setting<SI, SHC, SHM, S, C, M>,
-            C : Category<SI, SHC, SHM, S, C, M>,
-            M : Menu<SI, SHC, SHM, S, C, M>
+            I : SettingComposite<SI>,
+            SHC : SettingCategory<SI, I>,
+            SHM : SettingMenu<SI,I>,
+            S : Setting<SI, I, SHC, SHM, S, C, M>,
+            C : Category<SI, I, SHC, SHM, S, C, M>,
+            M : Menu<SI, I, SHC, SHM, S, C, M>
             >(
         private val context: Context,
-        private val builders: SettingsBuilders<SI, SHC, SHM, S, C, M>,
+        private val builders: SettingsBuilders<SI, I, SHC, SHM, S, C, M>,
     ) {
-        val categories: MutableList<SHC> = mutableListOf()
+        val settings: MutableList<SettingHierarchy<I>> = mutableListOf()
 
-        @Suppress("Unused")
+        @Suppress("Unused", "Unchecked_Cast")
         fun category(category: String, initializer: S.() -> Unit) {
-            this.categories.add(builders.shc(category, builders.setting.apply(initializer)))
+            this.settings.add(builders.shc(category, builders.category.apply { settings.addAll(builders.setting.apply(initializer).settings) }))
         }
 
-        @Suppress("Unused")
+        @Suppress("Unused", "Unchecked_Cast")
         fun category(categoryId: Int, initializer: S.() -> Unit) {
-            this.categories.add(builders.shc(context.getString(categoryId), builders.setting.apply(initializer)))
+            this.settings.add(builders.shc(context.getString(categoryId), builders.category.apply { settings.addAll(builders.setting.apply(initializer).settings) }))
         }
     }
 
-    open class Menu<
+    abstract class Menu<
             SI: SettingInfo,
-            SHC : SettingCategory<SI>,
-            SHM : SettingMenu<SI, SHC>,
-            S : Setting<SI, SHC, SHM, S, C, M>,
-            C : Category<SI, SHC, SHM, S, C, M>,
-            M : Menu<SI, SHC, SHM, S, C, M>
+            I : SettingComposite<SI>,
+            SHC : SettingCategory<SI, I>,
+            SHM : SettingMenu<SI, I>,
+            S : Setting<SI, I, SHC, SHM, S, C, M>,
+            C : Category<SI, I, SHC, SHM, S, C, M>,
+            M : Menu<SI, I, SHC, SHM, S, C, M>
             >(
-        private val builders: SettingsBuilders<SI, SHC, SHM, S, C, M>,
+        private val builders: SettingsBuilders<SI, I, SHC, SHM, S, C, M>,
     ) {
-        var setting: SettingComposite<SI, *>? = null
+        var setting: I? = null
             private set
             get() = (field ?: throw IllegalStateException("A menu needs a setting to click on."))
-        val settings: MutableList<SHC> = mutableListOf()
+        val settings: MutableList<SettingHierarchy<I>> = mutableListOf()
 
         fun setting(initializer: S.() -> Unit) {
-            this.setting = builders.setting.apply(initializer).settings.single().allSettings().single()
+            this.setting = builders.setting.apply(initializer).settings.single().all().single()
         }
 
         fun content(initializer: C.() -> Unit) {
-            this.settings.addAll(builders.category.apply(initializer).categories)
+            this.settings.addAll(builders.category.apply(initializer).settings)
         }
     }
 
@@ -179,18 +180,19 @@ abstract class Settings<SI: SettingInfo, SHC : SettingCategory<SI>, SHM : Settin
         @Suppress("Unused")
         fun <
                 SI: SettingInfo,
-                SHC : SettingCategory<SI>,
-                SHM : SettingMenu<SI, SHC>,
-                S : Setting<SI, SHC, SHM, S, C, M>,
-                C : Category<SI, SHC, SHM, S, C, M>,
-                M : Menu<SI, SHC, SHM, S, C, M>,
-                Set : Settings<SI, SHC, SHM>
+                I : SettingComposite<SI>,
+                SHC : SettingCategory<SI, I>,
+                SHM : SettingMenu<SI, I>,
+                S : Setting<SI, I, SHC, SHM, S, C, M>,
+                C : Category<SI, I, SHC, SHM, S, C, M>,
+                M : Menu<SI, I, SHC, SHM, S, C, M>,
+                Set : Settings<SI,I, SHC, SHM>
                 > build(
             builder: (settings: List<SHC>) -> Set,
-            builders: SettingsBuilders<SI, SHC, SHM, S, C, M>,
+            builders: SettingsBuilders<SI, I, SHC, SHM, S, C, M>,
             initializer: C.() -> Unit,
         ): Set {
-            return builder(builders.category.apply(initializer).categories)
+            return builder(builders.category.apply(initializer).settings as List<SHC>)
         }
     }
 
