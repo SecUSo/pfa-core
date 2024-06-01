@@ -2,6 +2,8 @@ package org.secuso.pfacore.ui.view.settings
 
 import android.content.Context
 import android.content.SharedPreferences
+import android.view.View
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -18,7 +20,7 @@ import org.secuso.pfacore.ui.view.settings.components.SettingsMenuFragment
 
 class Settings(
     private val settings: List<SettingCategory>,
-) : MSettings<InflatableSetting, SettingCategory, SettingMenu>(settings) {
+) : MSettings<InflatableSetting, SettingComposite<InflatableSetting>, SettingCategory, SettingMenu>(settings) {
 
     fun build(viewId: Int, fragmentManager: FragmentManager) = SettingsMenuFragment().apply {
         categories = settings;
@@ -27,8 +29,8 @@ class Settings(
     class Setting(
         preferences: SharedPreferences,
         val context: Context,
-        builders: SettingsBuilders<InflatableSetting, SettingCategory, SettingMenu, Setting, Category, Menu>
-    ) : MSetting<InflatableSetting, SettingCategory, SettingMenu, Setting, Category, Menu>(
+        builders: SettingsBuilders<InflatableSetting, SettingComposite<InflatableSetting>, SettingCategory, SettingMenu, Setting, Category, Menu>
+    ) : MSetting<InflatableSetting, SettingComposite<InflatableSetting>, SettingCategory, SettingMenu, Setting, Category, Menu>(
         preferences = preferences,
         builders = builders
     ) {
@@ -45,25 +47,25 @@ class Settings(
         }
     }
 
-    class Category(context: Context, builders: SettingsBuilders<InflatableSetting, SettingCategory, SettingMenu, Setting, Category, Menu>) :
-        MCategory<InflatableSetting, SettingCategory, SettingMenu, Setting, Category, Menu>(context, builders)
+    class Category(context: Context, builders: SettingsBuilders<InflatableSetting, SettingComposite<InflatableSetting>, SettingCategory, SettingMenu, Setting, Category, Menu>) :
+        MCategory<InflatableSetting, SettingComposite<InflatableSetting>, SettingCategory, SettingMenu, Setting, Category, Menu>(context, builders)
 
-    class Menu(builders: SettingsBuilders<InflatableSetting, SettingCategory, SettingMenu, Setting, Category, Menu>) :
-        MMenu<InflatableSetting, SettingCategory, SettingMenu, Setting, Category, Menu>(builders)
+    class Menu(builders: SettingsBuilders<InflatableSetting, SettingComposite<InflatableSetting>, SettingCategory, SettingMenu, Setting, Category, Menu>) :
+        MMenu<InflatableSetting, SettingComposite<InflatableSetting>, SettingCategory, SettingMenu, Setting, Category, Menu>(builders)
 
     companion object {
         fun build(
             context: Context,
             initializer: Category.() -> Unit
         ): Settings {
-            val builders = SettingsBuilders<InflatableSetting, SettingCategory, SettingMenu, Setting, Category, Menu>(
+            val builders = SettingsBuilders<InflatableSetting, SettingComposite<InflatableSetting>, SettingCategory, SettingMenu, Setting, Category, Menu>(
                 { Setting(PreferenceManager.getDefaultSharedPreferences(context), context, it) },
                 { Category(context, it) },
                 { Menu(it) },
                 { name, setting -> SettingCategory(name, setting) },
                 { name, menu -> SettingMenu(name, menu) }
             )
-            return MSettings.build<InflatableSetting, SettingCategory, SettingMenu, Setting, Category, Menu, Settings>(
+            return MSettings.build<InflatableSetting, SettingComposite<InflatableSetting>, SettingCategory, SettingMenu, Setting, Category, Menu, Settings>(
                 { Settings(it) },
                 builders,
                 initializer

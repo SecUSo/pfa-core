@@ -6,7 +6,6 @@ import android.view.ViewGroup
 import androidx.lifecycle.LifecycleOwner
 import androidx.recyclerview.widget.RecyclerView
 import org.secuso.pfacore.R
-import org.secuso.pfacore.model.Setting
 import org.secuso.pfacore.model.settings.SettingComposite
 import org.secuso.pfacore.model.settings.SettingHierarchy
 import org.secuso.pfacore.ui.view.replace
@@ -17,13 +16,13 @@ import org.secuso.ui.view.databinding.PreferenceBasicBinding
 import org.secuso.ui.view.databinding.PreferenceCategoryBinding
 
 class SettingsMenuAdapter(private val inflater: LayoutInflater, private val owner: LifecycleOwner, private val openMenu: (SettingMenu) -> Unit): RecyclerView.Adapter<RecyclerView.ViewHolder>() {
-    var items: List<SettingHierarchy<InflatableSetting>> = listOf()
+    var items: List<SettingHierarchy<SettingComposite<InflatableSetting>>> = listOf()
         // We want to display the whole menu by using a single recyclerview
         // therefore we want to flatten the hierarchy by treating the category as title only
         // and appending the settings of the category.
         set(value) {
             field = value.map { when(it) {
-                is SettingCategory -> mutableListOf<SettingHierarchy<InflatableSetting>>(it).apply { this.addAll(it.settings) }
+                is SettingCategory -> mutableListOf<SettingHierarchy<SettingComposite<InflatableSetting>>>(it).apply { this.addAll(it.settings) }
                 else -> listOf(it)
             } }.flatten()
         }
@@ -31,7 +30,7 @@ class SettingsMenuAdapter(private val inflater: LayoutInflater, private val owne
     override fun getItemCount() = items.count()
     override fun getItemViewType(position: Int) = when (items[position]) {
         is SettingCategory -> CATEGORY
-        is SettingComposite<InflatableSetting, *>, is SettingMenu -> SETTING
+        is SettingComposite, is SettingMenu -> SETTING
         else -> throw IllegalStateException("Class ${items[position]::class.java} is not a valid setting class")
     }
 
@@ -48,7 +47,7 @@ class SettingsMenuAdapter(private val inflater: LayoutInflater, private val owne
             is CategoryViewHolder -> holder.binding.text = (items[position] as SettingCategory).name
             is SettingViewHolder -> {
                 val setting = when (val item = items[position]) {
-                    is SettingComposite<InflatableSetting, *> -> item.setting as InflatableSetting
+                    is SettingComposite -> item as InflatableSetting
                     is SettingMenu -> {
                         item.menu.setting as InflatableSetting
                     }

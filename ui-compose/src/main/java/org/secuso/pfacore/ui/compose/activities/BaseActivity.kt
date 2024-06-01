@@ -27,7 +27,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.text.style.TextOverflow
 import org.secuso.pfacore.application.PFApplication
-import org.secuso.pfacore.model.Theme
 import org.secuso.pfacore.ui.compose.theme.PrivacyFriendlyCoreTheme
 import org.secuso.pfacore.ui.compose.theme.navbar
 
@@ -43,11 +42,9 @@ abstract class BaseActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         val application = PFApplication.instance
         setContent {
-            val theme = application.data.theme.observeAsState()
+            val lightMode = application.data.lightMode.observeAsState(false)
             PrivacyFriendlyCoreTheme(
-                darkTheme = isSystemInDarkTheme()
-                        && (resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK == Configuration.UI_MODE_NIGHT_YES)
-                        && (theme.value == Theme.DARK || theme.value == Theme.SYSTEM)
+                useDarkTheme = isSystemInDarkTheme() && resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK == Configuration.UI_MODE_NIGHT_YES && !lightMode.value
             ) {
                 window.statusBarColor = MaterialTheme.colorScheme.navbar.toArgb()
                 Scaffold(
