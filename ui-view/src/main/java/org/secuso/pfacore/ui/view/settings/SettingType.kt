@@ -1,13 +1,7 @@
 package org.secuso.pfacore.ui.view.settings
 
 import android.content.res.Resources
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
-import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.work.impl.utils.LiveDataUtils
 import org.secuso.pfacore.model.ISettingData
 import org.secuso.pfacore.model.ISettingDataBuildInfo
 import org.secuso.pfacore.model.SettingData
@@ -21,11 +15,9 @@ import org.secuso.pfacore.model.settings.SwitchSetting as MSwitchSetting
 import org.secuso.pfacore.ui.view.BasicInfo
 import org.secuso.pfacore.ui.view.Inflatable
 import org.secuso.pfacore.ui.view.TransformableInfo
-import org.secuso.pfacore.ui.view.replace
 import org.secuso.pfacore.ui.view.settings.components.RadioAdapter
 import org.secuso.ui.view.R
 import org.secuso.ui.view.databinding.PreferenceActionListBinding
-import org.secuso.ui.view.databinding.PreferenceBasicBinding
 import org.secuso.ui.view.databinding.PreferenceSwitchBinding
 import org.secuso.ui.view.databinding.SimpleDescriptionBinding
 import org.secuso.ui.view.databinding.SimpleTitleBinding
@@ -81,7 +73,7 @@ open class BasicDisplaySetting(private val resources: Resources) {
 }
 
 
-class SwitchSetting(data: SwitchData) : MSwitchSetting<SwitchSetting.SwitchData, SwitchSetting>(data), InflatableSetting {
+class SwitchSetting(data: SwitchData) : MSwitchSetting<SwitchSetting.SwitchData>(data), InflatableSetting {
     companion object {
         fun factory(): SettingFactory<Boolean, SwitchBuildInfo, SwitchData> = factory { info, data -> SwitchData(data.data, info.requireTitle(), info.requireSummary()) }
     }
@@ -110,14 +102,14 @@ class SwitchSetting(data: SwitchData) : MSwitchSetting<SwitchSetting.SwitchData,
             PreferenceSwitchBinding.inflate(inflater, root, false).apply {
                 action.setOnClickListener { data.value = !(data.value ?: data.default) }
                 action.isChecked = data.value ?: data.default
-                data.enabled.observe(owner) { enabled = it }
-                data.state.observe(owner) { action.isEnabled = it }
+                data.state.observe(owner) { action.isChecked = it }
                 enabled = data.enabled.value ?: true
+                data.enabled.observe(owner) { enabled = it }
             }.root
         }
 }
 
-class RadioSetting<T>(data: RadioData<T>) : MRadioSetting<T,RadioSetting.RadioData<T>, RadioSetting<T>>(data), InflatableSetting {
+class RadioSetting<T>(data: RadioData<T>) : MRadioSetting<T,RadioSetting.RadioData<T>>(data), InflatableSetting {
     companion object {
         fun <T> factory(): SettingFactory<T, RadioBuildInfo<T>, RadioData<T>> = factory() { info, data -> RadioData(data.data, info.entries, info.requireTitle(), info.requireSummary()) }
     }
@@ -153,7 +145,7 @@ class RadioSetting<T>(data: RadioData<T>) : MRadioSetting<T,RadioSetting.RadioDa
         }
 }
 
-class MenuSetting(data: MenuData) : MMenuSetting<MenuSetting.MenuData, MenuSetting>(data), InflatableSetting {
+class MenuSetting(data: MenuData) : MMenuSetting<MenuSetting.MenuData>(data), InflatableSetting {
     companion object {
         fun factory(): SettingFactory<Unit, MenuBuildInfo, MenuData> = factory() { info, data -> MenuData(info.requireTitle(), info.summary) }
     }

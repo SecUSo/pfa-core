@@ -16,7 +16,6 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import org.secuso.pfacore.model.settings.SettingComposite
 import org.secuso.pfacore.ui.compose.settings.DisplayableSettingInfo
 import org.secuso.pfacore.ui.compose.settings.SettingCategory
 import org.secuso.pfacore.ui.compose.settings.SettingMenu
@@ -45,27 +44,21 @@ fun SettingsMenu(settings: List<SettingCategory>) {
                 items(count = settings.size) {
                     val category = settings[it]
                     PreferenceGroupHeader(text = category.name)
-                    for (setting in category.settings) {
-                        when (setting) {
-                            is SettingMenu -> {
-                                (setting.menu.setting!! as DisplayableSettingInfo).Display { navController.navigate("_${setting.name}") }
-                            }
-
-                            is SettingComposite -> {
-                                (setting as DisplayableSettingInfo).Display {}
-                            }
-
-                            is SettingCategory -> {
-                                throw IllegalStateException("Category ${category.name} cannot contain another Category ${setting.name}")
-                            }
+                    category.settings
+                        .map { setting ->
+                            Pair(setting.setting(), when(setting) {
+                                is SettingMenu -> ({ navController.navigate("_${setting.name}") })
+                                else -> ({})
+                            })
                         }
-                    }
+                        .filterIsInstance<Pair<DisplayableSettingInfo, () -> Unit>>()
+                        .forEach { (setting, onClick) -> setting.Display(onClick) }
                 }
             }
         }
         for (menu in menus) {
             composable("_${menu.name}") {
-                SettingsMenu(settings = menu.settings as List<SettingCategory>)
+                SettingsMenu(settings = menu.settings)
             }
         }
     }

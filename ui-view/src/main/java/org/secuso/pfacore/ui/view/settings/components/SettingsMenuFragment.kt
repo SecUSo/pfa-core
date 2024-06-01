@@ -23,7 +23,7 @@ class SettingsMenuFragment: Fragment() {
         binding = FragmentPreferenceMenuBinding.inflate(inflater, container, false).apply {
             settings.adapter = SettingsMenuAdapter(inflater, this@SettingsMenuFragment) {
                 SettingsMenuFragment().apply {
-                    categories = it.settings as List<SettingCategory>
+                    categories = it.settings
                     openMenu = this@SettingsMenuFragment.openMenu
                     openMenu!!(this)
                 }
