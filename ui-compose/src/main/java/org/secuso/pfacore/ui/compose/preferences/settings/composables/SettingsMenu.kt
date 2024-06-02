@@ -16,11 +16,10 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import androidx.preference.PreferenceManager
 import org.secuso.pfacore.ui.compose.preferences.settings.DisplayableSettingInfo
 import org.secuso.pfacore.ui.compose.preferences.settings.SettingCategory
 import org.secuso.pfacore.ui.compose.preferences.settings.SettingMenu
-import org.secuso.pfacore.ui.compose.preferences.settings.Settings
+import org.secuso.pfacore.ui.compose.preferences.appPreferences
 import org.secuso.pfacore.ui.compose.theme.PrivacyFriendlyCoreTheme
 
 @Composable
@@ -69,7 +68,7 @@ fun SettingsMenu(settings: List<SettingCategory>) {
 @Composable
 fun SettingsMenuPreview() {
     val context = LocalContext.current
-    val preferences = org.secuso.pfacore.model.preferences.Preferences.build<Settings>(PreferenceManager.getDefaultSharedPreferences(LocalContext.current)) {
+    val preferences = appPreferences(LocalContext.current) {
         preferences {
             preference<String> {
                 key = "test"
@@ -77,7 +76,7 @@ fun SettingsMenuPreview() {
                 backup = false
             }
         }
-        settings = Settings.build(context) {
+        settings {
             category("General") {
                 switch {
                     key = "test"
