@@ -94,7 +94,7 @@ class BackupRestorer : IBackupRestorer {
 
         while (reader.hasNext()) {
             val name = reader.nextName()
-            val pref = PFApplication.instance.data.settings.all.map { it.data }.filterIsInstance<Preferable<*>>().firstOrNull { it.key == name }
+            val pref = PFApplication.instance.data.settings.all.map { it.setting.data }.filterIsInstance<Preferable<*>>().firstOrNull { it.key == name }
             if (pref == null) {
                 throw RuntimeException("Unknown preference $name")
             } else {

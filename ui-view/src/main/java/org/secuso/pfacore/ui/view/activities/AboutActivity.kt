@@ -28,7 +28,7 @@ import java.util.regex.Pattern
 /**
  * Activity that gives information about the developers.
  */
-class AboutActivity : BaseActivity() {
+class AboutActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
