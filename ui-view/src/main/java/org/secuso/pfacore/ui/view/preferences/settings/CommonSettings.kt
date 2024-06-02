@@ -1,11 +1,10 @@
-package org.secuso.pfacore.ui.compose.settings
+package org.secuso.pfacore.ui.view.preferences.settings
 
 import androidx.appcompat.app.AppCompatDelegate
 import org.secuso.pfacore.R
 import org.secuso.pfacore.model.Theme
 
 class SettingThemeSelector {
-
     companion object {
         const val themeSelectorKey = "settings_day_night_theme"
     }

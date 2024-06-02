@@ -1,12 +1,9 @@
-package org.secuso.pfacore.ui.view.settings.components
+package org.secuso.pfacore.ui.view.preferences.settings.components
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import androidx.lifecycle.LifecycleOwner
 import androidx.recyclerview.widget.RecyclerView
-import org.secuso.pfacore.model.SettingEntry
-import org.secuso.pfacore.ui.view.help.HelpData
-import org.secuso.pfacore.ui.view.replace
+import org.secuso.pfacore.model.preferences.settings.SettingEntry
 import org.secuso.ui.view.databinding.PreferenceActionRadioItemBinding
 
 class RadioAdapter<T>(private val inflater: LayoutInflater, private val items: List<SettingEntry<T>>, active: T? = null, private val onClick: (T) -> Unit): RecyclerView.Adapter<RadioAdapter.ViewHolder>() {

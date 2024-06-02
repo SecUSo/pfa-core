@@ -1,4 +1,4 @@
-package org.secuso.pfacore.ui.view.settings
+package org.secuso.pfacore.ui.view.preferences.settings
 
 import android.content.Context
 import android.content.SharedPreferences
@@ -6,15 +6,14 @@ import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.preference.PreferenceManager
-import org.secuso.pfacore.model.SettingEntry
-import org.secuso.pfacore.model.SettingInfo
-import org.secuso.pfacore.model.settings.SettingComposite
-import org.secuso.pfacore.model.settings.Settings as MSettings
-import org.secuso.pfacore.model.settings.Settings.Category as MCategory
-import org.secuso.pfacore.model.settings.Settings.Menu as MMenu
-import org.secuso.pfacore.model.settings.Settings.Setting as MSetting
+import org.secuso.pfacore.model.preferences.settings.SettingEntry
+import org.secuso.pfacore.model.preferences.Info
+import org.secuso.pfacore.model.preferences.settings.Settings as MSettings
+import org.secuso.pfacore.model.preferences.settings.Settings.Category as MCategory
+import org.secuso.pfacore.model.preferences.settings.Settings.Menu as MMenu
+import org.secuso.pfacore.model.preferences.settings.Settings.Setting as MSetting
 import org.secuso.pfacore.ui.view.Inflatable
-import org.secuso.pfacore.ui.view.settings.components.SettingsMenuFragment
+import org.secuso.pfacore.ui.view.preferences.settings.components.SettingsMenuFragment
 
 class Settings(
     private val settings: List<SettingCategory>,
@@ -63,7 +62,7 @@ class Settings(
                 { name, setting -> SettingCategory(name, setting) },
                 { name, menu -> SettingMenu(name, menu) }
             )
-            return MSettings.build<InflatableSetting, SettingCategory, SettingMenu, Setting, Category, Menu, Settings>(
+            return org.secuso.pfacore.model.preferences.settings.Settings.build<InflatableSetting, SettingCategory, SettingMenu, Setting, Category, Menu, Settings>(
                 { Settings(it) },
                 builders,
                 initializer
@@ -72,7 +71,7 @@ class Settings(
     }
 }
 
-interface InflatableSetting: SettingInfo {
+interface InflatableSetting: Info {
 
     val enabled: LiveData<Boolean>
         get() = MutableLiveData(true)

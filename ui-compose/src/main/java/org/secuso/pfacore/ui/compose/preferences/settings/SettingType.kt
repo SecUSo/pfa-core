@@ -1,4 +1,4 @@
-package org.secuso.pfacore.ui.compose.settings
+package org.secuso.pfacore.ui.compose.preferences.settings
 
 import android.annotation.SuppressLint
 import android.content.res.Resources
@@ -6,21 +6,22 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
-import org.secuso.pfacore.model.ISettingData
-import org.secuso.pfacore.model.ISettingDataBuildInfo
-import org.secuso.pfacore.model.SettingData
-import org.secuso.pfacore.model.SettingDataBuildInfo
-import org.secuso.pfacore.model.SettingEntry
-import org.secuso.pfacore.model.settings.Entries
-import org.secuso.pfacore.model.settings.SettingFactory
+import org.secuso.pfacore.model.preferences.settings.ISettingData
+import org.secuso.pfacore.model.preferences.settings.ISettingDataBuildInfo
+import org.secuso.pfacore.model.preferences.settings.SettingData
+import org.secuso.pfacore.model.preferences.settings.SettingDataBuildInfo
+import org.secuso.pfacore.model.preferences.settings.SettingEntry
+import org.secuso.pfacore.model.preferences.settings.Entries
+import org.secuso.pfacore.model.preferences.PreferenceFactory
+import org.secuso.pfacore.model.preferences.settings.SettingFactory
 import org.secuso.pfacore.ui.compose.BasicInfo
-import org.secuso.pfacore.model.settings.MenuSetting as MMenuSetting
-import org.secuso.pfacore.model.settings.RadioSetting as MRadioSetting
+import org.secuso.pfacore.model.preferences.settings.MenuSetting as MMenuSetting
+import org.secuso.pfacore.model.preferences.settings.RadioSetting as MRadioSetting
 import org.secuso.pfacore.ui.compose.TransformableInfo
-import org.secuso.pfacore.model.settings.SwitchSetting as MSwitchSetting
-import org.secuso.pfacore.ui.compose.settings.composables.MenuPreference
-import org.secuso.pfacore.ui.compose.settings.composables.RadioPreference
-import org.secuso.pfacore.ui.compose.settings.composables.SwitchPreference
+import org.secuso.pfacore.model.preferences.settings.SwitchSetting as MSwitchSetting
+import org.secuso.pfacore.ui.compose.preferences.settings.composables.MenuPreference
+import org.secuso.pfacore.ui.compose.preferences.settings.composables.RadioPreference
+import org.secuso.pfacore.ui.compose.preferences.settings.composables.SwitchPreference
 
 open class DisplaySetting<T, SD: ISettingData<T>>(private val resources: Resources) {
     var title: @Composable ((SD, T, Modifier) -> Unit)? = null
@@ -57,7 +58,7 @@ open class BasicDisplaySetting(private val resources: Resources) {
 
 class SwitchSetting(data: SwitchData) : MSwitchSetting<SwitchSetting.SwitchData>(data), DisplayableSettingInfo {
     companion object {
-        fun factory(): SettingFactory<Boolean, SwitchBuildInfo, SwitchData> = factory { info, data -> SwitchData(data.data, info.requireTitle(), info.requireSummary()) }
+        fun factory(): SettingFactory<SwitchBuildInfo, SwitchData> = factory { info, data -> SwitchData(data.data, info.requireTitle(), info.requireSummary()) }
     }
 
     class SwitchData(
@@ -87,9 +88,9 @@ class SwitchSetting(data: SwitchData) : MSwitchSetting<SwitchSetting.SwitchData>
     }
 }
 
-class RadioSetting<T>(data: RadioData<T>) : MRadioSetting<T,RadioSetting.RadioData<T>>(data), DisplayableSettingInfo {
+class RadioSetting<T>(data: RadioData<T>) : MRadioSetting<T, RadioSetting.RadioData<T>>(data), DisplayableSettingInfo {
     companion object {
-        fun <T> factory(): SettingFactory<T, RadioBuildInfo<T>, RadioData<T>> = factory() { info, data -> RadioData(data.data, info.entries, info.requireTitle(), info.requireSummary()) }
+        fun <T> factory(): SettingFactory<RadioBuildInfo<T>, RadioData<T>> = factory() { info, data -> RadioData(data.data, info.entries, info.requireTitle(), info.requireSummary()) }
     }
     class RadioData<T>(
         data: SettingData<T>,
@@ -125,7 +126,7 @@ class RadioSetting<T>(data: RadioData<T>) : MRadioSetting<T,RadioSetting.RadioDa
 
 class MenuSetting(data: MenuData) : MMenuSetting<MenuSetting.MenuData>(data), DisplayableSettingInfo {
     companion object {
-        fun factory(): SettingFactory<Unit, MenuBuildInfo, MenuData> = factory() { info, data -> MenuData(info.requireTitle(), info.summary) }
+        fun factory(): SettingFactory<MenuBuildInfo, MenuData> = factory() { info, data -> MenuData(info.requireTitle(), info.summary) }
     }
     class MenuData(
         val title: @Composable (Modifier) -> Unit,

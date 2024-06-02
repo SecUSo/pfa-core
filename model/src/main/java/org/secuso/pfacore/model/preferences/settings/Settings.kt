@@ -1,4 +1,4 @@
-package org.secuso.pfacore.model.settings
+package org.secuso.pfacore.model.preferences.settings
 
 import android.content.Context
 import android.content.SharedPreferences
@@ -12,23 +12,23 @@ import org.secuso.pfacore.backup.floatRestorer
 import org.secuso.pfacore.backup.intRestorer
 import org.secuso.pfacore.backup.noRestorer
 import org.secuso.pfacore.backup.stringRestorer
-import org.secuso.pfacore.model.DataSaverUpdater
-import org.secuso.pfacore.model.EnabledByDependency
-import org.secuso.pfacore.model.ISettingData
-import org.secuso.pfacore.model.SettingBuildInfo
-import org.secuso.pfacore.model.SettingInfo
+import org.secuso.pfacore.model.preferences.PreferenceFactory
+import org.secuso.pfacore.model.preferences.BuildInfo
+import org.secuso.pfacore.model.preferences.DataSaverUpdater
+import org.secuso.pfacore.model.preferences.Info
+import org.secuso.pfacore.model.preferences.InfoFactory
 
-interface ISettings<SI: SettingInfo> {
+interface ISettings<SI: Info> {
     @Suppress("unused")
     val all: List<SettingComposite<SI, *>>
 }
 
-abstract class Settings<SI: SettingInfo, SHC : SettingCategory<SI>, SHM : SettingMenu<SI, SHC>>(internal val settings: List<SHC>) : ISettings<SI> {
+abstract class Settings<SI: Info, SHC : SettingCategory<SI>, SHM : SettingMenu<SI, SHC>>(internal val settings: List<SHC>) : ISettings<SI> {
     override val all
         get() = settings.map { it.allSettings() }.flatten()
 
     data class SettingsBuilders<
-            SI: SettingInfo,
+            SI: Info,
             SHC : SettingCategory<SI>,
             SHM : SettingMenu<SI, SHC>,
             S : Setting<SI, SHC, SHM, S, C, M>,
@@ -50,7 +50,7 @@ abstract class Settings<SI: SettingInfo, SHC : SettingCategory<SI>, SHM : Settin
     }
 
     abstract class Setting<
-            SI: SettingInfo,
+            SI: Info,
             SHC : SettingCategory<SI>,
             SHM : SettingMenu<SI, SHC>,
             S : Setting<SI, SHC, SHM, S, C, M>,
@@ -76,51 +76,10 @@ abstract class Settings<SI: SettingInfo, SHC : SettingCategory<SI>, SHM : Settin
             }
         }
 
-        protected fun <T, BI: SettingBuildInfo, SI: SettingInfo> BI.build(factory: SettingFactory<T, BI, SI>): SI {
-            val state = { key: String, value: T ->
-                @Suppress("IMPLICIT_CAST_TO_ANY")
-                MutableLiveData(
-                    when (value) {
-                        is Unit -> Unit
-                        is Boolean -> preferences.getBoolean(key, value as Boolean)
-                        is String -> preferences.getString(key, value as String)
-                        is Int -> preferences.getInt(key, value as Int)
-                        is Float -> preferences.getFloat(key, value as Float)
-                        is Double -> Double.fromBits(preferences.getLong(key, (value as Double).toRawBits()))
-                        else -> throw UnsupportedOperationException("The given type ${value!!::class.java} is no valid setting type")
-                    } as T
-                )
-            }
-            val update: DataSaverUpdater<T> = { key: String, default: T, onUpdate: (T) -> Unit -> { value: T ->
-                    preferences.edit().apply {
-                        Log.d("Saving setting", "key: ${key}, value: $value")
-                        when (default) {
-                            is Boolean -> putBoolean(key, value as Boolean)
-                            is String -> putString(key, value as String)
-                            is Int -> putInt(key, value as Int)
-                            is Float -> putFloat(key, value as Float)
-                            is Double -> putLong(key, (value as Double).toRawBits())
-                            is Unit -> {}
-                            else -> throw UnsupportedOperationException("The given type ${default!!::class.java} is no valid setting type")
-                        }
-                    }.apply()
-                    onUpdate(value)
-                }
-            }
-            val restorer = { value: T ->
-                when (value) {
-                    is Boolean -> booleanRestorer
-                    is String -> stringRestorer
-                    is Int -> intRestorer
-                    is Float -> floatRestorer
-                    is Double -> doubleRestorer
-                    is Unit -> noRestorer
-                    else -> throw UnsupportedOperationException("The given type ${value!!::class.java} cannot be restored")
-                } as Restorer<T>
-            }
-            return factory(state, enabled, restorer, update).build(this).invoke()
+        protected fun <BI: BuildInfo, SI: Info> BI.build(factory: SettingFactory<BI, SI>): SI {
+            return factory(preferences, enabled).build(this).invoke()
         }
-        protected fun <S: org.secuso.pfacore.model.Setting<*>> S.register(): S = this.apply { settings.add(SettingComposite(this as org.secuso.pfacore.model.Setting<SI>)) }
+        protected fun <S: org.secuso.pfacore.model.preferences.settings.Setting<*>> S.register(): S = this.apply { settings.add(SettingComposite(this as org.secuso.pfacore.model.preferences.settings.Setting<SI>)) }
 
         fun menu(menu: String, initializer: M.() -> Unit) {
             this.settings.add(builders.shm(menu, builders.menu.apply(initializer)))
@@ -128,7 +87,7 @@ abstract class Settings<SI: SettingInfo, SHC : SettingCategory<SI>, SHM : Settin
     }
 
     open class Category<
-            SI: SettingInfo,
+            SI: Info,
             SHC : SettingCategory<SI>,
             SHM : SettingMenu<SI, SHC>,
             S : Setting<SI, SHC, SHM, S, C, M>,
@@ -152,7 +111,7 @@ abstract class Settings<SI: SettingInfo, SHC : SettingCategory<SI>, SHM : Settin
     }
 
     open class Menu<
-            SI: SettingInfo,
+            SI: Info,
             SHC : SettingCategory<SI>,
             SHM : SettingMenu<SI, SHC>,
             S : Setting<SI, SHC, SHM, S, C, M>,
@@ -178,7 +137,7 @@ abstract class Settings<SI: SettingInfo, SHC : SettingCategory<SI>, SHM : Settin
     companion object {
         @Suppress("Unused")
         fun <
-                SI: SettingInfo,
+                SI: Info,
                 SHC : SettingCategory<SI>,
                 SHM : SettingMenu<SI, SHC>,
                 S : Setting<SI, SHC, SHM, S, C, M>,

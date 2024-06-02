@@ -1,18 +1,17 @@
-package org.secuso.pfacore.ui.compose.settings
+package org.secuso.pfacore.ui.compose.preferences.settings
 
 import android.content.Context
 import android.content.SharedPreferences
 import androidx.compose.runtime.Composable
 import androidx.preference.PreferenceManager
-import org.secuso.pfacore.model.SettingEntry
-import org.secuso.pfacore.model.SettingInfo
-import org.secuso.pfacore.model.settings.SettingComposite
+import org.secuso.pfacore.model.preferences.settings.SettingEntry
+import org.secuso.pfacore.model.preferences.Info
 import org.secuso.pfacore.ui.compose.Displayable
-import org.secuso.pfacore.ui.compose.settings.composables.SettingsMenu
-import org.secuso.pfacore.model.settings.Settings as MSettings
-import org.secuso.pfacore.model.settings.Settings.Category as MCategory
-import org.secuso.pfacore.model.settings.Settings.Menu as MMenu
-import org.secuso.pfacore.model.settings.Settings.Setting as MSetting
+import org.secuso.pfacore.ui.compose.preferences.settings.composables.SettingsMenu
+import org.secuso.pfacore.model.preferences.settings.Settings as MSettings
+import org.secuso.pfacore.model.preferences.settings.Settings.Category as MCategory
+import org.secuso.pfacore.model.preferences.settings.Settings.Menu as MMenu
+import org.secuso.pfacore.model.preferences.settings.Settings.Setting as MSetting
 
 class Settings(
     settings: List<SettingCategory>,
@@ -63,7 +62,7 @@ class Settings(
                 { name, setting -> SettingCategory(name, setting) },
                 { name, menu -> SettingMenu(name, menu) }
             )
-            return MSettings.build<DisplayableSettingInfo, SettingCategory, SettingMenu, Setting, Category, Menu, Settings>(
+            return org.secuso.pfacore.model.preferences.settings.Settings.build<DisplayableSettingInfo, SettingCategory, SettingMenu, Setting, Category, Menu, Settings>(
                 { Settings(it) },
                 builders,
                 initializer
@@ -72,4 +71,4 @@ class Settings(
     }
 }
 
-interface DisplayableSettingInfo: SettingInfo, Displayable
+interface DisplayableSettingInfo: Info, Displayable
