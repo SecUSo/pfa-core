@@ -41,8 +41,5 @@
         <attr name="stylePreferenceCategoryHeader" format="reference" />
         <attr name="stylePreference" format="reference" />
     </declare-styleable>
-    <declare-styleable name="PrivacyFriendlyCoreTheme.Preference">
-        <attr name="stylePreferenceCategoryHeader" format="reference" />
-    </declare-styleable>
     <drawable name="splash_screen" />
 </resources>

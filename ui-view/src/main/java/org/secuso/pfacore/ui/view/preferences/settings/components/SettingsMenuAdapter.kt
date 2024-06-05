@@ -49,7 +49,7 @@ class SettingsMenuAdapter(private val inflater: LayoutInflater, private val owne
                 val setting = when (val item = items[position]) {
                     is SettingComposite<InflatableSetting, *> -> item.setting as InflatableSetting
                     is SettingMenu -> {
-                        item.menu.setting as InflatableSetting
+                        item.setting() as InflatableSetting
                     }
                     else -> throw IllegalStateException("A category cannot contain another category.")
                 }

@@ -63,5 +63,6 @@
         <item name="android:homeAsUpIndicator">@drawable/arrow_back</item>
 
         <item name="stylePreference">@style/PrivacyFriendlyCoreTheme.Preference</item>
+        <item name="stylePreferenceCategoryHeader">@style/PrivacyFriendlyCoreTheme.Preference.CategoryTitle</item>
     </style>
 </resources>
