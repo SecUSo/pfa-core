@@ -34,7 +34,7 @@ open class SettingMenu<SI: Info, SC: SettingCategory<SI>>(
     val setting: SettingComposite<SI, *>,
     val settings: List<SC>
 ) : CategoricalSettingHierarchy<SI> {
-    override fun setting() = setting.setting
+    override fun setting() = setting.setting()
     override fun all() = settings
     override fun allSettings(): List<SettingComposite<SI, *>> = settings.map { it.allSettings() }.flatten()
 }

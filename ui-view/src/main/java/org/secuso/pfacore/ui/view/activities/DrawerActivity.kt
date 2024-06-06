@@ -2,6 +2,7 @@ package org.secuso.pfacore.ui.view.activities
 
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
 import androidx.annotation.DrawableRes
 import androidx.annotation.LayoutRes
 import androidx.appcompat.app.AppCompatActivity
@@ -17,15 +18,15 @@ import org.secuso.pfacore.model.DrawerSection as MDrawerSection
 
 
 abstract class DrawerActivity: AppCompatActivity() {
-    protected var activeDrawerElement: DrawerElement? = null
-    private val drawerBinding: ActivityDrawerBinding by lazy {
-        ActivityDrawerBinding.inflate(layoutInflater)
-    }
+    private lateinit var drawerBinding: ActivityDrawerBinding
 
-    fun setContent(@LayoutRes layoutResID: Int, @DrawableRes imgRes: Int, menu: DrawerMenu) {
+    abstract fun isActiveDrawerElement(element: DrawerElement): Boolean
+
+    private fun initContent(@DrawableRes imgRes: Int, menu: DrawerMenu) {
+        drawerBinding = ActivityDrawerBinding.inflate(layoutInflater)
         super.setContentView(drawerBinding.root)
 
-        setSupportActionBar(drawerBinding.toolbarWrapper.toolbar)
+        setSupportActionBar(findViewById(org.secuso.ui.view.R.id.toolbar))
         supportActionBar?.setHomeAsUpIndicator(R.drawable.ic_menu)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         val header = DrawerNavHeaderBinding.inflate(layoutInflater, null, false)
@@ -44,15 +45,32 @@ abstract class DrawerActivity: AppCompatActivity() {
                     if (it.icon != null) {
                         setIcon(it.icon!!)
                     }
-                    if (it == activeDrawerElement) {
+                    if (isActiveDrawerElement(it)) {
                         isChecked = true
                     }
                     setOnMenuItemClickListener {  _ -> it.onClick(this@DrawerActivity); true }
                 }
             }
         }
+    }
 
+    fun setContent(view: View, @DrawableRes imgRes: Int, menu: DrawerMenu) {
+        initContent(imgRes, menu)
+        drawerBinding.content.addView(view)
+    }
+
+    fun setContent(@LayoutRes layoutResID: Int, @DrawableRes imgRes: Int, menu: DrawerMenu) {
+        initContent(imgRes, menu)
         drawerBinding.content.addView(layoutInflater.inflate(layoutResID, drawerBinding.content, false))
+    }
+
+    @Deprecated("Deprecated in Java")
+    override fun onBackPressed() {
+        if (drawerBinding.drawerLayout.isDrawerOpen(GravityCompat.START)) {
+            drawerBinding.drawerLayout.closeDrawer(GravityCompat.START)
+        } else {
+            super.onBackPressed()
+        }
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
