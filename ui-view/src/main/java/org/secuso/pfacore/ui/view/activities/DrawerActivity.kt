@@ -10,6 +10,7 @@ import androidx.core.view.GravityCompat
 import org.secuso.pfacore.application.PFApplication
 import org.secuso.pfacore.model.DrawerMenu
 import org.secuso.pfacore.R
+import org.secuso.pfacore.model.Drawer
 import org.secuso.pfacore.model.DrawerElement
 import org.secuso.ui.view.databinding.ActivityDrawerBinding
 import org.secuso.ui.view.databinding.DrawerNavHeaderBinding
@@ -17,29 +18,46 @@ import org.secuso.pfacore.model.ActivityDrawerElement as ActivityDrawerElement
 import org.secuso.pfacore.model.DrawerSection as MDrawerSection
 
 
-abstract class DrawerActivity: AppCompatActivity() {
+abstract class DrawerActivity: AppCompatActivity(), Drawer {
     private lateinit var drawerBinding: ActivityDrawerBinding
 
-    abstract fun isActiveDrawerElement(element: DrawerElement): Boolean
+    override fun defaultDrawerSection(builder: DrawerMenu.Builder) {
+        builder.apply {
+            section {
+                activity {
+                    name = getString(R.string.nav_help)
+                    icon = R.drawable.ic_help
+                    clazz = HelpActivity::class.java
+                }
+                activity {
+                    name = getString(R.string.nav_settings)
+                    icon = R.drawable.ic_settings
+                    clazz = SettingsActivity::class.java
+                }
+                activity {
+                    name = getString(R.string.nav_about)
+                    icon = R.drawable.ic_info
+                    clazz = AboutActivity::class.java
+                }
+            }
+        }
+    }
 
-    private fun initContent(@DrawableRes imgRes: Int, menu: DrawerMenu) {
+    private fun initContent() {
         drawerBinding = ActivityDrawerBinding.inflate(layoutInflater)
         super.setContentView(drawerBinding.root)
 
         setSupportActionBar(findViewById(org.secuso.ui.view.R.id.toolbar))
         supportActionBar?.setHomeAsUpIndicator(R.drawable.ic_menu)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
+
+        val drawer = drawer()
         val header = DrawerNavHeaderBinding.inflate(layoutInflater, null, false)
-        header.name = PFApplication.instance.name
-        header.imageView.setImageResource(imgRes)
+        header.name = drawer.name
+        header.imageView.setImageResource(drawer.icon)
         drawerBinding.navView.addHeaderView(header.root)
-        val standardMenu = MDrawerSection(listOf(
-            ActivityDrawerElement(getString(R.string.nav_settings), R.drawable.ic_settings, SettingsActivity::class.java),
-            ActivityDrawerElement(getString(R.string.nav_help), R.drawable.ic_help, HelpActivity::class.java),
-            ActivityDrawerElement(getString(R.string.nav_about), R.drawable.ic_info, AboutActivity::class.java)
-        ));
-        val sections = menu.sections + standardMenu
-        sections.forEachIndexed { index, section ->
+
+        drawer.sections.forEachIndexed { index, section ->
             section.items.forEach {
                 drawerBinding.navView.menu.add(index, Menu.NONE, Menu.NONE, it.name).apply {
                     if (it.icon != null) {
@@ -54,13 +72,13 @@ abstract class DrawerActivity: AppCompatActivity() {
         }
     }
 
-    fun setContent(view: View, @DrawableRes imgRes: Int, menu: DrawerMenu) {
-        initContent(imgRes, menu)
+    fun setContent(view: View) {
+        initContent()
         drawerBinding.content.addView(view)
     }
 
-    fun setContent(@LayoutRes layoutResID: Int, @DrawableRes imgRes: Int, menu: DrawerMenu) {
-        initContent(imgRes, menu)
+    fun setContent(@LayoutRes layoutResID: Int) {
+        initContent()
         drawerBinding.content.addView(layoutInflater.inflate(layoutResID, drawerBinding.content, false))
     }
 
