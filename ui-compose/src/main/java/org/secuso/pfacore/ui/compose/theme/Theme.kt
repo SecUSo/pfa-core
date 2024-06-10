@@ -355,3 +355,9 @@ val ColorScheme.navbar: Color
     get() = Color(0xFF024265)
 val ColorScheme.secuso: Color
     get() = Color(0xFF024265)
+val ColorScheme.secusoAccent: Color
+    get() = Color(0xFF0274B2)
+val ColorScheme.secusoDotListActive
+    get() = Color(0xFF448bb2)
+val ColorScheme.secusoDotListInActive
+    get() = Color(0xFF026499)
