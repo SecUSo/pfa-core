@@ -1,5 +1,8 @@
 package org.secuso.pfacore.model.tutorial
 
+import android.app.Activity
+import android.content.Intent
+
 open class TutorialStage(
     val title: String,
     val images: List<Int>,
@@ -18,12 +21,17 @@ open class TutorialStage(
 
 open class Tutorial<TS: TutorialStage>(
     val stages: List<TS>,
+    val launchActivity: Class<out Activity>? = null,
+    val extras: (Intent) -> Intent = { it }
 ) {
+    var onFinish: () -> Unit = { }
     class Builder<TS: TutorialStage, TB: TutorialStage.Builder<TS>>(
         private val builder: () -> TB,
     ) {
         private val stages = mutableListOf<TS>()
-        internal fun build() = Tutorial(stages)
+        var launchActivity: Class<out Activity>? = null
+        var extras: (Intent) -> Intent = { it }
+        internal fun build() = Tutorial(stages, launchActivity, extras)
         fun stage(initializer: TB.() -> Unit) {
             stages.add(builder().apply(initializer).build())
         }

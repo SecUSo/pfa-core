@@ -31,7 +31,6 @@ class TutorialStage(
 
 class Tutorial(
     stages: List<TutorialStage>,
-    private val onFinish: () -> Unit,
 ): MTutorial<TutorialStage>(stages), Displayable {
     @Composable
     override fun Display(onClick: (() -> Unit)?) {
@@ -39,11 +38,8 @@ class Tutorial(
     }
 
     companion object {
-        fun build(initializer: Builder<TutorialStage, TutorialStage.Builder>.() -> Unit): (() -> Unit) -> Tutorial {
-            return { onFinish ->
-                val stages = build({ TutorialStage.Builder() }, initializer).stages
-                Tutorial(stages, onFinish)
-            }
+        fun build(initializer: Builder<TutorialStage, TutorialStage.Builder>.() -> Unit): Tutorial {
+            return Tutorial(build({ TutorialStage.Builder() }, initializer).stages)
         }
     }
 }

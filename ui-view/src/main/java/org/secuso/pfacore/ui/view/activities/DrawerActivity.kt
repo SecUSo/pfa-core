@@ -3,19 +3,14 @@ package org.secuso.pfacore.ui.view.activities
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
-import androidx.annotation.DrawableRes
 import androidx.annotation.LayoutRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.GravityCompat
-import org.secuso.pfacore.application.PFApplication
-import org.secuso.pfacore.model.DrawerMenu
 import org.secuso.pfacore.R
 import org.secuso.pfacore.model.Drawer
-import org.secuso.pfacore.model.DrawerElement
+import org.secuso.pfacore.model.DrawerMenu
 import org.secuso.ui.view.databinding.ActivityDrawerBinding
 import org.secuso.ui.view.databinding.DrawerNavHeaderBinding
-import org.secuso.pfacore.model.ActivityDrawerElement as ActivityDrawerElement
-import org.secuso.pfacore.model.DrawerSection as MDrawerSection
 
 
 abstract class DrawerActivity: AppCompatActivity(), Drawer {
@@ -24,6 +19,11 @@ abstract class DrawerActivity: AppCompatActivity(), Drawer {
     override fun defaultDrawerSection(builder: DrawerMenu.Builder) {
         builder.apply {
             section {
+                activity {
+                    name = getString(R.string.nav_tutorial)
+                    icon = R.drawable.ic_tutorial
+                    clazz = TutorialActivity::class.java
+                }
                 activity {
                     name = getString(R.string.nav_help)
                     icon = R.drawable.ic_help

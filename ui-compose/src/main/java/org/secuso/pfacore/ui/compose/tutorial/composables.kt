@@ -163,7 +163,7 @@ fun TutorialComp(tutorial: Tutorial, onFinish: () -> Unit) {
 @Composable
 @Preview
 fun PrevTutorialComp() {
-    val tutorialBuilder = Tutorial.build {
+    val tutorial = Tutorial.build {
         stage {
             title = "Test Stage 1"
             description = "Test Description 1"
@@ -185,7 +185,6 @@ fun PrevTutorialComp() {
             images = listOf(R.drawable.privacyfriendlyappslogo)
         }
     }
-    val tutorial = tutorialBuilder { }
     PrivacyFriendlyCoreTheme {
         tutorial.Display { }
     }

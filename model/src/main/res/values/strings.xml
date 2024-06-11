@@ -16,6 +16,11 @@
     <string name="nav_about">About</string>
     <string name="nav_tutorial">Tutorial</string>
 
+    <string name="okay">Okay</string>
+    <string name="next">Next</string>
+    <string name="skip">Skip</string>
+
+
     <string name="select_day_night_theme">Appearance</string>
     <string-array name="array_day_night_theme">
         <item>System</item>

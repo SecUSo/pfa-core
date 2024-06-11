@@ -2,20 +2,16 @@ package org.secuso.pfacore.ui.compose.activities
 
 
 import android.app.Activity
-import android.content.Context
 import android.os.Bundle
-import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -51,7 +47,6 @@ import org.secuso.pfacore.application.PFApplication
 import org.secuso.pfacore.model.Drawer
 import org.secuso.pfacore.model.DrawerElement
 import org.secuso.pfacore.model.DrawerMenu
-import org.secuso.pfacore.ui.compose.theme.navbar
 import org.secuso.pfacore.ui.compose.theme.secuso
 
 abstract class DrawerActivity : AppCompatActivity(), Drawer {
@@ -64,6 +59,11 @@ abstract class DrawerActivity : AppCompatActivity(), Drawer {
     override fun defaultDrawerSection(builder: DrawerMenu.Builder) {
         builder.apply {
             section {
+                activity {
+                    name = getString(R.string.nav_tutorial)
+                    icon = R.drawable.ic_tutorial
+                    clazz = TutorialActivity::class.java
+                }
                 activity {
                     name = getString(R.string.nav_help)
                     icon = R.drawable.ic_help
