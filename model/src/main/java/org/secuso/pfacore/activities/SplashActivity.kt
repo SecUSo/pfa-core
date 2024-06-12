@@ -34,13 +34,17 @@ import org.secuso.pfacore.model.tutorial.Tutorial
  */
 open class SplashActivity(val tutorial: Class<out Activity>) : AppCompatActivity() {
 
+    companion object {
+        const val EXTRA_LAUNCH_MAIN_ACTIVITY_AFTER_TUTORIAL = "launchMainActivityAfterTutorial"
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         val firstLaunchPref = PFApplication.instance.data.firstLaunch
         val mainIntent = if (firstLaunchPref.value == null || firstLaunchPref.value == true) {
             firstLaunchPref.value = false
-            Intent(this, tutorial)
+            Intent(this, tutorial).putExtra(EXTRA_LAUNCH_MAIN_ACTIVITY_AFTER_TUTORIAL, true)
         } else {
             Intent(this, PFApplication.instance.mainActivity)
         }
