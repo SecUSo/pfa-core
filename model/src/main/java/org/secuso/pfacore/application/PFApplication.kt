@@ -1,5 +1,6 @@
 package org.secuso.pfacore.application
 
+import android.app.Activity
 import android.app.Application
 import android.content.Context
 import android.util.Log
@@ -16,6 +17,7 @@ abstract class PFApplication : Application(), Configuration.Provider {
     abstract val data: PFData
     abstract val databaseName: String
     abstract val database: Class<out RoomDatabase>
+    abstract val mainActivity: Class<out Activity>
     val backup = object : PFAppBackup {}
 
     override fun onCreate() {

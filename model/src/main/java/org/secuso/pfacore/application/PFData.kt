@@ -4,6 +4,7 @@ import androidx.lifecycle.LiveData
 import org.secuso.pfacore.model.Theme
 import org.secuso.pfacore.model.about.About
 import org.secuso.pfacore.model.help.Help
+import org.secuso.pfacore.model.preferences.Preferable
 import org.secuso.pfacore.model.preferences.settings.ISettings
 import org.secuso.pfacore.model.tutorial.Tutorial
 
@@ -12,5 +13,6 @@ data class PFData(
     val about: About,
     val help: Help<*>,
     val tutorial: Tutorial<*>,
-    val theme: LiveData<Theme>
+    val theme: LiveData<Theme>,
+    val firstLaunch: Preferable<Boolean>,
 )
