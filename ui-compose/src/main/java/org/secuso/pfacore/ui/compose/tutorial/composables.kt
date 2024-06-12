@@ -72,7 +72,7 @@ fun TutorialStageComp(title: String, images: List<Int>, description: String?) {
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun TutorialComp(tutorial: Tutorial, onFinish: () -> Unit) {
+fun TutorialComp(tutorial: Tutorial) {
     val pagerState = rememberPagerState(pageCount = { tutorial.stages.size })
     val coroutineScope = rememberCoroutineScope()
 
@@ -101,7 +101,7 @@ fun TutorialComp(tutorial: Tutorial, onFinish: () -> Unit) {
             Button(
                 colors = ButtonDefaults.filledTonalButtonColors(containerColor = MaterialTheme.colorScheme.secusoAccent, contentColor = Color.White),
                 onClick = {
-                    onFinish()
+                    tutorial.onFinish()
                 },
                 modifier = Modifier.constrainAs(skipRef) {
                     visibility = if (pagerState.canScrollForward) Visibility.Visible else Visibility.Invisible
@@ -149,7 +149,7 @@ fun TutorialComp(tutorial: Tutorial, onFinish: () -> Unit) {
                         if (pagerState.canScrollForward) {
                             pagerState.scrollToPage(pagerState.currentPage + 1)
                         } else {
-                            onFinish()
+                            tutorial.onFinish()
                         }
                     }
                 }
@@ -163,7 +163,7 @@ fun TutorialComp(tutorial: Tutorial, onFinish: () -> Unit) {
 @Composable
 @Preview
 fun PrevTutorialComp() {
-    val tutorial = Tutorial.build {
+    val tutorial = buildTutorial {
         stage {
             title = "Test Stage 1"
             description = "Test Description 1"
@@ -186,6 +186,6 @@ fun PrevTutorialComp() {
         }
     }
     PrivacyFriendlyCoreTheme {
-        tutorial.Display { }
+        TutorialComp(tutorial)
     }
 }

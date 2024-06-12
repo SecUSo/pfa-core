@@ -8,6 +8,7 @@ import androidx.appcompat.app.AppCompatActivity
 import org.secuso.pfacore.activities.SplashActivity
 import org.secuso.pfacore.application.PFApplication
 import org.secuso.pfacore.ui.compose.tutorial.Tutorial
+import org.secuso.pfacore.ui.compose.tutorial.TutorialComp
 
 class TutorialActivity: AppCompatActivity() {
 
@@ -27,6 +28,6 @@ class TutorialActivity: AppCompatActivity() {
             }
             finish()
         }
-        setContent { tutorial.Display {  } }
+        setContent { TutorialComp(tutorial) }
     }
 }

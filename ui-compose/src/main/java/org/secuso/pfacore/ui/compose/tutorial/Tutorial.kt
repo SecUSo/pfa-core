@@ -29,17 +29,22 @@ class TutorialStage(
     }
 }
 
-class Tutorial(
-    stages: List<TutorialStage>,
-): MTutorial<TutorialStage>(stages), Displayable {
-    @Composable
-    override fun Display(onClick: (() -> Unit)?) {
-        TutorialComp(this, onFinish)
-    }
-
-    companion object {
-        fun build(initializer: Builder<TutorialStage, TutorialStage.Builder>.() -> Unit): Tutorial {
-            return Tutorial(build({ TutorialStage.Builder() }, initializer).stages)
-        }
-    }
+typealias Tutorial = MTutorial<TutorialStage>
+fun buildTutorial(initializer: MTutorial.Builder<TutorialStage, TutorialStage.Builder>.() -> Unit): MTutorial<TutorialStage> {
+    return MTutorial.build({ TutorialStage.Builder() }, initializer)
 }
+
+//class Tutorial(
+//    stages: List<TutorialStage>,
+//): MTutorial<TutorialStage>(stages), Displayable {
+//    @Composable
+//    override fun Display(onClick: (() -> Unit)?) {
+//        TutorialComp(this, onFinish)
+//    }
+//
+//    companion object {
+//        fun build(initializer: Builder<TutorialStage, TutorialStage.Builder>.() -> Unit): Tutorial {
+//            return Tutorial(build({ TutorialStage.Builder() }, initializer).stages)
+//        }
+//    }
+//}
