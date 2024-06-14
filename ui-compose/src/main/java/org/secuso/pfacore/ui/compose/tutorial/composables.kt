@@ -55,10 +55,9 @@ fun TutorialStageComp(title: String, images: List<Int>, description: String?) {
             LazyVerticalGrid(
                 columns = GridCells.Fixed(min(images.size, 2)),
                 contentPadding = PaddingValues(16.dp),
-
-                ) {
+            ) {
                 items(images) {
-                    Box(Modifier.padding(8.dp)) {
+                    Box(Modifier.padding(8.dp), contentAlignment = Alignment.Center) {
                         Image(painter = painterResource(it), contentDescription = "")
                     }
                 }
