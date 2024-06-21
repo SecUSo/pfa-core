@@ -60,4 +60,7 @@
     <color name="md_theme_dark_surfaceTint">#91CDFF</color>
     <color name="md_theme_dark_outlineVariant">#42474E</color>
     <color name="md_theme_dark_scrim">#000000</color>
+
+    <color name="secusoDotListActive">#026499</color>
+    <color name="secusoDotListInactive">#448bb2</color>
 </resources>

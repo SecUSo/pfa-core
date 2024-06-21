@@ -8,6 +8,15 @@
     <string name="about_privacy_friendly">Diese App gehört zu einer Gruppe von Privacy Friendly Apps, welche von Karlsruher Institut für Technologie entwickelt werden.</string>
     <string name="about_author_contributors">und Beitragende.</string>
 
+    <string name="nav_settings">Einstellungen</string>
+    <string name="nav_tutorial">Tutorial</string>
+    <string name="nav_help">Hilfe</string>
+    <string name="nav_about">Über</string>
+
+    <string name="skip">Überspringen</string>
+    <string name="next">Weiter</string>
+    <string name="okay">Okay</string>
+
     <string name="select_day_night_theme">Aussehen</string>
 
 </resources>

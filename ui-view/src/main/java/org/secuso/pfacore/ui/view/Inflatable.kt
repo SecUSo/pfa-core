@@ -16,3 +16,10 @@ internal fun View.replace(inflater: LayoutInflater, owner: LifecycleOwner, infla
     parent.removeViewAt(index)
     parent.addView(inflatable.inflate(inflater, parent, owner), index)
 }
+
+internal fun View.replace(view: View) {
+    val parent = this.parent as ViewGroup
+    val index = parent.indexOfChild(this)
+    parent.removeViewAt(index)
+    parent.addView(view)
+}
