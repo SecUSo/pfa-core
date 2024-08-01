@@ -19,12 +19,10 @@ class PFAPermissionRequestHandler(
 
 class PFAPermissionAcquirer(
     private val activity: AppCompatActivity,
-    val permissionActivator: @Composable (() -> Unit) -> Unit,
     val handler: PFAPermissionRequestHandler
 ) {
-    @SuppressLint("ComposableNaming")
     @Composable
-    fun request(permission: PFAPermission) {
+    fun setup(): MPFAPermissionRequestHandler {
         val doGranted = remember {
             mutableStateOf(false)
         }
@@ -45,14 +43,26 @@ class PFAPermissionAcquirer(
             handler.showRationale(doRationale.value!!)
         }
 
-        val handler = MPFAPermissionRequestHandler(
+        return MPFAPermissionRequestHandler(
             onGranted = { doGranted.value = true },
             onDenied = { doDenied.value = true },
             finally = handler.finally,
             showRationale = { doRationale.value = it }
         )
+    }
 
-        permissionActivator { permission.request(activity, handler) }
+    @SuppressLint("ComposableNaming")
+    @Composable
+    fun request(permission: PFAPermission, activator: @Composable (() -> Unit) -> Unit) {
+        val handler = setup()
+        activator { permission.request(activity, handler) }
+    }
+
+    @SuppressLint("ComposableNaming")
+    @Composable
+    fun request(permission: PFAPermission): () -> Unit {
+        val handler = setup()
+        return { permission.request(activity, handler) }
     }
 
     class Builder(val activity: AppCompatActivity) {
@@ -60,11 +70,10 @@ class PFAPermissionAcquirer(
         var onDenied: @Composable () -> Unit = { }
         var finally: () -> Unit = { }
         lateinit var showRationale: RationaleOrDialog.() -> Unit
-        lateinit var permissionActivator: @Composable (() -> Unit) -> Unit
 
         internal fun build(): PFAPermissionAcquirer {
             val handler = PFAPermissionRequestHandler( onGranted, onDenied, finally, RationaleOrDialog().apply(showRationale).rationale(activity))
-            return PFAPermissionAcquirer(activity, permissionActivator, handler)
+            return PFAPermissionAcquirer(activity, handler)
         }
 
 
@@ -88,6 +97,15 @@ class PFAPermissionAcquirer(
         fun build(activity: AppCompatActivity, initializer: Builder.() -> Unit) = Builder(activity).apply(initializer).build()
     }
 }
+
+@SuppressLint("ComposableNaming")
+@Composable
+fun PFAPermission.declareUsage(activity: AppCompatActivity, activator: @Composable (() -> Unit) -> Unit, initializer: PFAPermissionAcquirer.Builder.() -> Unit) =
+    this.declareUsage(activator, PFAPermissionAcquirer.build(activity, initializer))
+
+@SuppressLint("ComposableNaming")
+@Composable
+fun PFAPermission.declareUsage(activator: @Composable (() -> Unit) -> Unit, requester: PFAPermissionAcquirer) = requester.request(this, activator)
 
 @SuppressLint("ComposableNaming")
 @Composable
