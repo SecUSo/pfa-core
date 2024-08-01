@@ -29,8 +29,23 @@ interface PFAPermissionLifecycleCallbacks: Application.ActivityLifecycleCallback
 class PFAPermissionRequestHandler(
     val onGranted: () -> Unit,
     val onDenied: () -> Unit,
-    val rationale: (doRequest: () -> Unit) -> Unit = { it() }
-)
+    val finally: () -> Unit = {},
+    val showRationale: (doRequest: () -> Unit) -> Unit = { it() }
+) {
+    class Builder(val activity: Activity)
+    {
+        lateinit var onGranted: () -> Unit
+        var onDenied: () -> Unit = {}
+        var finally: () -> Unit = {}
+        var showRationale: (doRequest: () -> Unit) -> Unit = { it() }
+
+        internal fun build() = PFAPermissionRequestHandler(onGranted, onDenied, finally, showRationale)
+    }
+
+    companion object {
+        fun build(activity: Activity, initializer: Builder.() -> Unit) = Builder(activity).apply(initializer).build()
+    }
+}
 
 sealed class PFAPermission(
     val sinceAPI: Int,
@@ -39,13 +54,15 @@ sealed class PFAPermission(
     open fun isGranted(activity: Activity): Boolean = ContextCompat.checkSelfPermission(activity, permission) == PackageManager.PERMISSION_GRANTED
     open fun showRationale(activity: Activity): Boolean = ActivityCompat.shouldShowRequestPermissionRationale(activity, permission)
     open fun doRequest(activity: AppCompatActivity, handler: PFAPermissionRequestHandler) {
-         activity.registerForActivityResult(ActivityResultContracts.RequestPermission()) { granted ->
+         val launcher = activity.registerForActivityResult(ActivityResultContracts.RequestPermission()) { granted ->
              if (granted) {
                  handler.onGranted()
              } else {
                  handler.onDenied()
              }
+             handler.finally()
          }
+        launcher.launch(permission)
     }
     fun request(activity: AppCompatActivity, handler: PFAPermissionRequestHandler) {
         if (Build.VERSION.SDK_INT < sinceAPI || isGranted(activity)) {
@@ -54,7 +71,7 @@ sealed class PFAPermission(
         if (!showRationale(activity)) {
             return doRequest(activity, handler)
         }
-        handler.rationale { doRequest(activity, handler) }
+        handler.showRationale { doRequest(activity, handler) }
     }
 
 
@@ -79,5 +96,8 @@ sealed class PFAPermission(
             activity.startActivity(Intent(Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM))
         }
     }
-
 }
+
+fun PFAPermission.acquireOrElse(activity: AppCompatActivity, initializer: PFAPermissionRequestHandler.Builder.() -> Unit)
+    = this.acquireOrElse(activity, PFAPermissionRequestHandler.build(activity, initializer))
+fun PFAPermission.acquireOrElse(activity: AppCompatActivity, handler: PFAPermissionRequestHandler) = this.request(activity, handler)

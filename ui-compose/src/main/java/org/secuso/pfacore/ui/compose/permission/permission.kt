@@ -8,13 +8,19 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import org.secuso.pfacore.model.dialog.AbortElseDialog
 import org.secuso.pfacore.model.permission.PFAPermission
-import org.secuso.pfacore.model.permission.PFAPermissionRequestHandler
+import org.secuso.pfacore.model.permission.PFAPermissionRequestHandler as MPFAPermissionRequestHandler
 
-class PFAPermissionRequester(
-    private val activity: AppCompatActivity,
+class PFAPermissionRequestHandler(
     val onGranted: @Composable () -> Unit,
     val onDenied: @Composable () -> Unit,
-    val onRationale: @Composable (doRequest: () -> Unit) -> Unit = { it() }
+    val finally: () -> Unit,
+    val showRationale: @Composable (doRequest: () -> Unit) -> Unit = { it() }
+)
+
+class PFAPermissionAcquirer(
+    private val activity: AppCompatActivity,
+    val permissionActivator: @Composable (() -> Unit) -> Unit,
+    val handler: PFAPermissionRequestHandler
 ) {
     @SuppressLint("ComposableNaming")
     @Composable
@@ -29,31 +35,38 @@ class PFAPermissionRequester(
             mutableStateOf<(() -> Unit)?>(null)
         }
 
-        val handler = PFAPermissionRequestHandler(
-            onGranted = { doGranted.value = true },
-            onDenied = { doDenied.value = true },
-            rationale = { }
-        )
-
         if (doGranted.value) {
-            onGranted()
+            handler.onGranted()
         }
         if (doDenied.value) {
-            onDenied()
+            handler.onDenied()
         }
         if (doRationale.value != null) {
-            onRationale(doRationale.value!!)
+            handler.showRationale(doRationale.value!!)
         }
 
-        permission.request(activity, handler)
+        val handler = MPFAPermissionRequestHandler(
+            onGranted = { doGranted.value = true },
+            onDenied = { doDenied.value = true },
+            finally = handler.finally,
+            showRationale = { doRationale.value = it }
+        )
+
+        permissionActivator { permission.request(activity, handler) }
     }
 
     class Builder(val activity: AppCompatActivity) {
         lateinit var onGranted: @Composable () -> Unit
-        var onDenied: (@Composable () -> Unit)? = null
-        lateinit var rationale: RationaleOrDialog.() -> Unit
+        var onDenied: @Composable () -> Unit = { }
+        var finally: () -> Unit = { }
+        lateinit var showRationale: RationaleOrDialog.() -> Unit
+        lateinit var permissionActivator: @Composable (() -> Unit) -> Unit
 
-        internal fun build() = PFAPermissionRequester(activity, onGranted, onDenied ?: {}, RationaleOrDialog().apply(rationale).rationale(activity))
+        internal fun build(): PFAPermissionAcquirer {
+            val handler = PFAPermissionRequestHandler( onGranted, onDenied, finally, RationaleOrDialog().apply(showRationale).rationale(activity))
+            return PFAPermissionAcquirer(activity, permissionActivator, handler)
+        }
+
 
         class RationaleOrDialog {
             var rationaleTitle: String? = null
@@ -78,9 +91,9 @@ class PFAPermissionRequester(
 
 @SuppressLint("ComposableNaming")
 @Composable
-fun PFAPermission.acquireOrElse(activity: AppCompatActivity, initializer: PFAPermissionRequester.Builder.() -> Unit) =
-    this.acquireOrElse(PFAPermissionRequester.build(activity, initializer))
+fun PFAPermission.declareUsage(activity: AppCompatActivity, initializer: PFAPermissionAcquirer.Builder.() -> Unit) =
+    this.declareUsage(PFAPermissionAcquirer.build(activity, initializer))
 
 @SuppressLint("ComposableNaming")
 @Composable
-fun PFAPermission.acquireOrElse(requester: PFAPermissionRequester) = requester.request(this)
+fun PFAPermission.declareUsage(requester: PFAPermissionAcquirer) = requester.request(this)
