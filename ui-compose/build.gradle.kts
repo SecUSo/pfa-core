@@ -1,3 +1,9 @@
+import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
+
+plugins {
+    id("org.jetbrains.kotlin.plugin.compose")
+}
+
 group = "org.secuso.pfa-core"
 android {
     namespace = "org.secuso.ui.compose"
@@ -8,14 +14,6 @@ android {
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles("consumer-rules.pro")
-    }
-
-    buildFeatures {
-        compose = true
-    }
-
-    composeOptions {
-        kotlinCompilerExtensionVersion = "1.5.0"
     }
 
     buildTypes {

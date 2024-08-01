@@ -72,7 +72,7 @@ open class DrawerMenu(
         private val sections = mutableListOf<DrawerSection>()
         lateinit var name: String
 
-        var icon by Delegates.notNull<@DrawableRes Int>()
+        var icon by Delegates.notNull<Int>()
         internal fun build() = DrawerMenu(sections, name, icon)
 
         fun section(initializer: DrawerSection.Builder.() -> Unit) {
