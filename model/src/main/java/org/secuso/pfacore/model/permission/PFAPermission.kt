@@ -53,25 +53,30 @@ sealed class PFAPermission(
 ) {
     open fun isGranted(activity: Activity): Boolean = ContextCompat.checkSelfPermission(activity, permission) == PackageManager.PERMISSION_GRANTED
     open fun showRationale(activity: Activity): Boolean = ActivityCompat.shouldShowRequestPermissionRationale(activity, permission)
-    open fun doRequest(activity: AppCompatActivity, handler: PFAPermissionRequestHandler) {
-         val launcher = activity.registerForActivityResult(ActivityResultContracts.RequestPermission()) { granted ->
-             if (granted) {
-                 handler.onGranted()
-             } else {
-                 handler.onDenied()
-             }
-             handler.finally()
-         }
-        launcher.launch(permission)
+
+    protected lateinit var launchPermissionRequest: () -> Unit
+    open fun buildPermissionRequestLauncher(activity: AppCompatActivity, handler: PFAPermissionRequestHandler): () -> Unit {
+        val launcher = activity.registerForActivityResult(ActivityResultContracts.RequestPermission()) { granted ->
+            if (granted) {
+                handler.onGranted()
+            } else {
+                handler.onDenied()
+            }
+            handler.finally()
+        }
+        return { launcher.launch(permission) }
+    }
+    fun initiatePermissionRequestLauncher(activity: AppCompatActivity, handler: PFAPermissionRequestHandler) {
+        launchPermissionRequest = buildPermissionRequestLauncher(activity, handler)
     }
     fun request(activity: AppCompatActivity, handler: PFAPermissionRequestHandler) {
         if (Build.VERSION.SDK_INT < sinceAPI || isGranted(activity)) {
             return handler.onGranted()
         }
         if (!showRationale(activity)) {
-            return doRequest(activity, handler)
+            return launchPermissionRequest()
         }
-        handler.showRationale { doRequest(activity, handler) }
+        handler.showRationale { launchPermissionRequest() }
     }
 
 
@@ -84,11 +89,9 @@ sealed class PFAPermission(
     data object PostNotifications: PFAPermission(sinceAPI = Build.VERSION_CODES.TIRAMISU, permission = Manifest.permission.POST_NOTIFICATIONS)
     @SuppressLint("InlinedApi")
     data object ScheduleExactAlarm: PFAPermission(sinceAPI = Build.VERSION_CODES.S, permission = Manifest.permission.SCHEDULE_EXACT_ALARM) {
-        override fun doRequest(activity: AppCompatActivity, handler: PFAPermissionRequestHandler) {
+        override fun isGranted(activity: Activity) = activity.getSystemService<AlarmManager>()?.canScheduleExactAlarms() ?: false
+        override fun buildPermissionRequestLauncher(activity: AppCompatActivity, handler: PFAPermissionRequestHandler): () -> Unit {
             val alarmManager = activity.getSystemService<AlarmManager>()!!
-            if (alarmManager.canScheduleExactAlarms()) {
-                return handler.onGranted()
-            }
             activity.registerActivityLifecycleCallbacks(object : PFAPermissionLifecycleCallbacks {
                 override fun onActivityResumed(activity: Activity) {
                     if (alarmManager.canScheduleExactAlarms()) {
@@ -98,41 +101,9 @@ sealed class PFAPermission(
                     }
                 }
             })
-            activity.startActivity(Intent(Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM))
+            return { activity.startActivity(Intent(Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM)) }
         }
     }
     data object RecordAudio: PFAPermission(sinceAPI = Build.VERSION_CODES.BASE, permission = Manifest.permission.RECORD_AUDIO)
     data object WriteExternalStorage: PFAPermission(sinceAPI = Build.VERSION_CODES.DONUT, permission = Manifest.permission.WRITE_EXTERNAL_STORAGE)
-}
-
-fun PFAPermission.acquireOrElse(activity: AppCompatActivity, initializer: PFAPermissionRequestHandler.Builder.() -> Unit)
-    = this.acquireOrElse(activity, PFAPermissionRequestHandler.build(activity, initializer))
-fun PFAPermission.acquireOrElse(activity: AppCompatActivity, handler: PFAPermissionRequestHandler) = this.request(activity, handler)
-fun List<PFAPermission>.acquireOrElse(activity: AppCompatActivity, initializer: PFAPermissionRequestHandler.Builder.() -> Unit)
-        = this.acquireOrElse(activity, PFAPermissionRequestHandler.build(activity, initializer))
-fun List<PFAPermission>.acquireOrElse(activity: AppCompatActivity, handler: PFAPermissionRequestHandler) {
-    val permissionStatus = mutableListOf<Pair<PFAPermission, Boolean>>()
-    val permissions = this
-    val rationaleShown = false
-    this.forEachIndexed { index, permission -> permission.acquireOrElse(activity) {
-        onGranted = { permissionStatus.add(permissions[index] to true) }
-        onDenied = { permissionStatus.add(permissions[index] to false) }
-        finally = {
-            if (permissionStatus.size == permissions.size) {
-                if (permissionStatus.any { !it.second }) {
-                    handler.onDenied()
-                } else {
-                    handler.onGranted()
-                }
-                handler.finally()
-            }
-        }
-        showRationale = {
-            if (!rationaleShown) {
-                handler.showRationale(it)
-            } else {
-                it()
-            }
-        }
-    } }
 }
