@@ -61,7 +61,7 @@ class SettingsMenuAdapter(private val inflater: LayoutInflater, private val owne
                             else -> toggle.setImageResource(icon)
                         }
                         val color = TypedValue().apply {
-                            toggle.context.theme.resolveAttribute(org.secuso.ui.view.R.attr.colorOnSurface, this, true)
+                            toggle.context.theme.resolveAttribute(org.secuso.pfacore.theme.R.attr.colorOnSurface, this, true)
                         }
                         toggle.setColorFilter(color.data)
                     }

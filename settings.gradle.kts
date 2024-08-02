@@ -27,3 +27,4 @@ project(":backup-api").projectDir = File("libs/privacy-friendly-backup-api/Backu
 include(":ui-compose")
 include(":model")
 include(":ui-view")
+include(":theme")
