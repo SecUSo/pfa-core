@@ -2,28 +2,22 @@ package org.secuso.pfacore.ui.compose.activities
 
 import android.content.res.Configuration
 import androidx.compose.foundation.isSystemInDarkTheme
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.TopAppBarDefaults.topAppBarColors
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.State
 import androidx.compose.runtime.livedata.observeAsState
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextOverflow
 import org.secuso.pfacore.application.PFApplication
 import org.secuso.pfacore.model.Theme
@@ -57,7 +51,7 @@ fun TopAppBar(title: State<String?>, onClick: () -> Unit, icon: (@Composable () 
                 }
             }
         },
-        colors = TopAppBarDefaults.smallTopAppBarColors(
+        colors = topAppBarColors(
             containerColor = MaterialTheme.colorScheme.navbar,
             titleContentColor = Color.White
         ),
