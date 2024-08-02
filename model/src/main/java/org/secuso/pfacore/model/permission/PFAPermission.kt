@@ -75,6 +75,11 @@ sealed class PFAPermission(
     }
 
 
+    data object AccessCoarseLocation: PFAPermission(sinceAPI = Build.VERSION_CODES.BASE, permission = Manifest.permission.ACCESS_COARSE_LOCATION)
+    data object AccessFineLocation: PFAPermission(sinceAPI = Build.VERSION_CODES.BASE, permission = Manifest.permission.ACCESS_FINE_LOCATION)
+    @SuppressLint("InlinedApi")
+    data object ActivityRecognition: PFAPermission(sinceAPI = Build.VERSION_CODES.Q, permission = Manifest.permission.ACTIVITY_RECOGNITION)
+    data object Camera: PFAPermission(sinceAPI = Build.VERSION_CODES.BASE, permission = Manifest.permission.CAMERA)
     @SuppressLint("InlinedApi")
     data object PostNotifications: PFAPermission(sinceAPI = Build.VERSION_CODES.TIRAMISU, permission = Manifest.permission.POST_NOTIFICATIONS)
     @SuppressLint("InlinedApi")
@@ -96,6 +101,8 @@ sealed class PFAPermission(
             activity.startActivity(Intent(Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM))
         }
     }
+    data object RecordAudio: PFAPermission(sinceAPI = Build.VERSION_CODES.BASE, permission = Manifest.permission.RECORD_AUDIO)
+    data object WriteExternalStorage: PFAPermission(sinceAPI = Build.VERSION_CODES.DONUT, permission = Manifest.permission.WRITE_EXTERNAL_STORAGE)
 }
 
 fun PFAPermission.acquireOrElse(activity: AppCompatActivity, initializer: PFAPermissionRequestHandler.Builder.() -> Unit)
