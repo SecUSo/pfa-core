@@ -127,7 +127,7 @@ fun PFAPermission.declareUsage(activity: AppCompatActivity, initializer: PFAPerm
 
 @SuppressLint("ComposableNaming")
 @Composable
-fun PFAPermission.declareUsage(requester: PFAPermissionAcquirer) = requester.request(this)
+fun PFAPermission.declareUsage(requester: PFAPermissionAcquirer) = requester.request(this).second
 
 @SuppressLint("ComposableNaming")
 @Composable
@@ -142,7 +142,7 @@ fun List<PFAPermission>.declareUsage(requester: PFAPermissionAcquirer): () -> Un
             onDenied = { permissionStatus.add(it to false) }
             finally = {
                 if (permissionStatus.size == permissions.size) {
-                    if (permissionStatus.any { !it.second }) {
+                    if (permissionStatus.any { (_,status) -> !status }) {
                         requester.handler.onDenied()
                     } else {
                         requester.handler.onGranted()
@@ -152,11 +152,11 @@ fun List<PFAPermission>.declareUsage(requester: PFAPermissionAcquirer): () -> Un
             }
             showRationale = {
                 rationale = {
-                    {
+                    { doRequest ->
                         if (!rationaleShown) {
-                            requester.handler.showRationale(it)
+                            requester.handler.showRationale(doRequest)
                         } else {
-                            it()
+                            doRequest()
                         }
                     }
                 }
