@@ -5,7 +5,7 @@ import androidx.appcompat.app.AppCompatActivity
 import org.secuso.pfacore.model.dialog.AbortElseDialog
 import org.secuso.pfacore.model.permission.PFAPermission
 import org.secuso.pfacore.model.permission.PFAPermissionRequestHandler
-import org.secuso.pfacore.ui.view.dialog.show
+import org.secuso.pfacore.ui.dialog.show
 
 class PFAPermissionAcquirer(
     internal val activity: AppCompatActivity,

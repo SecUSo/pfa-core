@@ -27,7 +27,7 @@ abstract class DrawerActivity: AppCompatActivity(), Drawer {
                 activity {
                     name = getString(R.string.nav_help)
                     icon = R.drawable.ic_help
-                    clazz = org.secuso.ui.activities.HelpActivity::class.java
+                    clazz = HelpActivity::class.java
                 }
                 activity {
                     name = getString(R.string.nav_settings)

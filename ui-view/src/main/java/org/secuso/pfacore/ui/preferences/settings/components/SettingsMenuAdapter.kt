@@ -8,10 +8,10 @@ import androidx.recyclerview.widget.RecyclerView
 import org.secuso.pfacore.R
 import org.secuso.pfacore.model.preferences.settings.SettingComposite
 import org.secuso.pfacore.model.preferences.settings.SettingHierarchy
-import org.secuso.pfacore.ui.view.replace
-import org.secuso.pfacore.ui.view.preferences.settings.InflatableSetting
-import org.secuso.pfacore.ui.view.preferences.settings.SettingCategory
-import org.secuso.pfacore.ui.view.preferences.settings.SettingMenu
+import org.secuso.pfacore.ui.replace
+import org.secuso.pfacore.ui.preferences.settings.InflatableSetting
+import org.secuso.pfacore.ui.preferences.settings.SettingCategory
+import org.secuso.pfacore.ui.preferences.settings.SettingMenu
 import org.secuso.ui.view.databinding.PreferenceBasicBinding
 import org.secuso.ui.view.databinding.PreferenceCategoryBinding
 

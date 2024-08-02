@@ -5,8 +5,8 @@ import android.content.res.Resources
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.lifecycle.LifecycleOwner
-import org.secuso.pfacore.ui.view.BasicInfo
-import org.secuso.pfacore.ui.view.Inflatable
+import org.secuso.pfacore.ui.BasicInfo
+import org.secuso.pfacore.ui.Inflatable
 import org.secuso.ui.view.databinding.SimpleDescriptionBinding
 import org.secuso.ui.view.databinding.SimpleTitleBinding
 import org.secuso.pfacore.model.help.Help as MHelp

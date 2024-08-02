@@ -18,7 +18,7 @@ import androidx.viewpager.widget.ViewPager.OnPageChangeListener
 import org.secuso.pfacore.R
 import org.secuso.pfacore.activities.SplashActivity
 import org.secuso.pfacore.application.PFApplication
-import org.secuso.pfacore.ui.view.tutorial.Tutorial
+import org.secuso.pfacore.ui.tutorial.Tutorial
 import org.secuso.ui.view.databinding.ActivityTutorialBinding
 
 class TutorialActivity: AppCompatActivity() {

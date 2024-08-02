@@ -3,7 +3,7 @@ package org.secuso.pfacore.ui.activities
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import org.secuso.pfacore.application.PFApplication
-import org.secuso.pfacore.ui.view.preferences.settings.Settings
+import org.secuso.pfacore.ui.preferences.settings.Settings
 import org.secuso.ui.view.R
 
 class SettingsActivity: AppCompatActivity() {

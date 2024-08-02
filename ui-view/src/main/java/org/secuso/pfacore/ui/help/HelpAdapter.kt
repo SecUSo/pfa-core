@@ -5,7 +5,7 @@ import android.view.ViewGroup
 import androidx.lifecycle.LifecycleOwner
 import androidx.recyclerview.widget.RecyclerView
 import org.secuso.ui.view.databinding.SimpleExpandableItemBinding
-import org.secuso.pfacore.ui.view.replace
+import org.secuso.pfacore.ui.replace
 
 class HelpAdapter(private val items: List<HelpData>, private val inflater: LayoutInflater, private val owner: LifecycleOwner): RecyclerView.Adapter<HelpAdapter.ViewHolder>() {
 

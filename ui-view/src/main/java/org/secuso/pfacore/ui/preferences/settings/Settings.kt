@@ -12,8 +12,8 @@ import org.secuso.pfacore.model.preferences.settings.Settings as MSettings
 import org.secuso.pfacore.model.preferences.settings.Settings.Category as MCategory
 import org.secuso.pfacore.model.preferences.settings.Settings.Menu as MMenu
 import org.secuso.pfacore.model.preferences.settings.Settings.Setting as MSetting
-import org.secuso.pfacore.ui.view.Inflatable
-import org.secuso.pfacore.ui.view.preferences.settings.components.SettingsMenuFragment
+import org.secuso.pfacore.ui.Inflatable
+import org.secuso.pfacore.ui.preferences.settings.components.SettingsMenuFragment
 
 class Settings(
     private val settings: List<SettingCategory>,

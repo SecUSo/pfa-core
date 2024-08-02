@@ -13,10 +13,10 @@ import org.secuso.pfacore.model.preferences.settings.SettingFactory
 import org.secuso.pfacore.model.preferences.settings.MenuSetting as MMenuSetting
 import org.secuso.pfacore.model.preferences.settings.RadioSetting as MRadioSetting
 import org.secuso.pfacore.model.preferences.settings.SwitchSetting as MSwitchSetting
-import org.secuso.pfacore.ui.view.BasicInfo
-import org.secuso.pfacore.ui.view.Inflatable
-import org.secuso.pfacore.ui.view.TransformableInfo
-import org.secuso.pfacore.ui.view.preferences.settings.components.RadioAdapter
+import org.secuso.pfacore.ui.BasicInfo
+import org.secuso.pfacore.ui.Inflatable
+import org.secuso.pfacore.ui.TransformableInfo
+import org.secuso.pfacore.ui.preferences.settings.components.RadioAdapter
 import org.secuso.ui.view.R
 import org.secuso.ui.view.databinding.PreferenceActionListBinding
 import org.secuso.ui.view.databinding.PreferenceSwitchBinding

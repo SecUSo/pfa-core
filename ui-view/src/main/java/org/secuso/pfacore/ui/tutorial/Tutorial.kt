@@ -5,7 +5,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import androidx.lifecycle.LifecycleOwner
-import org.secuso.pfacore.ui.view.Inflatable
+import org.secuso.pfacore.ui.Inflatable
 import org.secuso.ui.view.databinding.TutorialStageBinding
 import kotlin.math.min
 import org.secuso.pfacore.model.tutorial.Tutorial as MTutorial

@@ -4,7 +4,7 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import org.secuso.pfacore.application.PFApplication
 import org.secuso.ui.view.databinding.ActivityHelpBinding
-import org.secuso.pfacore.ui.view.help.Help
+import org.secuso.pfacore.ui.help.Help
 
 class HelpActivity: AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
