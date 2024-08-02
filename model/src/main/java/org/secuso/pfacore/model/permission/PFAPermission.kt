@@ -108,3 +108,31 @@ sealed class PFAPermission(
 fun PFAPermission.acquireOrElse(activity: AppCompatActivity, initializer: PFAPermissionRequestHandler.Builder.() -> Unit)
     = this.acquireOrElse(activity, PFAPermissionRequestHandler.build(activity, initializer))
 fun PFAPermission.acquireOrElse(activity: AppCompatActivity, handler: PFAPermissionRequestHandler) = this.request(activity, handler)
+fun List<PFAPermission>.acquireOrElse(activity: AppCompatActivity, initializer: PFAPermissionRequestHandler.Builder.() -> Unit)
+        = this.acquireOrElse(activity, PFAPermissionRequestHandler.build(activity, initializer))
+fun List<PFAPermission>.acquireOrElse(activity: AppCompatActivity, handler: PFAPermissionRequestHandler) {
+    val permissionStatus = mutableListOf<Pair<PFAPermission, Boolean>>()
+    val permissions = this
+    val rationaleShown = false
+    this.forEachIndexed { index, permission -> permission.acquireOrElse(activity) {
+        onGranted = { permissionStatus.add(permissions[index] to true) }
+        onDenied = { permissionStatus.add(permissions[index] to false) }
+        finally = {
+            if (permissionStatus.size == permissions.size) {
+                if (permissionStatus.any { !it.second }) {
+                    handler.onDenied()
+                } else {
+                    handler.onGranted()
+                }
+                handler.finally()
+            }
+        }
+        showRationale = {
+            if (!rationaleShown) {
+                handler.showRationale(it)
+            } else {
+                it()
+            }
+        }
+    } }
+}

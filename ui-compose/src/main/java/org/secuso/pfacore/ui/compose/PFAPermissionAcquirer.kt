@@ -1,4 +1,4 @@
-package org.secuso.pfacore.ui.compose.permission
+package org.secuso.pfacore.ui.compose
 
 import android.annotation.SuppressLint
 import android.content.Context
@@ -8,6 +8,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import org.secuso.pfacore.model.dialog.AbortElseDialog
 import org.secuso.pfacore.model.permission.PFAPermission
+import org.secuso.pfacore.model.permission.acquireOrElse
 import org.secuso.pfacore.model.permission.PFAPermissionRequestHandler as MPFAPermissionRequestHandler
 
 class PFAPermissionRequestHandler(
@@ -55,14 +56,28 @@ class PFAPermissionAcquirer(
     @Composable
     fun request(permission: PFAPermission, activator: @Composable (() -> Unit) -> Unit) {
         val handler = setup()
-        activator { permission.request(activity, handler) }
+        activator { permission.acquireOrElse(activity, handler) }
     }
 
     @SuppressLint("ComposableNaming")
     @Composable
     fun request(permission: PFAPermission): () -> Unit {
         val handler = setup()
-        return { permission.request(activity, handler) }
+        return { permission.acquireOrElse(activity, handler) }
+    }
+
+    @SuppressLint("ComposableNaming")
+    @Composable
+    fun request(permission: List<PFAPermission>, activator: @Composable (() -> Unit) -> Unit) {
+        val handler = setup()
+        activator { permission.acquireOrElse(activity, handler) }
+    }
+
+    @SuppressLint("ComposableNaming")
+    @Composable
+    fun request(permission: List<PFAPermission>): () -> Unit {
+        val handler = setup()
+        return { permission.acquireOrElse(activity, handler) }
     }
 
     class Builder(val activity: AppCompatActivity) {
@@ -109,9 +124,17 @@ fun PFAPermission.declareUsage(activator: @Composable (() -> Unit) -> Unit, requ
 
 @SuppressLint("ComposableNaming")
 @Composable
+fun List<PFAPermission>.declareUsage(activator: @Composable (() -> Unit) -> Unit, requester: PFAPermissionAcquirer) = requester.request(this, activator)
+
+@SuppressLint("ComposableNaming")
+@Composable
 fun PFAPermission.declareUsage(activity: AppCompatActivity, initializer: PFAPermissionAcquirer.Builder.() -> Unit) =
     this.declareUsage(PFAPermissionAcquirer.build(activity, initializer))
 
 @SuppressLint("ComposableNaming")
 @Composable
 fun PFAPermission.declareUsage(requester: PFAPermissionAcquirer) = requester.request(this)
+
+@SuppressLint("ComposableNaming")
+@Composable
+fun List<PFAPermission>.declareUsage(requester: PFAPermissionAcquirer) = requester.request(this)

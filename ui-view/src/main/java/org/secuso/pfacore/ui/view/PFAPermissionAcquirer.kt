@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity
 import org.secuso.pfacore.model.dialog.AbortElseDialog
 import org.secuso.pfacore.model.permission.PFAPermission
 import org.secuso.pfacore.model.permission.PFAPermissionRequestHandler
+import org.secuso.pfacore.model.permission.acquireOrElse
 
 class PFAPermissionAcquirer(
     private val activity: AppCompatActivity,
@@ -12,8 +13,9 @@ class PFAPermissionAcquirer(
 ) {
 
     fun request(permission: PFAPermission, activator:(() -> Unit) -> Inflatable): Inflatable = activator { permission.request(activity, handler) }
-
     fun request(permission: PFAPermission): () -> Unit = { permission.request(activity, handler) }
+    fun request(permissions: List<PFAPermission>, activator:(() -> Unit) -> Inflatable): Inflatable = activator { permissions.acquireOrElse(activity, handler) }
+    fun request(permissions: List<PFAPermission>): () -> Unit = { permissions.acquireOrElse(activity, handler) }
 
     class Builder(val activity: AppCompatActivity) {
         lateinit var onGranted: () -> Unit
@@ -50,10 +52,11 @@ class PFAPermissionAcquirer(
 
 fun PFAPermission.declareUsage(activity: AppCompatActivity, activator: (() -> Unit) -> Inflatable, initializer: PFAPermissionAcquirer.Builder.() -> Unit) =
     this.declareUsage(activator, PFAPermissionAcquirer.build(activity, initializer))
-
 fun PFAPermission.declareUsage(activator: (() -> Unit) -> Inflatable, requester: PFAPermissionAcquirer) = requester.request(this, activator)
+fun List<PFAPermission>.declareUsage(activator: (() -> Unit) -> Inflatable, requester: PFAPermissionAcquirer) = requester.request(this, activator)
 
 fun PFAPermission.declareUsage(activity: AppCompatActivity, initializer: PFAPermissionAcquirer.Builder.() -> Unit) =
     this.declareUsage(PFAPermissionAcquirer.build(activity, initializer))
 
 fun PFAPermission.declareUsage(requester: PFAPermissionAcquirer) = requester.request(this)
+fun List<PFAPermission>.declareUsage(requester: PFAPermissionAcquirer) = requester.request(this)
