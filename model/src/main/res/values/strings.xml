@@ -27,4 +27,5 @@
         <item>Light</item>
         <item>Dark</item>
     </string-array>
+    <string name="nav_bugs">Errors</string>
 </resources>

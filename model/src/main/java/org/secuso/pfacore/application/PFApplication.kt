@@ -9,10 +9,10 @@ import androidx.room.RoomDatabase
 import androidx.work.Configuration
 import org.secuso.pfacore.backup.BackupCreator
 import org.secuso.pfacore.backup.BackupRestorer
+import org.secuso.pfacore.model.ErrorReport
 import org.secuso.privacyfriendlybackup.api.pfa.BackupManager.backupCreator
 import org.secuso.privacyfriendlybackup.api.pfa.BackupManager.backupRestorer
 import java.io.File
-import java.io.FileOutputStream
 
 abstract class PFApplication : Application(), Configuration.Provider {
     abstract val name: String
@@ -41,6 +41,8 @@ abstract class PFApplication : Application(), Configuration.Provider {
             throw e
         }
     }
+
+    fun getErrorReports() = errors.listFiles()?.map { ErrorReport(it.lastModified(), it.readText()) } ?: listOf()
 
     override fun getWorkManagerConfiguration(): Configuration {
         return Configuration.Builder().setMinimumLoggingLevel(Log.INFO).build()
