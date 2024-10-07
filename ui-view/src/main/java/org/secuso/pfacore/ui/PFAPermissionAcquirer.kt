@@ -22,8 +22,8 @@ class PFAPermissionAcquirer(
         lateinit var showRationale: org.secuso.pfacore.ui.PFAPermissionAcquirer.Builder.RationaleOrDialog.() -> Unit
 
         internal fun build(): org.secuso.pfacore.ui.PFAPermissionAcquirer {
-            val handler = PFAPermissionRequestHandler( onGranted, onDenied, finally, _root_ide_package_.org.secuso.pfacore.ui.PFAPermissionAcquirer.Builder.RationaleOrDialog().apply(showRationale).rationale(activity))
-            return _root_ide_package_.org.secuso.pfacore.ui.PFAPermissionAcquirer(activity, handler)
+            val handler = PFAPermissionRequestHandler( onGranted, onDenied, finally, org.secuso.pfacore.ui.PFAPermissionAcquirer.Builder.RationaleOrDialog().apply(showRationale).rationale(activity))
+            return org.secuso.pfacore.ui.PFAPermissionAcquirer(activity, handler)
         }
 
 
@@ -45,37 +45,37 @@ class PFAPermissionAcquirer(
     }
 
     companion object {
-        fun build(activity: AppCompatActivity, initializer: org.secuso.pfacore.ui.PFAPermissionAcquirer.Builder.() -> Unit) = _root_ide_package_.org.secuso.pfacore.ui.PFAPermissionAcquirer.Builder(
+        fun build(activity: AppCompatActivity, initializer: org.secuso.pfacore.ui.PFAPermissionAcquirer.Builder.() -> Unit) = org.secuso.pfacore.ui.PFAPermissionAcquirer.Builder(
             activity
         ).apply(initializer).build()
     }
 }
 
 fun PFAPermission.declareUsage(activity: AppCompatActivity, activator: (() -> Unit) -> org.secuso.pfacore.ui.Inflatable, initializer: org.secuso.pfacore.ui.PFAPermissionAcquirer.Builder.() -> Unit) =
-    this.declareUsage(activator, _root_ide_package_.org.secuso.pfacore.ui.PFAPermissionAcquirer.Companion.build(activity, initializer))
-fun PFAPermission.declareUsage(activator: (() -> Unit) -> _root_ide_package_.org.secuso.pfacore.ui.Inflatable, requester: _root_ide_package_.org.secuso.pfacore.ui.PFAPermissionAcquirer): _root_ide_package_.org.secuso.pfacore.ui.Inflatable {
+    this.declareUsage(activator, org.secuso.pfacore.ui.PFAPermissionAcquirer.Companion.build(activity, initializer))
+fun PFAPermission.declareUsage(activator: (() -> Unit) -> org.secuso.pfacore.ui.Inflatable, requester: org.secuso.pfacore.ui.PFAPermissionAcquirer): org.secuso.pfacore.ui.Inflatable {
     this.initiatePermissionRequestLauncher(requester.activity, requester.handler)
     return requester.request(this, activator)
 }
 
-fun List<PFAPermission>.declareUsage(activator: (() -> Unit) -> _root_ide_package_.org.secuso.pfacore.ui.Inflatable, requester: _root_ide_package_.org.secuso.pfacore.ui.PFAPermissionAcquirer): _root_ide_package_.org.secuso.pfacore.ui.Inflatable {
+fun List<PFAPermission>.declareUsage(activator: (() -> Unit) -> org.secuso.pfacore.ui.Inflatable, requester: org.secuso.pfacore.ui.PFAPermissionAcquirer): org.secuso.pfacore.ui.Inflatable {
     return activator { this.declareUsage(requester) }
 }
 
-fun PFAPermission.declareUsage(activity: AppCompatActivity, initializer: _root_ide_package_.org.secuso.pfacore.ui.PFAPermissionAcquirer.Builder.() -> Unit) =
-    this.declareUsage(_root_ide_package_.org.secuso.pfacore.ui.PFAPermissionAcquirer.Companion.build(activity, initializer))
-fun PFAPermission.declareUsage(requester: _root_ide_package_.org.secuso.pfacore.ui.PFAPermissionAcquirer): () -> Unit {
+fun PFAPermission.declareUsage(activity: AppCompatActivity, initializer: org.secuso.pfacore.ui.PFAPermissionAcquirer.Builder.() -> Unit) =
+    this.declareUsage(org.secuso.pfacore.ui.PFAPermissionAcquirer.Companion.build(activity, initializer))
+fun PFAPermission.declareUsage(requester: org.secuso.pfacore.ui.PFAPermissionAcquirer): () -> Unit {
     this.initiatePermissionRequestLauncher(requester.activity, requester.handler)
     return requester.request(this)
 }
 
-fun List<PFAPermission>.declareUsage(requester: _root_ide_package_.org.secuso.pfacore.ui.PFAPermissionAcquirer): () -> Unit {
+fun List<PFAPermission>.declareUsage(requester: org.secuso.pfacore.ui.PFAPermissionAcquirer): () -> Unit {
     val permissionStatus = mutableListOf<Pair<PFAPermission, Boolean>>()
     val permissions = this
     val rationaleShown = false
 
     val permissionAcquirers = this.map {
-        val acquirer = _root_ide_package_.org.secuso.pfacore.ui.PFAPermissionAcquirer.Companion.build(requester.activity) {
+        val acquirer = org.secuso.pfacore.ui.PFAPermissionAcquirer.Companion.build(requester.activity) {
             onGranted = { permissionStatus.add(it to true) }
             onDenied = { permissionStatus.add(it to false) }
             finally = {
