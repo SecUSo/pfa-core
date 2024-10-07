@@ -13,6 +13,7 @@ import org.secuso.pfacore.model.ErrorReport
 import org.secuso.privacyfriendlybackup.api.pfa.BackupManager.backupCreator
 import org.secuso.privacyfriendlybackup.api.pfa.BackupManager.backupRestorer
 import java.io.File
+import kotlin.system.exitProcess
 
 abstract class PFApplication : Application(), Configuration.Provider {
     abstract val name: String
@@ -21,13 +22,14 @@ abstract class PFApplication : Application(), Configuration.Provider {
     abstract val database: Class<out RoomDatabase>
     abstract val mainActivity: Class<out Activity>
     val backup = object : PFAppBackup {}
-    val errors = File(filesDir.path + "/errors")
+    private lateinit var errors: File
 
     override fun onCreate() {
         super.onCreate()
         _instance = this
         backupCreator = BackupCreator()
         backupRestorer = BackupRestorer()
+        errors = File(applicationContext.filesDir.path + "/errors")
         errors.mkdirs()
 
         errors.listFiles()?.forEach {
@@ -36,9 +38,10 @@ abstract class PFApplication : Application(), Configuration.Provider {
             }
         }
 
-        Thread.setDefaultUncaughtExceptionHandler { _, e ->
-            File(errors.path + System.currentTimeMillis()).writeText(e.stackTraceToString())
-            throw e
+        val defaultHandler = Thread.getDefaultUncaughtExceptionHandler();
+        Thread.setDefaultUncaughtExceptionHandler { t, e ->
+            File( "${errors.path}/${System.currentTimeMillis()}").writeText(e.stackTraceToString())
+            defaultHandler?.uncaughtException(t, e)
         }
     }
 
