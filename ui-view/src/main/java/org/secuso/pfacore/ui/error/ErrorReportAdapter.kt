@@ -1,5 +1,6 @@
 package org.secuso.pfacore.ui.error
 
+import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
@@ -9,10 +10,16 @@ import org.secuso.ui.view.databinding.ErrorReportItemBinding
 import java.text.DateFormat
 import java.util.Date
 
-class ErrorReportAdapter(private val inflater: LayoutInflater, private val errorReports: List<ErrorReportHandler>): RecyclerView.Adapter<ErrorReportAdapter.ViewHolder>() {
+class ErrorReportAdapter(private val inflater: LayoutInflater, private var errorReports: List<ErrorReportHandler> = listOf()): RecyclerView.Adapter<ErrorReportAdapter.ViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         return ViewHolder(ErrorReportItemBinding.inflate(inflater, parent, false))
+    }
+
+    @SuppressLint("NotifyDataSetChanged")
+    fun setErrorReports(errorReports: List<ErrorReportHandler>) {
+        this.errorReports = errorReports
+        this.notifyDataSetChanged()
     }
 
     override fun getItemCount() = errorReports.size
@@ -23,13 +30,14 @@ class ErrorReportAdapter(private val inflater: LayoutInflater, private val error
         val errorReport = errorReports[position]
         var expanded = false
         holder.binding.title = DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.MEDIUM).format(Date(errorReport.report.unixTime))
-        holder.binding.text = errorReport.report.trace
+        holder.binding.text = errorReport.report.trace.lines().slice(0..2).joinToString("\n")
+        holder.binding.toggle.setImageResource(R.drawable.baseline_expand_more_24)
         holder.binding.toggle.setOnClickListener {
             if (expanded) {
-                holder.binding.lines = 3
+                holder.binding.text = errorReport.report.trace.lines().slice(0..2).joinToString("\n")
                 holder.binding.toggle.setImageResource(R.drawable.baseline_expand_more_24)
             } else {
-                holder.binding.lines = -1
+                holder.binding.text = errorReport.report.trace
                 holder.binding.toggle.setImageResource(R.drawable.baseline_expand_less_24)
             }
             expanded = !expanded

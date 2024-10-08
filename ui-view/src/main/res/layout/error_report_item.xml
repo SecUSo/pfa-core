@@ -16,13 +16,15 @@
             type="int" />
     </data>
 
-    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    <com.google.android.material.card.MaterialCardView
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="wrap_content">
 
-        <com.google.android.material.card.MaterialCardView
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="8dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -36,7 +38,7 @@
                 <ImageButton
                     android:id="@+id/email"
                     android:layout_width="32dp"
-                    android:layout_height="wrap_content"
+                    android:layout_height="32dp"
                     android:src="@drawable/baseline_email_24" />
                 <ImageButton
                     android:id="@+id/toggle"
@@ -47,10 +49,7 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@{text}"
-                android:maxLines="@{lines}" />
-
-        </com.google.android.material.card.MaterialCardView>
-
-    </LinearLayout>
+                android:text="@{text}" />
+        </LinearLayout>
+    </com.google.android.material.card.MaterialCardView>
 </layout>
