@@ -3,6 +3,8 @@ package org.secuso.pfacore.application
 import android.app.Activity
 import android.app.Application
 import android.content.Context
+import android.content.Intent
+import android.os.Build
 import android.util.Log
 import androidx.multidex.MultiDex
 import androidx.room.RoomDatabase
@@ -10,10 +12,10 @@ import androidx.work.Configuration
 import org.secuso.pfacore.backup.BackupCreator
 import org.secuso.pfacore.backup.BackupRestorer
 import org.secuso.pfacore.model.ErrorReport
+import org.secuso.pfacore.model.ErrorReportHandler
 import org.secuso.privacyfriendlybackup.api.pfa.BackupManager.backupCreator
 import org.secuso.privacyfriendlybackup.api.pfa.BackupManager.backupRestorer
 import java.io.File
-import kotlin.system.exitProcess
 
 abstract class PFApplication : Application(), Configuration.Provider {
     abstract val name: String
@@ -45,7 +47,32 @@ abstract class PFApplication : Application(), Configuration.Provider {
         }
     }
 
-    fun getErrorReports() = errors.listFiles()?.map { ErrorReport(it.lastModified(), it.readText()) } ?: listOf()
+    fun getErrorReports() = errors.listFiles()?.map {
+        ErrorReportHandler(
+            report = ErrorReport(it.lastModified(), it.readText()),
+            deleteReport = { report -> File("${errors.path}/${report.unixTime}") },
+            sendReport = { report -> sendEmailErrorReport(report) }
+        )
+    } ?: listOf()
+
+    fun sendEmailErrorReport(errorReport: ErrorReport) = sendEmailErrorReport(listOf(errorReport))
+    fun sendEmailErrorReport(errorReports: List<ErrorReport>) {
+        val reports = errorReports.joinToString(
+            separator = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+                System.lineSeparator()
+            } else {
+                "\n"
+            }
+        ) {
+            File("${errors.path}/${it.unixTime}").readText()
+        }
+        val intent = Intent(Intent.ACTION_SEND)
+        intent.setType("text/plain")
+        intent.putExtra(Intent.EXTRA_EMAIL, "pfa@secuso.org")
+        intent.putExtra(Intent.EXTRA_SUBJECT, "ErrorReport:")
+        intent.putExtra(Intent.EXTRA_TEXT, reports)
+        startActivity(intent)
+    }
 
     override fun getWorkManagerConfiguration(): Configuration {
         return Configuration.Builder().setMinimumLoggingLevel(Log.INFO).build()
