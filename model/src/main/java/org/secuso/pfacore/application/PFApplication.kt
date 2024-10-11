@@ -10,6 +10,7 @@ import android.util.Log
 import androidx.multidex.MultiDex
 import androidx.room.RoomDatabase
 import androidx.work.Configuration
+import org.secuso.pfacore.R
 import org.secuso.pfacore.backup.BackupCreator
 import org.secuso.pfacore.backup.BackupRestorer
 import org.secuso.pfacore.model.ErrorReport
@@ -63,24 +64,34 @@ abstract class PFApplication : Application(), Configuration.Provider {
 
     fun sendEmailErrorReport(errorReport: ErrorReport) = sendEmailErrorReport(listOf(errorReport))
     fun sendEmailErrorReport(errorReports: List<ErrorReport>) {
-        val reports = errorReports.joinToString(
-            separator = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-                System.lineSeparator()
-            } else {
-                "\n"
-            }
-        ) {
+        val reports = errorReports.joinToString(SEPARATOR) {
             File("${errors.path}/${it.unixTime}").readText()
+        }
+        val deviceInfo = if (data.includeDeviceDataInReport.value == true) {
+            getDeviceInformation().joinToString(SEPARATOR)
+        } else {
+            ""
         }
         val intent = Intent(Intent.ACTION_SENDTO).apply {
             data = Uri.parse("mailto:")
             putExtra(Intent.EXTRA_EMAIL, arrayOf("pfa@secuso.org"))
-            putExtra(Intent.EXTRA_SUBJECT, "ErrorReport:")
-            putExtra(Intent.EXTRA_TEXT, reports)
+            putExtra(Intent.EXTRA_SUBJECT, String.format(getString(R.string.error_report_email_header), this@PFApplication.data.about.name, this@PFApplication.data.about.version))
+            putExtra(Intent.EXTRA_TEXT, String.format(getString(R.string.error_report_email_body), deviceInfo, reports))
         }
         val chooser = Intent.createChooser(intent, "Send mail")
         chooser.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         startActivity(chooser)
+    }
+
+    private fun getDeviceInformation(): List<String> = mutableListOf<String>().apply {
+        add("MODEL: ${Build.MODEL}")
+        add("MANUFACTURER: ${Build.MANUFACTURER}")
+        add("BRAND: ${Build.BRAND}")
+        add("ANDROID-VERSION: ${Build.VERSION.RELEASE}")
+        add("SDK: ${Build.VERSION.SDK_INT}")
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            add("BASE-OS: ${Build.VERSION.BASE_OS}")
+        }
     }
 
     override fun getWorkManagerConfiguration(): Configuration {
@@ -89,6 +100,11 @@ abstract class PFApplication : Application(), Configuration.Provider {
 
     companion object {
         private val ERROR_REPORT_DELETE_TIME: Long = 7 * 24 * 60 * 60 * 1000L
+        val SEPARATOR = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            System.lineSeparator()
+        } else {
+            "\n"
+        }
         private var _instance: PFApplication? = null
         val instance
             get() = _instance ?: throw IllegalStateException("The PFApplication was not instanced")

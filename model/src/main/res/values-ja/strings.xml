@@ -19,4 +19,22 @@
 
     <string name="select_day_night_theme">外観</string>
     <string name="nav_bugs">エラー</string>
+    <string name="include_device_info_error_title">エラーレポートにデバイス情報を含める</string>
+    <string name="include_device_info_error_summary">有効にすると、エラー レポートには、製造元やインストールされている Android のバージョンなど、このデバイスに関する有用な情報が含まれます。</string>
+    <string name="error_report_email_body">
+        Dear PFA-Team, \n\n
+
+        &lt;Please describe your encountered problem as accurately as possible. Include any information on what you were doing, what happened, what content would have been shown, any special characters like &amp;, … .
+        The more information you provide, the more likely we are able to determine the cause of it.&gt; \n\n
+
+        Sincerely, \n\n
+
+        ======================= \n\n
+
+        Device-Information: \n
+        %s
+        \n\n
+        Error Logs: \n
+        %s
+    </string>
 </resources>
