@@ -1,5 +1,52 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" xmlns:tools="http://schemas.android.com/tools">
+    <application>
+        <activity
+            android:name="org.secuso.pfacore.ui.activities.SplashActivity"
+            android:exported="true"
+            android:theme="@style/SplashTheme">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name="org.secuso.pfacore.ui.activities.TutorialActivity"
+            android:theme="@style/PrivacyFriendlyCoreTheme.NoActionBar" />
+        <activity
+            android:name="org.secuso.pfacore.ui.activities.AboutActivity"
+            android:label="@string/activity_about_title"
+            android:theme="@style/PrivacyFriendlyCoreTheme.NoActionBar">
+        </activity>
+        <activity
+            android:name="org.secuso.pfacore.ui.activities.HelpActivity"
+            android:label="@string/activity_help_title"
+            android:theme="@style/PrivacyFriendlyCoreTheme.NoActionBar">
+        </activity>
+        <activity
+            android:name="org.secuso.pfacore.ui.activities.SettingsActivity"
+            android:label="@string/activity_settings_title"
+            android:theme="@style/PrivacyFriendlyCoreTheme.NoActionBar">
+        </activity>
+        <activity
+            android:name="org.secuso.pfacore.ui.activities.ErrorReportActivity"
+            android:label="@string/activity_report_errors_title"
+            android:theme="@style/PrivacyFriendlyCoreTheme.NoActionBar">
+        </activity>
+        <provider
+            android:name="androidx.startup.InitializationProvider"
+            android:authorities="${applicationId}.androidx-startup"
+            tools:node="remove"/>
 
-    <application></application>
+        <service
+            android:name="org.secuso.pfacore.backup.PFABackupService"
+            android:enabled="true"
+            android:exported="true"
+            android:process=":backup"
+            tools:ignore="ExportedService">
+            <intent-filter>
+                <action android:name="org.secuso.privacyfriendlybackup.api.pfa.PFAAuthService" />
+            </intent-filter>
+        </service>
+    </application>
 </manifest>
