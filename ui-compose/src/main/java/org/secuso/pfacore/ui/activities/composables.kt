@@ -39,11 +39,11 @@ fun WithTheme(content: @Composable () -> Unit) {
 
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
-fun TopAppBar(title: State<String?>, onClick: () -> Unit, icon: (@Composable () -> Unit)? = null) {
+fun TopAppBar(title: State<String?>, onNavigationClick: () -> Unit, actions: (@Composable () -> Unit) = {}, icon: (@Composable () -> Unit)? = null) {
     TopAppBar(
         title = { Text(text = title.value ?: PFApplication.instance.name, maxLines = 1, overflow = TextOverflow.Ellipsis) },
         navigationIcon = {
-            IconButton(onClick = onClick) {
+            IconButton(onClick = onNavigationClick) {
                 if (icon != null) {
                     icon()
                 } else {
@@ -55,6 +55,9 @@ fun TopAppBar(title: State<String?>, onClick: () -> Unit, icon: (@Composable () 
             containerColor = MaterialTheme.colorScheme.navbar,
             titleContentColor = Color.White
         ),
+        actions = {
+            actions()
+        },
         scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState()),
     )
 }

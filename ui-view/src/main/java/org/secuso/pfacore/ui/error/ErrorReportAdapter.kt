@@ -53,11 +53,11 @@ class ErrorReportAdapter(
         val errorReport = errorReports[position]
         var expanded = false
         holder.binding.title = DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.MEDIUM).format(Date(errorReport.report.unixTime))
-        holder.binding.text = errorReport.report.trace.lines().slice(0..2).joinToString("\n")
+        holder.binding.text = errorReport.report.trace.lines().take(3).joinToString("\n")
         holder.binding.toggle.setImageResource(R.drawable.baseline_expand_more_24)
         holder.binding.toggle.setOnClickListener {
             if (expanded) {
-                holder.binding.text = errorReport.report.trace.lines().slice(0..2).joinToString("\n")
+                holder.binding.text = errorReport.report.trace.lines().take(3).joinToString("\n")
                 holder.binding.toggle.setImageResource(R.drawable.baseline_expand_more_24)
             } else {
                 holder.binding.text = errorReport.report.trace

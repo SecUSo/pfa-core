@@ -1,9 +1,12 @@
 package org.secuso.pfacore.ui.activities
 
 import android.util.Log
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
@@ -17,46 +20,71 @@ import androidx.compose.material3.IconToggleButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import org.secuso.pfacore.application.PFApplication
 import org.secuso.pfacore.model.ErrorReport
 import org.secuso.pfacore.model.ErrorReportHandler
+import org.secuso.pfacore.ui.theme.PrivacyFriendlyCoreTheme
 import org.secuso.ui.compose.R
 import java.text.DateFormat
 import java.util.Date
 
 class ErrorReportActivity: BaseActivity() {
 
+    private val selectedReports: SnapshotStateList<ErrorReport> = mutableStateListOf()
+
+    @Composable
+    override fun Actions() {
+        if (selectedReports.isNotEmpty()) {
+            IconButton(onClick = { PFApplication.instance.sendEmailErrorReport(selectedReports.toList()) }) {
+                Icon(imageVector = Icons.Filled.Email, contentDescription = "E-Mail")
+            }
+        }
+    }
+
     @Composable
     override fun Content(application: PFApplication) {
         val errors = application.getErrorReports()
-        if (errors.isEmpty()) {
-            Column(verticalArrangement = Arrangement.Center, horizontalAlignment = Alignment.CenterHorizontally) {
-                Text(text = "No Error Reports available :D")
-            }
-        } else {
-            LazyColumn(Modifier.fillMaxWidth()) {
-                items(count = errors.size) {
-                    ErrorReportElement(errors[it])
+        Box(Modifier.fillMaxSize().pointerInput(Unit) {
+            detectTapGestures(
+                onTap = {
+                    if (selectedReports.isNotEmpty()) {
+                        selectedReports.clear()
+                    }
                 }
-            }
+            )
+        }) {
+            ErrorReportList(errors, selectedReports)
+        }
+    }
+
+    @Deprecated("Deprecated in Java")
+    override fun onBackPressed() {
+        Log.d("debug", selectedReports.toString())
+        if (selectedReports.isNotEmpty()) {
+            selectedReports.clear()
+        } else {
+            super.onBackPressed()
         }
     }
 }
 
 @Composable
-fun ErrorReportElement(errorReport: ErrorReportHandler) {
+fun ErrorReportElement(errorReport: ErrorReportHandler, selected: Boolean) {
     val expanded = remember {
         mutableStateOf(false)
     }
     Card(
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant),
+        colors = CardDefaults.cardColors(containerColor = if (selected) { MaterialTheme.colorScheme.primaryContainer } else { MaterialTheme.colorScheme.surface }),
     ) {
         Column(modifier = Modifier.padding(all = 8.dp)) {
             Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) {
@@ -65,8 +93,10 @@ fun ErrorReportElement(errorReport: ErrorReportHandler) {
                     style = MaterialTheme.typography.titleSmall
                 )
                 Row {
-                    IconButton(onClick = { errorReport.send() }) {
-                        Icon(imageVector = Icons.Filled.Email, contentDescription = "E-Mail")
+                    if (!selected) {
+                        IconButton(onClick = { errorReport.send() }) {
+                            Icon(imageVector = Icons.Filled.Email, contentDescription = "E-Mail")
+                        }
                     }
                     IconToggleButton(checked = expanded.value, onCheckedChange = {
                         expanded.value = !expanded.value
@@ -85,7 +115,7 @@ fun ErrorReportElement(errorReport: ErrorReportHandler) {
                     text = if (expanded.value) {
                         errorReport.report.trace
                     } else {
-                        errorReport.report.trace.lines().slice(0..2).joinToString(System.lineSeparator())
+                        errorReport.report.trace.lines().take(3).joinToString(System.lineSeparator())
                     }
                 )
             }
@@ -112,5 +142,53 @@ fun PreviewErrorReportElement() {
             "\tat java.lang.reflect.Method.invoke(Native Method)\n" +
             "\tat com.android.internal.os.RuntimeInit\$MethodAndArgsCaller.run(RuntimeInit.java:548)\n" +
             "\tat com.android.internal.os.ZygoteInit.main(ZygoteInit.java:936)"
-    ErrorReportElement(ErrorReportHandler(ErrorReport(System.currentTimeMillis(), trace), { Log.d("Preview", "Send report ${it.unixTime}")}, {Log.d("Preview", "Delete report ${it.unixTime}")}))
+    val selected = false
+    ErrorReportElement(ErrorReportHandler(ErrorReport(System.currentTimeMillis(), trace), { Log.d("Preview", "Send report ${it.unixTime}")}, {Log.d("Preview", "Delete report ${it.unixTime}")}), selected)
+}
+
+@Composable
+fun ErrorReportList(errorReports: List<ErrorReportHandler>, selectedReports: SnapshotStateList<ErrorReport>) {
+    LazyColumn(Modifier.fillMaxWidth()) {
+        items(count = errorReports.size) {
+            val errorReport = errorReports[it]
+            Box(Modifier.padding(horizontal = 8.dp, vertical = 4.dp).pointerInput(Unit) {
+                detectTapGestures(
+                    onLongPress = {
+                        if (!selectedReports.contains(errorReport.report)) {
+                            selectedReports.add(errorReport.report)
+                        } else {
+                            selectedReports.remove(errorReport.report)
+                        }
+                    },
+                    onTap = {
+                        if (selectedReports.isNotEmpty()) {
+                            if (!selectedReports.contains(errorReport.report)) {
+                                selectedReports.add(errorReport.report)
+                            } else {
+                                selectedReports.remove(errorReport.report)
+                            }
+                        }
+                    }
+                )}
+            ) {
+                ErrorReportElement(errorReport, selectedReports.contains(errorReport.report))
+            }
+        }
+    }
+}
+
+@Preview
+@Composable
+fun PreviewErrorReportList() {
+    val errors = mutableListOf(
+        ErrorReportHandler(ErrorReport(System.currentTimeMillis(), "a"), { Log.d("Preview", "Send report ${it.unixTime}")}, {Log.d("Preview", "Delete report ${it.unixTime}")}),
+        ErrorReportHandler(ErrorReport(System.currentTimeMillis() + 1, "b"), { Log.d("Preview", "Send report ${it.unixTime}")}, {Log.d("Preview", "Delete report ${it.unixTime}")}),
+        ErrorReportHandler(ErrorReport(System.currentTimeMillis() + 2, "c"), { Log.d("Preview", "Send report ${it.unixTime}")}, {Log.d("Preview", "Delete report ${it.unixTime}")})
+    )
+    val selectedReports = remember {
+        mutableStateListOf<ErrorReport>()
+    }
+    PrivacyFriendlyCoreTheme {
+        ErrorReportList(errors, selectedReports)
+    }
 }
