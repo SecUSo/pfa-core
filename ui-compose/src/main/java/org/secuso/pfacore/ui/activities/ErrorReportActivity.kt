@@ -26,6 +26,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -46,7 +47,7 @@ class ErrorReportActivity: BaseActivity() {
     override fun Actions() {
         if (selectedReports.isNotEmpty()) {
             IconButton(onClick = { PFApplication.instance.sendEmailErrorReport(selectedReports.toList()) }) {
-                Icon(imageVector = Icons.Filled.Email, contentDescription = "E-Mail")
+                Icon(imageVector = Icons.Filled.Email, contentDescription = "E-Mail", tint = Color.White)
             }
         }
     }
@@ -84,7 +85,7 @@ fun ErrorReportElement(errorReport: ErrorReportHandler, selected: Boolean) {
         mutableStateOf(false)
     }
     Card(
-        colors = CardDefaults.cardColors(containerColor = if (selected) { MaterialTheme.colorScheme.primaryContainer } else { MaterialTheme.colorScheme.surface }),
+        colors = CardDefaults.cardColors(containerColor = if (selected) { MaterialTheme.colorScheme.primaryContainer } else { MaterialTheme.colorScheme.surfaceVariant }),
     ) {
         Column(modifier = Modifier.padding(all = 8.dp)) {
             Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) {

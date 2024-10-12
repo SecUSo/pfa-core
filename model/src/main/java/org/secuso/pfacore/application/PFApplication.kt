@@ -42,7 +42,7 @@ abstract class PFApplication : Application(), Configuration.Provider {
             }
         }
 
-        val defaultHandler = Thread.getDefaultUncaughtExceptionHandler();
+        val defaultHandler = Thread.getDefaultUncaughtExceptionHandler()
         Thread.setDefaultUncaughtExceptionHandler { t, e ->
             File( "${errors.path}/${System.currentTimeMillis()}").writeText(e.stackTraceToString())
             defaultHandler?.uncaughtException(t, e)
@@ -60,7 +60,7 @@ abstract class PFApplication : Application(), Configuration.Provider {
         } else {
             null
         }
-    }?.filterNotNull()?.sortedBy { it.report.unixTime } ?: listOf()
+    }?.filterNotNull()?.sortedByDescending { it.report.unixTime } ?: listOf()
 
     fun sendEmailErrorReport(errorReport: ErrorReport) = sendEmailErrorReport(listOf(errorReport))
     fun sendEmailErrorReport(errorReports: List<ErrorReport>) {
