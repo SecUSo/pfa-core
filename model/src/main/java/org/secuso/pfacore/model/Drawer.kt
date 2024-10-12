@@ -23,7 +23,6 @@ open class ActivityDrawerElement(override val name: String, @DrawableRes overrid
             return
         }
         activity.startActivity(extras(Intent(activity, clazz)))
-        activity.finish()
     }
 
     class Builder {
