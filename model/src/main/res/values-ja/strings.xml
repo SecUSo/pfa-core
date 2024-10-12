@@ -37,4 +37,8 @@
         Error Logs: \n
         %s
     </string>
+    <string name="activity_about_title">その上</string>
+    <string name="activity_help_title">ヘルプ</string>
+    <string name="activity_settings_title">設定</string>
+    <string name="activity_report_errors_title">バグを報告する</string>
 </resources>

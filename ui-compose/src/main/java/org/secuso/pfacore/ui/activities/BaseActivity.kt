@@ -1,5 +1,7 @@
 package org.secuso.pfacore.ui.activities
 
+import android.app.Activity
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
@@ -12,10 +14,13 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.toArgb
+import androidx.core.app.TaskStackBuilder
 import org.secuso.pfacore.application.PFApplication
 import org.secuso.pfacore.ui.theme.navbar
 
 abstract class BaseActivity : AppCompatActivity() {
+
+    open val parentActivity: Class<out Activity> = PFApplication.instance.mainActivity
 
     @Composable
     abstract fun Content(application: PFApplication)
@@ -37,7 +42,17 @@ abstract class BaseActivity : AppCompatActivity() {
                     topBar = {
                         TopAppBar(
                             title = title,
-                            onNavigationClick = { finish() },
+                            onNavigationClick = {
+                                TaskStackBuilder.create(this)
+                                    .addParentStack(parentActivity)
+                                    .addNextIntent(Intent(this, parentActivity))
+                                    .intents.apply {
+                                        if (isNotEmpty()) {
+                                            this[0].setFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_TASK_ON_HOME)
+                                        }
+                                        startActivities(this)
+                                    }
+                            },
                             actions = { Actions() }
                         )
                     }

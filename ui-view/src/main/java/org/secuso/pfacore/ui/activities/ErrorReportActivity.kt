@@ -19,7 +19,7 @@ import org.secuso.pfacore.ui.error.ErrorReportAdapter
 import org.secuso.ui.view.R
 import org.secuso.ui.view.databinding.ActivityErrorReportBinding
 
-class ErrorReportActivity: AppCompatActivity() {
+class ErrorReportActivity: BaseActivity() {
 
     private lateinit var tracker: SelectionTracker<Long>
     private lateinit var binding: ActivityErrorReportBinding

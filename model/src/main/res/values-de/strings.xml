@@ -37,5 +37,9 @@
         Fehlerprotokolle: \n
         %s
     </string>
+    <string name="activity_about_title">Über</string>
+    <string name="activity_help_title">Hilfe</string>
+    <string name="activity_settings_title">Einstellungen</string>
+    <string name="activity_report_errors_title">Fehler melden</string>
 
 </resources>

@@ -1,5 +1,6 @@
 package org.secuso.pfacore.ui.activities
 
+import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -13,8 +14,13 @@ import org.secuso.ui.view.databinding.ActivityDrawerBinding
 import org.secuso.ui.view.databinding.DrawerNavHeaderBinding
 
 
-abstract class DrawerActivity: AppCompatActivity(), Drawer {
+abstract class DrawerActivity: BaseActivity(), Drawer {
     private lateinit var drawerBinding: ActivityDrawerBinding
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        supportActionBar?.setDisplayHomeAsUpEnabled(false)
+    }
 
     override fun defaultDrawerSection(builder: DrawerMenu.Builder) {
         builder.apply {
