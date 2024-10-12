@@ -20,6 +20,11 @@ abstract class BaseActivity : AppCompatActivity() {
     @Composable
     abstract fun Content(application: PFApplication)
 
+    @Composable
+    open fun Actions() {
+
+    }
+
     val title: State<String?> = mutableStateOf(null)
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -30,7 +35,11 @@ abstract class BaseActivity : AppCompatActivity() {
                 window.statusBarColor = MaterialTheme.colorScheme.navbar.toArgb()
                 Scaffold(
                     topBar = {
-                        TopAppBar(title, { finish() })
+                        TopAppBar(
+                            title = title,
+                            onNavigationClick = { finish() },
+                            actions = { Actions() }
+                        )
                     }
                 ) {
                     Box(modifier = Modifier.padding(it)) {

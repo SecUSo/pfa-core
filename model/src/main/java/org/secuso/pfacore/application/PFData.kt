@@ -15,4 +15,5 @@ data class PFData(
     val tutorial: Tutorial<*>,
     val theme: LiveData<Theme>,
     val firstLaunch: Preferable<Boolean>,
+    val includeDeviceDataInReport: Preferable<Boolean>
 )

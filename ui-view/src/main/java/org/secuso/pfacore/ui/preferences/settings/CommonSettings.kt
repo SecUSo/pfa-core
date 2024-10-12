@@ -42,3 +42,20 @@ class PreferenceFirstTimeLaunch {
         }
     }
 }
+
+class DeviceInformationOnErrorReport {
+    companion object {
+        const val includeDeviceDataInReportKey = "includeDeviceDataInReport"
+    }
+    fun build(): Settings.Setting.() -> SwitchSetting.SwitchData {
+        return {
+            switch {
+                key = includeDeviceDataInReportKey
+                default = true
+                backup = true
+                title { resource(R.string.include_device_info_error_title) }
+                summary { resource(R.string.include_device_info_error_summary) }
+            }
+        }
+    }
+}

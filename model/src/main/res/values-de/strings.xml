@@ -18,5 +18,24 @@
     <string name="okay">Okay</string>
 
     <string name="select_day_night_theme">Aussehen</string>
+    <string name="nav_bugs">Fehler</string>
+    <string name="include_device_info_error_title">Geräteinformationen in Fehlerbericht einschließen</string>
+    <string name="include_device_info_error_summary">Falls diese Option aktiviert ist, enthält der Fehlerbericht nützliche Informationen zu diesem Gerät, z. B.B. den Hersteller oder die installierte Android-Version.</string>
+    <string name="error_report_email_body">
+        Liebes PFA-Team, \n\n
+
+        &lt;Bitte beschreiben Sie das aufgetretene Problem so genau wie möglich. Geben Sie alle Informationen dazu an, was Sie getan haben, was passiert ist, welche Inhalte angezeigt worden wären, und geben Sie Sonderzeichen wie &amp;, … an.
+        Je mehr Informationen Sie angeben, desto wahrscheinlicher ist es, dass wir die Ursache ermitteln können.&gt; \n\n
+
+        Mit freundlichen Grüßen \n\n
+
+        ======================== \n\n
+
+        Geräteinformationen: \n
+        %s
+        \n\n
+        Fehlerprotokolle: \n
+        %s
+    </string>
 
 </resources>

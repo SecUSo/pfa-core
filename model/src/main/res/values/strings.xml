@@ -27,4 +27,24 @@
         <item>Light</item>
         <item>Dark</item>
     </string-array>
+    <string name="nav_bugs">Errors</string>
+    <string name="include_device_info_error_title">Include device information on error report</string>
+    <string name="include_device_info_error_summary">If enabled, the error report will include useful information about this device, e.g. manufacturer or the version of Android installed.</string>
+    <string name="error_report_email_header" translatable="false">Error Report: %s (%s)</string>
+    <string name="error_report_email_body">
+        Dear PFA-Team, \n\n
+
+        &lt;Please describe your encountered problem as accurately as possible. Include any information on what you were doing, what happened, what content would have been shown, any special characters like &amp;, … .
+        The more information you provide, the more likely we are able to determine the cause of it.&gt; \n\n
+
+        Sincerely, \n\n
+
+        ======================= \n\n
+
+        Device-Information: \n
+        %s
+        \n\n
+        Error Logs: \n
+        %s
+    </string>
 </resources>
