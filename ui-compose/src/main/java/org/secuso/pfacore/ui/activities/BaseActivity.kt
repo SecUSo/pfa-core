@@ -37,7 +37,6 @@ abstract class BaseActivity : AppCompatActivity() {
         val application = PFApplication.instance
         setContent {
             WithTheme {
-                window.statusBarColor = MaterialTheme.colorScheme.navbar.toArgb()
                 Scaffold(
                     topBar = {
                         TopAppBar(

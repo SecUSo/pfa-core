@@ -333,11 +333,14 @@ fun PrivacyFriendlyCoreTheme(
         darkTheme -> darkScheme
         else -> lightScheme
     }
+
+    // Set the statusbar color to match the top navigation bar
     val view = LocalView.current
     if (!view.isInEditMode) {
         SideEffect {
             val window = (view.context as Activity).window
-            window.statusBarColor = colorScheme.primary.toArgb()
+            window.statusBarColor = colorScheme.navbar.toArgb()
+            window.navigationBarColor = colorScheme.background.toArgb()
             WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = darkTheme
         }
     }
