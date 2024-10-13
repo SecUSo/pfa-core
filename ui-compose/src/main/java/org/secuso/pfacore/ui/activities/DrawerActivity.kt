@@ -28,6 +28,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -54,7 +55,7 @@ abstract class DrawerActivity : AppCompatActivity(), Drawer {
     @Composable
     abstract fun Content(application: PFApplication)
 
-    val title: State<String?> = mutableStateOf(null)
+    protected val title: MutableState<String> = mutableStateOf(PFApplication.instance.name)
 
     override fun defaultDrawerSection(builder: DrawerMenu.Builder) {
         builder.apply {

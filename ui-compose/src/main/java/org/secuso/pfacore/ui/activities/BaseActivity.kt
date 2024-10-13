@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Modifier
@@ -30,7 +31,7 @@ abstract class BaseActivity : AppCompatActivity() {
 
     }
 
-    val title: State<String?> = mutableStateOf(null)
+    protected val title: MutableState<String> = mutableStateOf(PFApplication.instance.name)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

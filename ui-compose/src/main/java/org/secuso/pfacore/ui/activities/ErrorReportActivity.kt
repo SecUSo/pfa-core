@@ -43,6 +43,10 @@ class ErrorReportActivity: BaseActivity() {
 
     private val selectedReports: SnapshotStateList<ErrorReport> = mutableStateListOf()
 
+    init {
+        super.title.value = getString(org.secuso.pfacore.R.string.activity_report_errors_title)
+    }
+
     @Composable
     override fun Actions() {
         if (selectedReports.isNotEmpty()) {
