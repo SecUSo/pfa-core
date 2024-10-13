@@ -16,7 +16,7 @@
     </style>
 
     <style name="PrivacyFriendlyCoreTheme.Preference.CategoryTitle" parent="TextAppearance.Material3.TitleSmall">
-        <item name="android:textColor">?attr/colorPrimary</item>
+        <item name="android:textColor">?attr/colorSecondary</item>
         <item name="android:paddingTop">16dp</item>
         <item name="android:paddingBottom">16dp</item>
     </style>
