@@ -34,6 +34,7 @@
     <style name="PrivacyFriendlyCoreTheme.ActionBar" parent="Widget.Material3.Toolbar">
         <item name="android:background">@color/colorSecuso</item>
         <item name="navigationIconTint">@color/white</item>
+        <item name="colorControlNormal">@color/white</item>
         <item name="titleTextColor">@color/white</item>
         <item name="subtitleTextColor">@color/white</item>
     </style>
