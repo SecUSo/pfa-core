@@ -20,6 +20,8 @@ import org.secuso.pfacore.ui.TransformableInfo
 import org.secuso.pfacore.model.preferences.settings.SwitchSetting as MSwitchSetting
 import org.secuso.pfacore.ui.preferences.settings.composables.MenuPreference
 import org.secuso.pfacore.ui.preferences.settings.composables.RadioPreference
+import org.secuso.pfacore.ui.preferences.settings.composables.SettingSummary
+import org.secuso.pfacore.ui.preferences.settings.composables.SettingTitle
 import org.secuso.pfacore.ui.preferences.settings.composables.SwitchPreference
 
 open class DisplaySetting<T, SD: ISettingData<T>>(private val resources: Resources) {
@@ -27,13 +29,13 @@ open class DisplaySetting<T, SD: ISettingData<T>>(private val resources: Resourc
     var summary: @Composable ((SD, T, Modifier) -> Unit)? = null
     fun title(initializer: TransformableInfo<SD, T>.() -> Unit) {
         this.title = TransformableInfo<SD, T>(resources) { transformer ->
-            { data, value, modifier -> Text(text = transformer(data, value), modifier = modifier) }
+            { data, value, modifier -> SettingTitle(text = transformer(data, value), modifier = modifier) }
         }.apply(initializer).build()
     }
     @Suppress("Unused")
     fun summary(initializer: TransformableInfo<SD, T>.() -> Unit) {
         this.summary = TransformableInfo<SD, T>(resources) { transformer ->
-            { data, state, modifier -> Text(text = transformer(data, state), modifier = modifier) }
+            { data, state, modifier -> SettingSummary(text = transformer(data, state), modifier = modifier) }
         }.apply(initializer).build()
     }
     internal fun requireTitle() = title ?: throw IllegalStateException("This setting requires a title")

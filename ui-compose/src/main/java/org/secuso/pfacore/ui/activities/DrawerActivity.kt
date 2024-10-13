@@ -24,6 +24,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalDrawerSheet
 import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.material3.NavigationDrawerItem
+import androidx.compose.material3.NavigationDrawerItemColors
+import androidx.compose.material3.NavigationDrawerItemDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberDrawerState
@@ -160,6 +162,7 @@ fun DrawerMenuComp(drawer: DrawerMenu, selected: (DrawerElement) -> Boolean) {
                 label = { Text(item.name) },
                 icon = if (item.icon != null) { -> Icon(painter = painterResource(item.icon!!), contentDescription = item.name) } else null,
                 onClick = { if (context is Activity) item.onClick(context) },
+                colors = NavigationDrawerItemDefaults.colors(selectedContainerColor = MaterialTheme.colorScheme.primaryContainer),
                 selected = selected(item)
             )
         }

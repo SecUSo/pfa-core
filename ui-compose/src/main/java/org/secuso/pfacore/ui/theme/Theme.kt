@@ -321,7 +321,7 @@ val unspecified_scheme = ColorFamily(
 fun PrivacyFriendlyCoreTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
     // Dynamic color is available on Android 12+
-    dynamicColor: Boolean = true,
+    dynamicColor: Boolean = false,
     content: @Composable() () -> Unit
 ) {
     val colorScheme = when {
@@ -333,15 +333,13 @@ fun PrivacyFriendlyCoreTheme(
         darkTheme -> darkScheme
         else -> lightScheme
     }
-
-    // Set the statusbar color to match the top navigation bar
     val view = LocalView.current
     if (!view.isInEditMode) {
         SideEffect {
             val window = (view.context as Activity).window
             window.statusBarColor = colorScheme.navbar.toArgb()
             window.navigationBarColor = colorScheme.background.toArgb()
-            WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = darkTheme
+            WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = if (dynamicColor) { darkTheme } else { false }
         }
     }
 
