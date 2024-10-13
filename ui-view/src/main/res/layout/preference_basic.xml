@@ -14,7 +14,7 @@
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        style="?attr/stylePreference">
+        android:theme="?attr/stylePreference">
         <LinearLayout
             android:orientation="horizontal"
             android:layout_width="match_parent"
@@ -26,12 +26,14 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
                 android:layout_gravity="center">
+                <!-- Note: Theses Elements are only stubs. Please refer to simple_title and simple_description -->
                 <com.google.android.material.textview.MaterialTextView
                     android:enabled="@{enabled}"
                     android:id="@+id/title"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Title"/>
+                    android:text="Title"
+                    style="?attr/stylePreferenceTitle"/>
                 <com.google.android.material.textview.MaterialTextView
                     android:enabled="@{enabled}"
                     android:id="@+id/description"

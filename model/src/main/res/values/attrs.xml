@@ -38,8 +38,9 @@
         <attr name="colorSurfaceInverse" format="color" />
         <attr name="colorPrimaryInverse" format="color" />
 
+        <attr name="stylePreferenceMenu" format="reference" />
         <attr name="stylePreferenceCategoryHeader" format="reference" />
-        <attr name="stylePreference" format="reference" />
+        <attr name="stylePreferenceTitle" format="reference" />
     </declare-styleable>
     <drawable name="splash_screen" />
 </resources>

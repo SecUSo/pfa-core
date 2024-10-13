@@ -5,21 +5,23 @@
     </style>
 
     <style name="PrivacyFriendlyCoreTheme.Preference" parent="Preference">
-        <item name="android:paddingLeft">12dp</item>
-        <item name="android:paddingRight">12dp</item>
+        <item name="stylePreferenceMenu">@style/PrivacyFriendlyCoreTheme.Preference.Menu</item>
         <item name="stylePreferenceCategoryHeader">@style/PrivacyFriendlyCoreTheme.Preference.CategoryTitle</item>
+        <item name="stylePreferenceTitle">@style/PrivacyFriendlyCoreTheme.Preference.Title</item>
     </style>
 
-    <style name="PrivacyFriendlyCoreTheme.Preference.CategoryTitle" parent="PrivacyFriendlyCoreTheme">
-        <item name="android:textAppearance">@style/TextAppearance.Material3.TitleSmall</item>
-        <item name="android:textColor">?attr/colorSecuso</item>
-        <item name="android:paddingTop">16dp</item>
+    <style name="PrivacyFriendlyCoreTheme.Preference.Menu">
         <item name="android:paddingLeft">12dp</item>
         <item name="android:paddingRight">12dp</item>
     </style>
 
-    <style name="PrivacyFriendlyCoreTheme.Preference.Title" parent="TextAppearance.Material3.TitleSmall">
+    <style name="PrivacyFriendlyCoreTheme.Preference.CategoryTitle" parent="TextAppearance.Material3.TitleSmall">
+        <item name="android:textColor">?attr/colorPrimary</item>
+        <item name="android:paddingTop">16dp</item>
+        <item name="android:paddingBottom">16dp</item>
+    </style>
 
+    <style name="PrivacyFriendlyCoreTheme.Preference.Title" parent="TextAppearance.Material3.TitleMedium">
     </style>
 
     <style name="PrivacyFriendlyCoreTheme.Help.Item" parent="PrivacyFriendlyCoreTheme.Help">

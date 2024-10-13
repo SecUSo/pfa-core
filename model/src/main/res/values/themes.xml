@@ -62,8 +62,9 @@
         <item name="colorControlNormal">@color/white</item>
         <item name="android:homeAsUpIndicator">@drawable/arrow_back</item>
 
-        <item name="stylePreference">@style/PrivacyFriendlyCoreTheme.Preference</item>
+        <item name="stylePreferenceMenu">@style/PrivacyFriendlyCoreTheme.Preference.Menu</item>
         <item name="stylePreferenceCategoryHeader">@style/PrivacyFriendlyCoreTheme.Preference.CategoryTitle</item>
+        <item name="stylePreferenceTitle">@style/PrivacyFriendlyCoreTheme.Preference.Title</item>
     </style>
 
     <style name="PrivacyFriendlyCoreTheme.NoActionBar" parent="PrivacyFriendlyCoreTheme">
