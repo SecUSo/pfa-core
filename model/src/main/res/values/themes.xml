@@ -74,6 +74,12 @@
         <item name="windowNoTitle">true</item>
     </style>
 
+    <style name="PrivacyFriendlyCoreTheme.Tutorial" parent="PrivacyFriendlyCoreTheme">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+        <item name="android:statusBarColor">@color/colorAccent</item>
+    </style>
+
     <style name="SplashTheme" parent="@android:style/Theme.NoTitleBar.Fullscreen">
         <item name="android:windowBackground">@drawable/splash_screen</item>
         <item name="android:windowNoTitle">true</item>
