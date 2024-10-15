@@ -41,6 +41,9 @@
         <attr name="stylePreferenceMenu" format="reference" />
         <attr name="stylePreferenceCategoryHeader" format="reference" />
         <attr name="stylePreferenceTitle" format="reference" />
+
+        <attr name="styleHelpTitle" format="reference" />
+        <attr name="styleHelpDescription" format="reference" />
     </declare-styleable>
     <drawable name="splash_screen" />
 </resources>

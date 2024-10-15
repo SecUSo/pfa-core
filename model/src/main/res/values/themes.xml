@@ -64,6 +64,9 @@
         <item name="stylePreferenceMenu">@style/PrivacyFriendlyCoreTheme.Preference.Menu</item>
         <item name="stylePreferenceCategoryHeader">@style/PrivacyFriendlyCoreTheme.Preference.CategoryTitle</item>
         <item name="stylePreferenceTitle">@style/PrivacyFriendlyCoreTheme.Preference.Title</item>
+
+        <item name="styleHelpTitle">@style/PrivacyFriendlyCoreTheme.Help.Title</item>
+        <item name="styleHelpDescription">@style/PrivacyFriendlyCoreTheme.Help.Description</item>
     </style>
 
     <style name="PrivacyFriendlyCoreTheme.NoActionBar" parent="PrivacyFriendlyCoreTheme">

@@ -1,8 +1,17 @@
 <resources>
 
-    <style name="PrivacyFriendlyCoreTheme.Help" parent="PrivacyFriendlyCoreTheme">
+    <style name="PrivacyFriendlyCoreTheme.Help">
 
     </style>
+
+    <style name="PrivacyFriendlyCoreTheme.Help.Title">
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="PrivacyFriendlyCoreTheme.Help.Description">
+        <item name="android:textColor">?attr/colorOnSurfaceVariant</item>
+    </style>
+
 
     <style name="PrivacyFriendlyCoreTheme.Preference" parent="Preference">
         <item name="stylePreferenceMenu">@style/PrivacyFriendlyCoreTheme.Preference.Menu</item>
