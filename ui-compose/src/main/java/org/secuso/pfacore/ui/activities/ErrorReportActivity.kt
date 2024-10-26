@@ -94,8 +94,7 @@ class ErrorReportActivity: BaseActivity() {
     }
 }
 
-private fun sendErrorReportDialog(context: Context, accept: () -> Unit): AbortElseDialog = AbortElseDialog.build {
-    this.context = context
+private fun sendErrorReportDialog(context: Context, accept: () -> Unit): AbortElseDialog = AbortElseDialog.build(context) {
     title = { ContextCompat.getString(context, org.secuso.pfacore.R.string.dialog_report_sensitive_information_title) }
     content = { ContextCompat.getString(context, org.secuso.pfacore.R.string.dialog_report_sensitive_information_content) }
     acceptLabel = ContextCompat.getString(context, org.secuso.pfacore.R.string.dialog_button_understood)

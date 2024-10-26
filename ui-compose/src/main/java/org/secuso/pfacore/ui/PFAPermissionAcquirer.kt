@@ -8,7 +8,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import org.secuso.pfacore.model.dialog.AbortElseDialog
 import org.secuso.pfacore.model.permission.PFAPermission
-import org.secuso.pfacore.ui.dialog.Show
+import org.secuso.pfacore.ui.dialog.register
 import org.secuso.pfacore.model.permission.PFAPermissionRequestHandler as MPFAPermissionRequestHandler
 
 class PFAPermissionRequestHandler(
@@ -88,13 +88,12 @@ class PFAPermissionAcquirer(
             var rationaleText: String? = null
             var rationale: (Context) -> @Composable (doRequest: () -> Unit) -> Unit = { ctx ->
                 { doRequest ->
-                    AbortElseDialog.build {
+                    AbortElseDialog.build(ctx) {
                         title = { rationaleTitle ?: throw IllegalStateException("Either specify a custom rationale or specify a title for the default rationale.") }
                         content = { rationaleText ?: throw IllegalStateException("Either specify a custom rationale or specify a content for the default rationale.") }
                         acceptLabel = ctx.getString(android.R.string.ok)
-                        context = ctx
                         onElse = { doRequest() }
-                    }.Show()
+                    }.register().show()
                 }
             }
         }
