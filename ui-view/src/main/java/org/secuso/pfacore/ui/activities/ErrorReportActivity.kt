@@ -4,6 +4,7 @@ import android.graphics.Rect
 import android.os.Bundle
 import android.view.Menu
 import android.view.MotionEvent
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.selection.SelectionPredicates
 import androidx.recyclerview.selection.SelectionTracker
 import androidx.recyclerview.selection.StorageStrategy
@@ -13,9 +14,12 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import org.secuso.pfacore.model.dialog.AbortElseDialog
 import org.secuso.pfacore.ui.PFApplication
+import org.secuso.pfacore.ui.dialog.show
 import org.secuso.pfacore.ui.error.ErrorReportAdapter
 import org.secuso.ui.view.R
+import org.secuso.pfacore.R as CoreR
 import org.secuso.ui.view.databinding.ActivityErrorReportBinding
 
 class ErrorReportActivity: BaseActivity() {
@@ -31,7 +35,15 @@ class ErrorReportActivity: BaseActivity() {
         super.onCreate(savedInstanceState)
 
         val application = PFApplication.instance
-        adapter = ErrorReportAdapter(this, layoutInflater)
+        adapter = ErrorReportAdapter(this, layoutInflater) {
+            AbortElseDialog.build {
+                title = { ContextCompat.getString(this@ErrorReportActivity, CoreR.string.dialog_report_sensitive_information_title) }
+                content = { ContextCompat.getString(this@ErrorReportActivity, CoreR.string.dialog_report_sensitive_information_content) }
+                onElse = {
+                    it.send()
+                }
+            }.show()
+        }
         binding = ActivityErrorReportBinding.inflate(layoutInflater)
         binding.errorReports.adapter = adapter
         tracker = SelectionTracker.Builder<Long>(
@@ -74,7 +86,13 @@ class ErrorReportActivity: BaseActivity() {
         menu.findItem(R.id.email)?.let {
             it.isVisible = tracker.hasSelection()
             it.setOnMenuItemClickListener {
-                PFApplication.instance.sendEmailErrorReport(tracker.selection.map { id -> adapter.getErrorReportAt(provider.getPosition(id)).report })
+                AbortElseDialog.build {
+                    title = { ContextCompat.getString(this@ErrorReportActivity, CoreR.string.dialog_report_sensitive_information_title) }
+                    content = { ContextCompat.getString(this@ErrorReportActivity, CoreR.string.dialog_report_sensitive_information_content) }
+                    onElse = {
+                        PFApplication.instance.sendEmailErrorReport(tracker.selection.map { id -> adapter.getErrorReportAt(provider.getPosition(id)).report })
+                    }
+                }.show()
                 true
             }
         }

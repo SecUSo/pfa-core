@@ -18,6 +18,7 @@ import org.secuso.pfacore.model.ErrorReportHandler
 import org.secuso.privacyfriendlybackup.api.pfa.BackupManager.backupCreator
 import org.secuso.privacyfriendlybackup.api.pfa.BackupManager.backupRestorer
 import java.io.File
+import java.io.IOException
 
 abstract class PFModelApplication<PFD: PFData<*,*,*>> : Application(), Configuration.Provider {
     abstract val name: String
@@ -62,28 +63,32 @@ abstract class PFModelApplication<PFD: PFData<*,*,*>> : Application(), Configura
         }
     }?.filterNotNull()?.sortedByDescending { it.report.unixTime } ?: listOf()
 
+    fun Collection<ErrorReport>.readAndConcat() = this.map {
+        try {
+            File("${errors.path}/${it.unixTime}").readText()
+        } catch (exception: IOException) {
+            null
+        }
+    }.joinToString(SEPARATOR)
+
     fun sendEmailErrorReport(errorReport: ErrorReport) = sendEmailErrorReport(listOf(errorReport))
     fun sendEmailErrorReport(errorReports: List<ErrorReport>) {
-        val reports = errorReports.joinToString(SEPARATOR) {
-            File("${errors.path}/${it.unixTime}").readText()
-        }
-        val deviceInfo = if (data.includeDeviceDataInReport.value == true) {
-            getDeviceInformation().joinToString(SEPARATOR)
-        } else {
-            ""
-        }
         val intent = Intent(Intent.ACTION_SENDTO).apply {
             data = Uri.parse("mailto:")
             putExtra(Intent.EXTRA_EMAIL, arrayOf("pfa@secuso.org"))
             putExtra(Intent.EXTRA_SUBJECT, String.format(getString(R.string.error_report_email_header), this@PFModelApplication.data.about.name, this@PFModelApplication.data.about.version))
-            putExtra(Intent.EXTRA_TEXT, String.format(getString(R.string.error_report_email_body), deviceInfo, reports))
+            putExtra(Intent.EXTRA_TEXT, String.format(getString(R.string.error_report_email_body), getDeviceInformation().joinToString(SEPARATOR), errorReports.readAndConcat()))
         }
         val chooser = Intent.createChooser(intent, "Send mail")
         chooser.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         startActivity(chooser)
     }
 
-    private fun getDeviceInformation(): List<String> = mutableListOf<String>().apply {
+
+    fun getDeviceInformation(): List<String> = mutableListOf<String>().apply {
+        if (!data.includeDeviceDataInReport.value) {
+            return@apply
+        }
         add("MODEL: ${Build.MODEL}")
         add("MANUFACTURER: ${Build.MANUFACTURER}")
         add("BRAND: ${Build.BRAND}")

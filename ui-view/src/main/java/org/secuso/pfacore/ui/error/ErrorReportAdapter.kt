@@ -20,6 +20,7 @@ class ErrorReportAdapter(
     private val context: Context,
     private val inflater: LayoutInflater,
     private var errorReports: List<ErrorReportHandler> = listOf(),
+    private val sendReport: (ErrorReportHandler) -> Unit
 ): RecyclerView.Adapter<ErrorReportAdapter.ViewHolder>() {
 
     internal var tracker: SelectionTracker<Long>? = null
@@ -65,7 +66,7 @@ class ErrorReportAdapter(
             }
             expanded = !expanded
         }
-        holder.binding.email.setOnClickListener { errorReport.send() }
+        holder.binding.email.setOnClickListener { sendReport(errorReport) }
 
         if (tracker?.isSelected(errorReport.report.unixTime) == true) {
             holder.binding.card.setCardBackgroundColor(selectedColor)

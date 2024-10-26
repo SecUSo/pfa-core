@@ -32,8 +32,10 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.core.content.ContextCompat
 import org.secuso.pfacore.model.ErrorReport
 import org.secuso.pfacore.model.ErrorReportHandler
+import org.secuso.pfacore.model.dialog.AbortElseDialog
 import org.secuso.pfacore.ui.PFApplication
 import org.secuso.pfacore.ui.theme.PrivacyFriendlyCoreTheme
 import org.secuso.ui.compose.R
@@ -52,7 +54,9 @@ class ErrorReportActivity: BaseActivity() {
     @Composable
     override fun Actions() {
         if (selectedReports.isNotEmpty()) {
-            IconButton(onClick = { PFApplication.instance.sendEmailErrorReport(selectedReports.toList()) }) {
+            IconButton(onClick = { sendErrorReportDialog {
+                PFApplication.instance.sendEmailErrorReport(selectedReports.toList())
+            } }) {
                 Icon(imageVector = Icons.Filled.Email, contentDescription = "E-Mail", tint = Color.White)
             }
         }
@@ -70,7 +74,9 @@ class ErrorReportActivity: BaseActivity() {
                 }
             )
         }) {
-            ErrorReportList(errors, selectedReports)
+            ErrorReportList(errors, selectedReports) {
+                sendErrorReportDialog { it.send() }
+            }
         }
     }
 
@@ -83,10 +89,16 @@ class ErrorReportActivity: BaseActivity() {
             super.onBackPressed()
         }
     }
+
+    private fun sendErrorReportDialog(onElse: () -> Unit): AbortElseDialog = AbortElseDialog.build {
+        title = { ContextCompat.getString(this@ErrorReportActivity, org.secuso.pfacore.R.string.dialog_report_sensitive_information_title) }
+        content = { ContextCompat.getString(this@ErrorReportActivity, org.secuso.pfacore.R.string.dialog_report_sensitive_information_content) }
+        this.onElse = onElse
+    }
 }
 
 @Composable
-fun ErrorReportElement(errorReport: ErrorReportHandler, selected: Boolean) {
+fun ErrorReportElement(errorReport: ErrorReportHandler, selected: Boolean, send: (ErrorReportHandler) -> Unit = {}) {
     val expanded = remember {
         mutableStateOf(false)
     }
@@ -101,7 +113,7 @@ fun ErrorReportElement(errorReport: ErrorReportHandler, selected: Boolean) {
                 )
                 Row {
                     if (!selected) {
-                        IconButton(onClick = { errorReport.send() }) {
+                        IconButton(onClick = { send(errorReport) }) {
                             Icon(imageVector = Icons.Filled.Email, contentDescription = "E-Mail")
                         }
                     }
@@ -154,7 +166,7 @@ fun PreviewErrorReportElement() {
 }
 
 @Composable
-fun ErrorReportList(errorReports: List<ErrorReportHandler>, selectedReports: SnapshotStateList<ErrorReport>) {
+fun ErrorReportList(errorReports: List<ErrorReportHandler>, selectedReports: SnapshotStateList<ErrorReport>, send: (ErrorReportHandler) -> Unit = {}) {
     LazyColumn(Modifier.fillMaxWidth()) {
         items(count = errorReports.size) {
             val errorReport = errorReports[it]
@@ -178,7 +190,7 @@ fun ErrorReportList(errorReports: List<ErrorReportHandler>, selectedReports: Sna
                     }
                 )}
             ) {
-                ErrorReportElement(errorReport, selectedReports.contains(errorReport.report))
+                ErrorReportElement(errorReport, selectedReports.contains(errorReport.report), send)
             }
         }
     }

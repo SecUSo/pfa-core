@@ -51,4 +51,7 @@
     <string name="activity_help_title">Help</string>
     <string name="activity_settings_title">Settings</string>
     <string name="activity_report_errors_title">Report Errors</string>
+
+    <string name="dialog_report_sensitive_information_title">Confidential Information</string>
+    <string name="dialog_report_sensitive_information_content">Please note that any bug report may contain confidential information, so please submit a report only if you agree to share confidential information with us and only after reviewing it. You can censor any confidential part of a report.</string>
 </resources>
