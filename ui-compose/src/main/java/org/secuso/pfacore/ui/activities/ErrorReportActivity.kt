@@ -54,10 +54,17 @@ class ErrorReportActivity: BaseActivity() {
 
     @Composable
     override fun Actions() {
-        if (selectedReports.isNotEmpty()) {
-            IconButton(onClick = { sendErrorReportDialog {
+        val sendClicked = remember {
+            mutableStateOf(false)
+        }
+        if (sendClicked.value) {
+            sendClicked.value = false
+            sendErrorReportDialog {
                 PFApplication.instance.sendEmailErrorReport(selectedReports.toList())
-            } }) {
+            }.Show()
+        }
+        if (selectedReports.isNotEmpty()) {
+            IconButton(onClick = { sendClicked.value = true }) {
                 Icon(imageVector = Icons.Filled.Email, contentDescription = "E-Mail", tint = Color.White)
             }
         }
