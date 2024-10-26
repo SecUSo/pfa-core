@@ -82,19 +82,6 @@ fun TutorialComp(tutorial: Tutorial) {
     val pagerState = rememberPagerState(pageCount = { tutorial.stages.size })
     val coroutineScope = rememberCoroutineScope()
 
-    val accentColor = MaterialTheme.colorScheme.secusoAccent.toArgb()
-    val view = LocalView.current
-    if (!view.isInEditMode) {
-        SideEffect {
-            val window = (view.context as Activity).window
-            window.statusBarColor = accentColor
-            WindowCompat.getInsetsController(window, window.decorView).apply {
-                systemBarsBehavior = WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
-                hide(WindowInsetsCompat.Type.statusBars())
-            }
-        }
-    }
-
     Column(Modifier.fillMaxSize()) {
         var stage: TutorialStage? = null
         val forwardButtonEnabled = remember {
