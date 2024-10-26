@@ -15,6 +15,9 @@ open class BaseActivity: AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        if (!PFApplication.instance.data.theme.hasActiveObservers()) {
+            PFApplication.instance.data.theme.observe(this) { it.apply() }
+        }
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {

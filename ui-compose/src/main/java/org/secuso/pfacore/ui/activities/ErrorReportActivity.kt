@@ -1,5 +1,6 @@
 package org.secuso.pfacore.ui.activities
 
+import android.os.Bundle
 import android.util.Log
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
@@ -43,7 +44,8 @@ class ErrorReportActivity: BaseActivity() {
 
     private val selectedReports: SnapshotStateList<ErrorReport> = mutableStateListOf()
 
-    init {
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
         super.title.value = getString(org.secuso.pfacore.R.string.activity_report_errors_title)
     }
 
