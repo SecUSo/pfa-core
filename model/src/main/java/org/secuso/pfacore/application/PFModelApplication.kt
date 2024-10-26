@@ -7,6 +7,7 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Build
 import android.util.Log
+import androidx.core.content.ContextCompat
 import androidx.multidex.MultiDex
 import androidx.room.RoomDatabase
 import androidx.work.Configuration
@@ -75,7 +76,7 @@ abstract class PFModelApplication<PFD: PFData<*,*,*>> : Application(), Configura
     fun sendEmailErrorReport(errorReports: List<ErrorReport>) {
         val intent = Intent(Intent.ACTION_SENDTO).apply {
             data = Uri.parse("mailto:")
-            putExtra(Intent.EXTRA_EMAIL, arrayOf("pfa@secuso.org"))
+            putExtra(Intent.EXTRA_EMAIL, arrayOf(ContextCompat.getString(applicationContext, R.attr.error_report_mail)))
             putExtra(Intent.EXTRA_SUBJECT, String.format(getString(R.string.error_report_email_header), this@PFModelApplication.data.about.name, this@PFModelApplication.data.about.version))
             putExtra(Intent.EXTRA_TEXT, String.format(getString(R.string.error_report_email_body), getDeviceInformation().joinToString(SEPARATOR), errorReports.readAndConcat()))
         }

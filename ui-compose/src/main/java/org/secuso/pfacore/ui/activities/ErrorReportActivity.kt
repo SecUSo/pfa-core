@@ -37,6 +37,7 @@ import org.secuso.pfacore.model.ErrorReport
 import org.secuso.pfacore.model.ErrorReportHandler
 import org.secuso.pfacore.model.dialog.AbortElseDialog
 import org.secuso.pfacore.ui.PFApplication
+import org.secuso.pfacore.ui.dialog.Show
 import org.secuso.pfacore.ui.theme.PrivacyFriendlyCoreTheme
 import org.secuso.ui.compose.R
 import java.text.DateFormat
@@ -75,7 +76,7 @@ class ErrorReportActivity: BaseActivity() {
             )
         }) {
             ErrorReportList(errors, selectedReports) {
-                sendErrorReportDialog { it.send() }
+                sendErrorReportDialog { it.send() }.Show()
             }
         }
     }
@@ -98,9 +99,16 @@ class ErrorReportActivity: BaseActivity() {
 }
 
 @Composable
-fun ErrorReportElement(errorReport: ErrorReportHandler, selected: Boolean, send: (ErrorReportHandler) -> Unit = {}) {
+fun ErrorReportElement(errorReport: ErrorReportHandler, selected: Boolean, send: @Composable (ErrorReportHandler) -> Unit = {}) {
     val expanded = remember {
         mutableStateOf(false)
+    }
+    val sendClicked = remember {
+        mutableStateOf(false)
+    }
+    if (sendClicked.value) {
+        send(errorReport)
+        sendClicked.value = false
     }
     Card(
         colors = CardDefaults.cardColors(containerColor = if (selected) { MaterialTheme.colorScheme.primaryContainer } else { MaterialTheme.colorScheme.surfaceVariant }),
@@ -113,7 +121,7 @@ fun ErrorReportElement(errorReport: ErrorReportHandler, selected: Boolean, send:
                 )
                 Row {
                     if (!selected) {
-                        IconButton(onClick = { send(errorReport) }) {
+                        IconButton(onClick = { sendClicked.value = true }) {
                             Icon(imageVector = Icons.Filled.Email, contentDescription = "E-Mail")
                         }
                     }
@@ -166,7 +174,7 @@ fun PreviewErrorReportElement() {
 }
 
 @Composable
-fun ErrorReportList(errorReports: List<ErrorReportHandler>, selectedReports: SnapshotStateList<ErrorReport>, send: (ErrorReportHandler) -> Unit = {}) {
+fun ErrorReportList(errorReports: List<ErrorReportHandler>, selectedReports: SnapshotStateList<ErrorReport>, send: @Composable (ErrorReportHandler) -> Unit = {}) {
     LazyColumn(Modifier.fillMaxWidth()) {
         items(count = errorReports.size) {
             val errorReport = errorReports[it]
