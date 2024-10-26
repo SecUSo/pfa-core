@@ -103,22 +103,18 @@ fun <T> ShowValueSelectionDialog<T>.register(): DialogHandle {
 @Composable
 @Preview
 fun InfoDialogPreview() {
-    val ctx = LocalContext.current
-    InfoDialog.build {
+    InfoDialog.build(LocalContext.current) {
         title = { "Test Title" }
         content = { "This is a long and good content describing the action happening to invoke this." }
-        context = ctx
     }.register().show()
 }
 
 @Composable
 @Preview
 fun AbortElseDialogPreview() {
-    val ctx = LocalContext.current
-    AbortElseDialog.build {
+    AbortElseDialog.build(LocalContext.current) {
         title = { "Test Title" }
         content = { "This is a long and good content explaining a decision the user have to made."}
-        context = ctx
         acceptLabel = "Just Do It!"
     }.register().show()
 }
@@ -126,10 +122,8 @@ fun AbortElseDialogPreview() {
 @Composable
 @Preview
 fun ShowValueSelectionDialogPreview() {
-    val ctx = LocalContext.current
-    ValueSelectionDialog.build<String> {
+    ValueSelectionDialog.build<String>(LocalContext.current) {
         title = { "Test Title" }
-        context = ctx
         acceptLabel = "Just Do It!"
         onConfirmation = { Log.i("ValueSelectionDialog", it) }
     }.content { update ->

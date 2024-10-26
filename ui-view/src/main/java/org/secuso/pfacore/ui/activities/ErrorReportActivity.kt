@@ -39,7 +39,7 @@ class ErrorReportActivity: BaseActivity() {
             AbortElseDialog.build(this) {
                 title = { ContextCompat.getString(this@ErrorReportActivity, CoreR.string.dialog_report_sensitive_information_title) }
                 content = { ContextCompat.getString(this@ErrorReportActivity, CoreR.string.dialog_report_sensitive_information_content) }
-                acceptLabel = "send"
+                acceptLabel = ContextCompat.getString(context, org.secuso.pfacore.R.string.dialog_button_understood)
                 onElse = {
                     it.send()
                 }
