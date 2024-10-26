@@ -32,7 +32,7 @@ interface Preferable<T> : Info {
     val default: T
     val key: String
     val backup: Boolean
-    var value: T?
+    var value: T
     fun restore(reader: JsonReader)
     val onUpdate: (T) -> Unit
 }
@@ -53,9 +53,9 @@ open class Preference<T>(
     override val onUpdate: (T) -> Unit
 ): Preferable<T> {
     override var value
-        get() = state.value
+        get() = state.value ?: default
         set(value) {
-            state.value = value!!
+            state.value = value
             onUpdate(value)
         }
 
