@@ -1,5 +1,6 @@
 package org.secuso.pfacore.ui.activities
 
+import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import androidx.compose.foundation.gestures.detectTapGestures
@@ -29,6 +30,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -37,7 +39,7 @@ import org.secuso.pfacore.model.ErrorReport
 import org.secuso.pfacore.model.ErrorReportHandler
 import org.secuso.pfacore.model.dialog.AbortElseDialog
 import org.secuso.pfacore.ui.PFApplication
-import org.secuso.pfacore.ui.dialog.Show
+import org.secuso.pfacore.ui.dialog.register
 import org.secuso.pfacore.ui.theme.PrivacyFriendlyCoreTheme
 import org.secuso.ui.compose.R
 import java.text.DateFormat
@@ -47,6 +49,7 @@ class ErrorReportActivity: BaseActivity() {
 
     private val selectedReports: SnapshotStateList<ErrorReport> = mutableStateListOf()
 
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         super.title.value = getString(org.secuso.pfacore.R.string.activity_report_errors_title)
@@ -54,17 +57,11 @@ class ErrorReportActivity: BaseActivity() {
 
     @Composable
     override fun Actions() {
-        val sendClicked = remember {
-            mutableStateOf(false)
-        }
-        if (sendClicked.value) {
-            sendClicked.value = false
-            sendErrorReportDialog {
-                PFApplication.instance.sendEmailErrorReport(selectedReports.toList())
-            }.Show()
-        }
+        val handle = sendErrorReportDialog(this) {
+            PFApplication.instance.sendEmailErrorReport(selectedReports.toList())
+        }.register()
         if (selectedReports.isNotEmpty()) {
-            IconButton(onClick = { sendClicked.value = true }) {
+            IconButton(onClick = { handle.show() }) {
                 Icon(imageVector = Icons.Filled.Email, contentDescription = "E-Mail", tint = Color.White)
             }
         }
@@ -82,9 +79,7 @@ class ErrorReportActivity: BaseActivity() {
                 }
             )
         }) {
-            ErrorReportList(errors, selectedReports) {
-                sendErrorReportDialog { it.send() }.Show()
-            }
+            ErrorReportList(errors, selectedReports)
         }
     }
 
@@ -97,26 +92,24 @@ class ErrorReportActivity: BaseActivity() {
             super.onBackPressed()
         }
     }
+}
 
-    private fun sendErrorReportDialog(onElse: () -> Unit): AbortElseDialog = AbortElseDialog.build {
-        title = { ContextCompat.getString(this@ErrorReportActivity, org.secuso.pfacore.R.string.dialog_report_sensitive_information_title) }
-        content = { ContextCompat.getString(this@ErrorReportActivity, org.secuso.pfacore.R.string.dialog_report_sensitive_information_content) }
-        this.onElse = onElse
-    }
+private fun sendErrorReportDialog(context: Context, accept: () -> Unit): AbortElseDialog = AbortElseDialog.build {
+    this.context = context
+    title = { ContextCompat.getString(context, org.secuso.pfacore.R.string.dialog_report_sensitive_information_title) }
+    content = { ContextCompat.getString(context, org.secuso.pfacore.R.string.dialog_report_sensitive_information_content) }
+    acceptLabel = ContextCompat.getString(context, org.secuso.pfacore.R.string.dialog_button_understood)
+    onElse = accept
 }
 
 @Composable
-fun ErrorReportElement(errorReport: ErrorReportHandler, selected: Boolean, send: @Composable (ErrorReportHandler) -> Unit = {}) {
+fun ErrorReportElement(errorReport: ErrorReportHandler, selected: Boolean) {
     val expanded = remember {
         mutableStateOf(false)
     }
-    val sendClicked = remember {
-        mutableStateOf(false)
-    }
-    if (sendClicked.value) {
-        send(errorReport)
-        sendClicked.value = false
-    }
+    val dialog = sendErrorReportDialog(LocalContext.current) {
+        errorReport.send()
+    }.register()
     Card(
         colors = CardDefaults.cardColors(containerColor = if (selected) { MaterialTheme.colorScheme.primaryContainer } else { MaterialTheme.colorScheme.surfaceVariant }),
     ) {
@@ -128,7 +121,7 @@ fun ErrorReportElement(errorReport: ErrorReportHandler, selected: Boolean, send:
                 )
                 Row {
                     if (!selected) {
-                        IconButton(onClick = { sendClicked.value = true }) {
+                        IconButton(onClick = { dialog.show() }) {
                             Icon(imageVector = Icons.Filled.Email, contentDescription = "E-Mail")
                         }
                     }
@@ -181,7 +174,7 @@ fun PreviewErrorReportElement() {
 }
 
 @Composable
-fun ErrorReportList(errorReports: List<ErrorReportHandler>, selectedReports: SnapshotStateList<ErrorReport>, send: @Composable (ErrorReportHandler) -> Unit = {}) {
+fun ErrorReportList(errorReports: List<ErrorReportHandler>, selectedReports: SnapshotStateList<ErrorReport>) {
     LazyColumn(Modifier.fillMaxWidth()) {
         items(count = errorReports.size) {
             val errorReport = errorReports[it]
@@ -205,7 +198,7 @@ fun ErrorReportList(errorReports: List<ErrorReportHandler>, selectedReports: Sna
                     }
                 )}
             ) {
-                ErrorReportElement(errorReport, selectedReports.contains(errorReport.report), send)
+                ErrorReportElement(errorReport, selectedReports.contains(errorReport.report))
             }
         }
     }

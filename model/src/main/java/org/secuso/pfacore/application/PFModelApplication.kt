@@ -76,7 +76,7 @@ abstract class PFModelApplication<PFD: PFData<*,*,*>> : Application(), Configura
     fun sendEmailErrorReport(errorReports: List<ErrorReport>) {
         val intent = Intent(Intent.ACTION_SENDTO).apply {
             data = Uri.parse("mailto:")
-            putExtra(Intent.EXTRA_EMAIL, arrayOf(ContextCompat.getString(applicationContext, R.attr.error_report_mail)))
+            putExtra(Intent.EXTRA_EMAIL, arrayOf(ContextCompat.getString(applicationContext, R.string.error_report_mail)))
             putExtra(Intent.EXTRA_SUBJECT, String.format(getString(R.string.error_report_email_header), this@PFModelApplication.data.about.name, this@PFModelApplication.data.about.version))
             putExtra(Intent.EXTRA_TEXT, String.format(getString(R.string.error_report_email_body), getDeviceInformation().joinToString(SEPARATOR), errorReports.readAndConcat()))
         }

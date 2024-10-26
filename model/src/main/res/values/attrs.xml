@@ -46,5 +46,4 @@
         <attr name="styleHelpDescription" format="reference" />
     </declare-styleable>
     <drawable name="splash_screen" />
-    <attr name="error_report_mail" format="string" />
 </resources>

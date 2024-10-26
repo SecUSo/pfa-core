@@ -37,8 +37,10 @@ class ErrorReportActivity: BaseActivity() {
         val application = PFApplication.instance
         adapter = ErrorReportAdapter(this, layoutInflater) {
             AbortElseDialog.build {
+                context = this@ErrorReportActivity
                 title = { ContextCompat.getString(this@ErrorReportActivity, CoreR.string.dialog_report_sensitive_information_title) }
                 content = { ContextCompat.getString(this@ErrorReportActivity, CoreR.string.dialog_report_sensitive_information_content) }
+                acceptLabel = "send"
                 onElse = {
                     it.send()
                 }
@@ -87,8 +89,10 @@ class ErrorReportActivity: BaseActivity() {
             it.isVisible = tracker.hasSelection()
             it.setOnMenuItemClickListener {
                 AbortElseDialog.build {
+                    context = this@ErrorReportActivity
                     title = { ContextCompat.getString(this@ErrorReportActivity, CoreR.string.dialog_report_sensitive_information_title) }
                     content = { ContextCompat.getString(this@ErrorReportActivity, CoreR.string.dialog_report_sensitive_information_content) }
+                    acceptLabel = ContextCompat.getString(context, org.secuso.pfacore.R.string.dialog_button_understood)
                     onElse = {
                         PFApplication.instance.sendEmailErrorReport(tracker.selection.map { id -> adapter.getErrorReportAt(provider.getPosition(id)).report })
                     }

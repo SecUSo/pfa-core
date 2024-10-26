@@ -43,5 +43,6 @@
     <string name="activity_report_errors_title">Fehler melden</string>
     <string name="dialog_report_sensitive_information_title">Vertrauliche Informationen</string>
     <string name="dialog_report_sensitive_information_content">Bitte beachten Sie, dass Fehlerberichte vertrauliche Informationen enthalten können. Senden Sie uns daher nur dann einen Bericht, wenn Sie damit einverstanden sind, vertrauliche Informationen an uns weiterzugeben und nur, nachdem Sie diese überprüft haben. Sie können alle vertraulichen Teile eines Berichts zensieren.</string>
+    <string name="dialog_button_understood">Ich habe verstanden</string>
 
 </resources>

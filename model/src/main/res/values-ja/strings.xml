@@ -43,4 +43,5 @@
     <string name="activity_report_errors_title">バグを報告する</string>
     <string name="dialog_report_sensitive_information_title">機密情報</string>
     <string name="dialog_report_sensitive_information_content">バグレポートには機密情報が含まれる場合がありますので、機密情報を弊社と共有することに同意し、内容を確認した上でのみレポートを送信してください。レポートの機密部分は検閲できます。</string>
+    <string name="dialog_button_understood">理解しました</string>
 </resources>

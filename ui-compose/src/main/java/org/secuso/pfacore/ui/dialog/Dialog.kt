@@ -19,9 +19,13 @@ import org.secuso.pfacore.model.dialog.Dialog
 import org.secuso.pfacore.model.dialog.InfoDialog
 import org.secuso.pfacore.model.dialog.ValueSelectionDialog
 
+fun interface DialogHandle {
+    fun show()
+}
+
 @Composable
-fun InfoDialog.Show() {
-    val showDialog = remember { mutableStateOf(true) }
+fun InfoDialog.register(): DialogHandle {
+    val showDialog = remember { mutableStateOf(false) }
     if (showDialog.value) {
         AlertDialog(
             onDismissRequest = { onClose(); showDialog.value = false },
@@ -34,11 +38,12 @@ fun InfoDialog.Show() {
             }
         )
     }
+    return DialogHandle { showDialog.value = true }
 }
 
 @Composable
-fun AbortElseDialog.Show() {
-    val showDialog = remember { mutableStateOf(true) }
+fun AbortElseDialog.register(): DialogHandle {
+    val showDialog = remember { mutableStateOf(false) }
     if (showDialog.value) {
         AlertDialog(
             onDismissRequest = { onAbort(); showDialog.value = false },
@@ -57,6 +62,7 @@ fun AbortElseDialog.Show() {
             properties = DialogProperties(dismissOnClickOutside = handleDismiss, dismissOnBackPress = handleDismiss)
         )
     }
+    return DialogHandle { showDialog.value = true }
 }
 
 typealias ValueSelectionDialogContent<T> = @Composable (onSelected: (T) -> Unit) -> Unit
@@ -67,9 +73,9 @@ data class ShowValueSelectionDialog<T>(
 fun <T> ValueSelectionDialog<T>.content(content: ValueSelectionDialogContent<T>) = ShowValueSelectionDialog<T>(content, this@content)
 
 @Composable
-fun <T> ShowValueSelectionDialog<T>.Show() {
+fun <T> ShowValueSelectionDialog<T>.register(): DialogHandle {
     val selectedValue = remember { mutableStateOf<T?>(null) }
-    val showDialog = remember { mutableStateOf(true) }
+    val showDialog = remember { mutableStateOf(false) }
     if (showDialog.value) {
         AlertDialog(
             onDismissRequest = { dialog.onAbort(); showDialog.value = false },
@@ -91,6 +97,7 @@ fun <T> ShowValueSelectionDialog<T>.Show() {
             properties = DialogProperties(dismissOnClickOutside = dialog.handleDismiss, dismissOnBackPress = dialog.handleDismiss)
         )
     }
+    return DialogHandle { showDialog.value = true }
 }
 
 @Composable
@@ -101,7 +108,7 @@ fun InfoDialogPreview() {
         title = { "Test Title" }
         content = { "This is a long and good content describing the action happening to invoke this." }
         context = ctx
-    }.Show()
+    }.register().show()
 }
 
 @Composable
@@ -113,7 +120,7 @@ fun AbortElseDialogPreview() {
         content = { "This is a long and good content explaining a decision the user have to made."}
         context = ctx
         acceptLabel = "Just Do It!"
-    }.Show()
+    }.register().show()
 }
 
 @Composable
@@ -128,5 +135,5 @@ fun ShowValueSelectionDialogPreview() {
     }.content { update ->
         val state = remember { mutableStateOf("") }
         TextField(state.value, { update(it); state.value = it })
-    }.Show()
+    }.register().show()
 }
