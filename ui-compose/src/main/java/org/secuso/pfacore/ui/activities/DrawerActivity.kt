@@ -160,7 +160,7 @@ fun DrawerMenuComp(drawer: DrawerMenu, selected: (DrawerElement) -> Boolean) {
                 label = { Text(item.name) },
                 icon = if (item.icon != null) { -> Icon(painter = painterResource(item.icon!!), contentDescription = item.name) } else null,
                 onClick = { if (context is Activity) item.onClick(context) },
-                colors = NavigationDrawerItemDefaults.colors(selectedContainerColor = MaterialTheme.colorScheme.primaryContainer),
+                colors = NavigationDrawerItemDefaults.colors(selectedTextColor = MaterialTheme.colorScheme.primary, selectedContainerColor = Color.Unspecified),
                 selected = selected(item)
             )
         }
