@@ -38,6 +38,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -110,7 +111,7 @@ fun TutorialComp(tutorial: Tutorial) {
                     visibility = if (pagerState.canScrollForward) Visibility.Visible else Visibility.Invisible
                     start.linkTo(parent.start)
                 }
-            ) { Text(text = "Skip") }
+            ) { Text(text = stringResource(R.string.tutorial_skip)) }
             Box(
                 Modifier.constrainAs(pagesRef) {
                     horizontalChainWeight = 1f
@@ -157,7 +158,7 @@ fun TutorialComp(tutorial: Tutorial) {
                     }
                 }
             ) {
-                Text(text = if (pagerState.canScrollForward) "Next" else "Finish")
+                Text(text = stringResource(if (pagerState.canScrollForward) R.string.tutorial_next else R.string.tutorial_finish))
             }
         }
     }

@@ -52,11 +52,8 @@ class TutorialActivity: AppCompatActivity() {
         val colorActive = R.color.secusoDotListActive
         val dots = tutorial.stages.indices.map {
             TextView(this).apply {
-                text = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                    Html.fromHtml("&#8226;", Html.FROM_HTML_MODE_LEGACY)
-                } else {
-                    Html.fromHtml("&#8226;")
-                }
+                // Draws a colored circle
+                text = HtmlCompat.fromHtml("&#8226;", HtmlCompat.FROM_HTML_MODE_LEGACY)
                 textSize = 35f
                 setTextColor(resources.getColor(if (it == 0) colorActive else colorInactive))
                 binding.layoutDots.addView(this)
@@ -66,10 +63,10 @@ class TutorialActivity: AppCompatActivity() {
         binding.viewPager.addOnPageChangeListener(object : OnPageChangeListener {
             override fun onPageSelected(position: Int) {
                 if (position == tutorial.stages.size - 1) {
-                    binding.btnNext.text = getString(R.string.okay)
-                    binding.btnSkip. visibility = View.GONE
+                    binding.btnNext.text = getString(R.string.tutorial_finish)
+                    binding.btnSkip.visibility = View.GONE
                 } else {
-                    binding.btnNext.text = getString(R.string.next)
+                    binding.btnNext.text = getString(R.string.tutorial_next)
                     binding.btnSkip.visibility = View.VISIBLE
                 }
                 dots.forEachIndexed { index, dot ->

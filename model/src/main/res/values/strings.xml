@@ -56,4 +56,8 @@
     <string name="dialog_report_sensitive_information_title">Confidential Information</string>
     <string name="dialog_report_sensitive_information_content">Please note that any bug report may contain confidential information, so please submit a report only if you agree to share confidential information with us and only after reviewing it. You can censor any confidential part of a report.</string>
     <string name="dialog_button_understood">I\'ve understood</string>
+
+    <string name="tutorial_next">Next</string>
+    <string name="tutorial_finish">Okay</string>
+    <string name="tutorial_skip">Skip</string>
 </resources>
