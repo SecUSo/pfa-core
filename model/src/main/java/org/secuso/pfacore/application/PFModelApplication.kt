@@ -19,9 +19,9 @@ import org.secuso.privacyfriendlybackup.api.pfa.BackupManager.backupCreator
 import org.secuso.privacyfriendlybackup.api.pfa.BackupManager.backupRestorer
 import java.io.File
 
-abstract class PFApplication : Application(), Configuration.Provider {
+abstract class PFModelApplication<PFD: PFData<*,*,*>> : Application(), Configuration.Provider {
     abstract val name: String
-    abstract val data: PFData
+    abstract val data: PFD
     abstract val databaseName: String
     abstract val database: Class<out RoomDatabase>
     abstract val mainActivity: Class<out Activity>
@@ -75,7 +75,7 @@ abstract class PFApplication : Application(), Configuration.Provider {
         val intent = Intent(Intent.ACTION_SENDTO).apply {
             data = Uri.parse("mailto:")
             putExtra(Intent.EXTRA_EMAIL, arrayOf("pfa@secuso.org"))
-            putExtra(Intent.EXTRA_SUBJECT, String.format(getString(R.string.error_report_email_header), this@PFApplication.data.about.name, this@PFApplication.data.about.version))
+            putExtra(Intent.EXTRA_SUBJECT, String.format(getString(R.string.error_report_email_header), this@PFModelApplication.data.about.name, this@PFModelApplication.data.about.version))
             putExtra(Intent.EXTRA_TEXT, String.format(getString(R.string.error_report_email_body), deviceInfo, reports))
         }
         val chooser = Intent.createChooser(intent, "Send mail")
@@ -105,7 +105,7 @@ abstract class PFApplication : Application(), Configuration.Provider {
         } else {
             "\n"
         }
-        private var _instance: PFApplication? = null
+        private var _instance: PFModelApplication<*>? = null
         val instance
             get() = _instance ?: throw IllegalStateException("The PFApplication was not instanced")
     }

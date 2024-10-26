@@ -8,11 +8,11 @@ import org.secuso.pfacore.model.preferences.Preferable
 import org.secuso.pfacore.model.preferences.settings.ISettings
 import org.secuso.pfacore.model.tutorial.Tutorial
 
-data class PFData(
-    val settings: ISettings<*>,
+data class PFData<SD: ISettings<*>, HD: Help<*>, TD: Tutorial<*>>(
+    val settings: SD,
     val about: About,
-    val help: Help<*>,
-    val tutorial: Tutorial<*>,
+    val help: HD,
+    val tutorial: TD,
     val theme: LiveData<Theme>,
     val firstLaunch: Preferable<Boolean>,
     val includeDeviceDataInReport: Preferable<Boolean>

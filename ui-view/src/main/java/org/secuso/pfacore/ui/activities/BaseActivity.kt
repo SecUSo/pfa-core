@@ -6,7 +6,7 @@ import android.os.Bundle
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.TaskStackBuilder
-import org.secuso.pfacore.application.PFApplication
+import org.secuso.pfacore.ui.PFApplication
 
 open class BaseActivity: AppCompatActivity() {
 

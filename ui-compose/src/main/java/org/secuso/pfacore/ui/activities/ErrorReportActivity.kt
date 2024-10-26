@@ -32,9 +32,9 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import org.secuso.pfacore.application.PFApplication
 import org.secuso.pfacore.model.ErrorReport
 import org.secuso.pfacore.model.ErrorReportHandler
+import org.secuso.pfacore.ui.PFApplication
 import org.secuso.pfacore.ui.theme.PrivacyFriendlyCoreTheme
 import org.secuso.ui.compose.R
 import java.text.DateFormat

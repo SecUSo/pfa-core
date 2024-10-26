@@ -19,8 +19,8 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.text.style.TextOverflow
-import org.secuso.pfacore.application.PFApplication
 import org.secuso.pfacore.model.Theme
+import org.secuso.pfacore.ui.PFApplication
 import org.secuso.pfacore.ui.theme.PrivacyFriendlyCoreTheme
 import org.secuso.pfacore.ui.theme.navbar
 

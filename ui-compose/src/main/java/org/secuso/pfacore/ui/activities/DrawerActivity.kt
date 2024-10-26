@@ -24,14 +24,12 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalDrawerSheet
 import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.material3.NavigationDrawerItem
-import androidx.compose.material3.NavigationDrawerItemColors
 import androidx.compose.material3.NavigationDrawerItemDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -46,10 +44,10 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
 import org.secuso.pfacore.R
-import org.secuso.pfacore.application.PFApplication
 import org.secuso.pfacore.model.Drawer
 import org.secuso.pfacore.model.DrawerElement
 import org.secuso.pfacore.model.DrawerMenu
+import org.secuso.pfacore.ui.PFApplication
 import org.secuso.pfacore.ui.theme.secuso
 
 abstract class DrawerActivity : AppCompatActivity(), Drawer {

@@ -4,7 +4,6 @@ import android.graphics.Rect
 import android.os.Bundle
 import android.view.Menu
 import android.view.MotionEvent
-import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.selection.SelectionPredicates
 import androidx.recyclerview.selection.SelectionTracker
 import androidx.recyclerview.selection.StorageStrategy
@@ -14,7 +13,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import org.secuso.pfacore.application.PFApplication
+import org.secuso.pfacore.ui.PFApplication
 import org.secuso.pfacore.ui.error.ErrorReportAdapter
 import org.secuso.ui.view.R
 import org.secuso.ui.view.databinding.ActivityErrorReportBinding

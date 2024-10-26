@@ -6,15 +6,14 @@ import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
 import org.secuso.pfacore.activities.SplashActivity
-import org.secuso.pfacore.application.PFApplication
-import org.secuso.pfacore.ui.tutorial.Tutorial
+import org.secuso.pfacore.ui.PFApplication
 import org.secuso.pfacore.ui.tutorial.TutorialComp
 
 class TutorialActivity: AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val tutorial = PFApplication.instance.data.tutorial as Tutorial
+        val tutorial = PFApplication.instance.data.tutorial
         tutorial.onFinish = {
             val activity: Class<out Activity>? = tutorial.launchActivity ?: run {
                 if (intent.extras?.getBoolean(SplashActivity.EXTRA_LAUNCH_MAIN_ACTIVITY_AFTER_TUTORIAL) == true) {

@@ -20,9 +20,7 @@ import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import org.secuso.pfacore.application.PFApplication
-import org.secuso.pfacore.model.preferences.PreferenceFactory
-import org.secuso.pfacore.model.tutorial.Tutorial
+import org.secuso.pfacore.application.PFModelApplication
 
 /**
  * SplashScreen when the App is started.
@@ -41,12 +39,12 @@ open class SplashActivity(val tutorial: Class<out Activity>) : AppCompatActivity
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        val firstLaunchPref = PFApplication.instance.data.firstLaunch
+        val firstLaunchPref = PFModelApplication.instance.data.firstLaunch
         val mainIntent = if (firstLaunchPref.value == null || firstLaunchPref.value == true) {
             firstLaunchPref.value = false
             Intent(this, tutorial).putExtra(EXTRA_LAUNCH_MAIN_ACTIVITY_AFTER_TUTORIAL, true)
         } else {
-            Intent(this, PFApplication.instance.mainActivity)
+            Intent(this, PFModelApplication.instance.mainActivity)
         }
 
         startActivity(mainIntent)

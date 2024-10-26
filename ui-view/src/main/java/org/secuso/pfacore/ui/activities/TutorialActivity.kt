@@ -2,16 +2,15 @@ package org.secuso.pfacore.ui.activities
 
 import android.app.Activity
 import android.content.Intent
-import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
 import android.text.Html
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.WindowManager
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.text.HtmlCompat
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
@@ -20,7 +19,7 @@ import androidx.viewpager.widget.PagerAdapter
 import androidx.viewpager.widget.ViewPager.OnPageChangeListener
 import org.secuso.pfacore.R
 import org.secuso.pfacore.activities.SplashActivity
-import org.secuso.pfacore.application.PFApplication
+import org.secuso.pfacore.ui.PFApplication
 import org.secuso.pfacore.ui.tutorial.Tutorial
 import org.secuso.ui.view.databinding.ActivityTutorialBinding
 
@@ -31,7 +30,7 @@ class TutorialActivity: AppCompatActivity() {
             systemBarsBehavior = WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
             hide(WindowInsetsCompat.Type.navigationBars())
         }
-        val tutorial = PFApplication.instance.data.tutorial as Tutorial
+        val tutorial = PFApplication.instance.data.tutorial
         tutorial.onFinish = {
             val activity: Class<out Activity>? = tutorial.launchActivity ?: run {
                 if (intent.extras?.getBoolean(SplashActivity.EXTRA_LAUNCH_MAIN_ACTIVITY_AFTER_TUTORIAL) == true) {
