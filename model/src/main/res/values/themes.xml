@@ -1,6 +1,6 @@
 
 <resources>
-    <style name="PrivacyFriendlyCoreTheme" parent="Theme.Material3.Dark">
+    <style name="PrivacyFriendlyCoreTheme" parent="Theme.Material3.Light">
         <item name="colorPrimary">@color/md_theme_primary</item>
         <item name="colorOnPrimary">@color/md_theme_onPrimary</item>
         <item name="colorPrimaryContainer">@color/md_theme_primaryContainer</item>
@@ -63,5 +63,21 @@
 
         <item name="styleHelpTitle">@style/PrivacyFriendlyCoreTheme.Help.Title</item>
         <item name="styleHelpDescription">@style/PrivacyFriendlyCoreTheme.Help.Description</item>
+    </style>
+
+    <style name="PrivacyFriendlyCoreTheme.NoActionBar" parent="PrivacyFriendlyCoreTheme">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
+
+    <style name="PrivacyFriendlyCoreTheme.Tutorial" parent="PrivacyFriendlyCoreTheme">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+        <item name="android:statusBarColor">@color/colorAccent</item>
+    </style>
+
+    <style name="SplashTheme" parent="@android:style/Theme.NoTitleBar.Fullscreen">
+        <item name="android:windowBackground">@drawable/splash_screen</item>
+        <item name="android:windowNoTitle">true</item>
     </style>
 </resources>

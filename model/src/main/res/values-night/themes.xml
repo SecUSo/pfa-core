@@ -47,10 +47,6 @@
         <item name="colorSurfaceContainer">@color/md_theme_surfaceContainer</item>
         <item name="colorSurfaceContainerHigh">@color/md_theme_surfaceContainerHigh</item>
         <item name="colorSurfaceContainerHighest">@color/md_theme_surfaceContainerHighest</item>
-        <item name="colorSecuso">@color/colorSecuso</item>
-        <item name="colorOnSecuso">@color/colorOnSecuso</item>
-        <item name="colorSecusoContainer">@color/colorSecusoContainer</item>
-        <item name="colorOnSecusoContainer">@color/colorOnSecusoContainer</item>
 
         <item name="colorNavbarHeaderBackground">@color/colorAccent</item>
         <item name="colorNavbarHeaderSurface">@color/colorSurface</item>
