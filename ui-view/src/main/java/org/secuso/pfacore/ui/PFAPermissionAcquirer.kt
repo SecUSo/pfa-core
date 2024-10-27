@@ -32,11 +32,10 @@ class PFAPermissionAcquirer(
             var rationaleText: String? = null
             var rationale: (Context) -> (doRequest: () -> Unit) -> Unit = { ctx ->
                 { doRequest ->
-                    AbortElseDialog.build {
+                    AbortElseDialog.build(ctx) {
                         title = { rationaleTitle ?: throw IllegalStateException("Either specify a custom rationale or specify a title for the default rationale.") }
                         content = { rationaleText ?: throw IllegalStateException("Either specify a custom rationale or specify a content for the default rationale.") }
                         acceptLabel = ctx.getString(android.R.string.ok)
-                        context = ctx
                         onElse = { doRequest() }
                     }.show()
                 }

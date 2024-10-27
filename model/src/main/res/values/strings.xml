@@ -30,6 +30,7 @@
     <string name="nav_bugs">Errors</string>
     <string name="include_device_info_error_title">Include device information on error report</string>
     <string name="include_device_info_error_summary">If enabled, the error report will include useful information about this device, e.g. manufacturer or the version of Android installed.</string>
+    <string name="error_report_mail" translatable="false">pfa@secuso.org</string>
     <string name="error_report_email_header" translatable="false">Error Report: %s (%s)</string>
     <string name="error_report_email_body">
         Dear PFA-Team, \n\n
@@ -51,4 +52,12 @@
     <string name="activity_help_title">Help</string>
     <string name="activity_settings_title">Settings</string>
     <string name="activity_report_errors_title">Report Errors</string>
+
+    <string name="dialog_report_sensitive_information_title">Confidential Information</string>
+    <string name="dialog_report_sensitive_information_content">Please note that any bug report may contain confidential information, so please submit a report only if you agree to share confidential information with us and only after reviewing it. You can censor any confidential part of a report.</string>
+    <string name="dialog_button_understood">I\'ve understood</string>
+
+    <string name="tutorial_next">Next</string>
+    <string name="tutorial_finish">Okay</string>
+    <string name="tutorial_skip">Skip</string>
 </resources>

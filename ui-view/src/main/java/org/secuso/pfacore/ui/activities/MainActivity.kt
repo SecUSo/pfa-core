@@ -2,7 +2,7 @@ package org.secuso.pfacore.ui.activities
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import org.secuso.pfacore.application.PFApplication
+import org.secuso.pfacore.ui.PFApplication
 
 class MainActivity: AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {

@@ -1,5 +1,7 @@
 package org.secuso.pfacore.ui.activities
 
+import android.content.Context
+import android.os.Bundle
 import android.util.Log
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
@@ -28,12 +30,16 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import org.secuso.pfacore.application.PFApplication
+import androidx.core.content.ContextCompat
 import org.secuso.pfacore.model.ErrorReport
 import org.secuso.pfacore.model.ErrorReportHandler
+import org.secuso.pfacore.model.dialog.AbortElseDialog
+import org.secuso.pfacore.ui.PFApplication
+import org.secuso.pfacore.ui.dialog.register
 import org.secuso.pfacore.ui.theme.PrivacyFriendlyCoreTheme
 import org.secuso.ui.compose.R
 import java.text.DateFormat
@@ -43,10 +49,19 @@ class ErrorReportActivity: BaseActivity() {
 
     private val selectedReports: SnapshotStateList<ErrorReport> = mutableStateListOf()
 
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        super.title.value = getString(org.secuso.pfacore.R.string.activity_report_errors_title)
+    }
+
     @Composable
     override fun Actions() {
+        val handle = sendErrorReportDialog(this) {
+            PFApplication.instance.sendEmailErrorReport(selectedReports.toList())
+        }.register()
         if (selectedReports.isNotEmpty()) {
-            IconButton(onClick = { PFApplication.instance.sendEmailErrorReport(selectedReports.toList()) }) {
+            IconButton(onClick = { handle.show() }) {
                 Icon(imageVector = Icons.Filled.Email, contentDescription = "E-Mail", tint = Color.White)
             }
         }
@@ -79,11 +94,21 @@ class ErrorReportActivity: BaseActivity() {
     }
 }
 
+private fun sendErrorReportDialog(context: Context, accept: () -> Unit): AbortElseDialog = AbortElseDialog.build(context) {
+    title = { ContextCompat.getString(context, org.secuso.pfacore.R.string.dialog_report_sensitive_information_title) }
+    content = { ContextCompat.getString(context, org.secuso.pfacore.R.string.dialog_report_sensitive_information_content) }
+    acceptLabel = ContextCompat.getString(context, org.secuso.pfacore.R.string.dialog_button_understood)
+    onElse = accept
+}
+
 @Composable
 fun ErrorReportElement(errorReport: ErrorReportHandler, selected: Boolean) {
     val expanded = remember {
         mutableStateOf(false)
     }
+    val dialog = sendErrorReportDialog(LocalContext.current) {
+        errorReport.send()
+    }.register()
     Card(
         colors = CardDefaults.cardColors(containerColor = if (selected) { MaterialTheme.colorScheme.primaryContainer } else { MaterialTheme.colorScheme.surfaceVariant }),
     ) {
@@ -95,7 +120,7 @@ fun ErrorReportElement(errorReport: ErrorReportHandler, selected: Boolean) {
                 )
                 Row {
                     if (!selected) {
-                        IconButton(onClick = { errorReport.send() }) {
+                        IconButton(onClick = { dialog.show() }) {
                             Icon(imageVector = Icons.Filled.Email, contentDescription = "E-Mail")
                         }
                     }

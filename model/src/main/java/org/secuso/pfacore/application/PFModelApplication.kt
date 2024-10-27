@@ -7,6 +7,7 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Build
 import android.util.Log
+import androidx.core.content.ContextCompat
 import androidx.multidex.MultiDex
 import androidx.room.RoomDatabase
 import androidx.work.Configuration
@@ -18,10 +19,11 @@ import org.secuso.pfacore.model.ErrorReportHandler
 import org.secuso.privacyfriendlybackup.api.pfa.BackupManager.backupCreator
 import org.secuso.privacyfriendlybackup.api.pfa.BackupManager.backupRestorer
 import java.io.File
+import java.io.IOException
 
-abstract class PFApplication : Application(), Configuration.Provider {
+abstract class PFModelApplication<PFD: PFData<*,*,*>> : Application(), Configuration.Provider {
     abstract val name: String
-    abstract val data: PFData
+    abstract val data: PFD
     abstract val databaseName: String
     abstract val database: Class<out RoomDatabase>
     abstract val mainActivity: Class<out Activity>
@@ -62,28 +64,32 @@ abstract class PFApplication : Application(), Configuration.Provider {
         }
     }?.filterNotNull()?.sortedByDescending { it.report.unixTime } ?: listOf()
 
+    fun Collection<ErrorReport>.readAndConcat() = this.map {
+        try {
+            File("${errors.path}/${it.unixTime}").readText()
+        } catch (exception: IOException) {
+            null
+        }
+    }.joinToString(SEPARATOR)
+
     fun sendEmailErrorReport(errorReport: ErrorReport) = sendEmailErrorReport(listOf(errorReport))
     fun sendEmailErrorReport(errorReports: List<ErrorReport>) {
-        val reports = errorReports.joinToString(SEPARATOR) {
-            File("${errors.path}/${it.unixTime}").readText()
-        }
-        val deviceInfo = if (data.includeDeviceDataInReport.value == true) {
-            getDeviceInformation().joinToString(SEPARATOR)
-        } else {
-            ""
-        }
         val intent = Intent(Intent.ACTION_SENDTO).apply {
             data = Uri.parse("mailto:")
-            putExtra(Intent.EXTRA_EMAIL, arrayOf("pfa@secuso.org"))
-            putExtra(Intent.EXTRA_SUBJECT, String.format(getString(R.string.error_report_email_header), this@PFApplication.data.about.name, this@PFApplication.data.about.version))
-            putExtra(Intent.EXTRA_TEXT, String.format(getString(R.string.error_report_email_body), deviceInfo, reports))
+            putExtra(Intent.EXTRA_EMAIL, arrayOf(ContextCompat.getString(applicationContext, R.string.error_report_mail)))
+            putExtra(Intent.EXTRA_SUBJECT, String.format(getString(R.string.error_report_email_header), this@PFModelApplication.data.about.name, this@PFModelApplication.data.about.version))
+            putExtra(Intent.EXTRA_TEXT, String.format(getString(R.string.error_report_email_body), getDeviceInformation().joinToString(SEPARATOR), errorReports.readAndConcat()))
         }
         val chooser = Intent.createChooser(intent, "Send mail")
         chooser.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         startActivity(chooser)
     }
 
-    private fun getDeviceInformation(): List<String> = mutableListOf<String>().apply {
+
+    fun getDeviceInformation(): List<String> = mutableListOf<String>().apply {
+        if (!data.includeDeviceDataInReport.value) {
+            return@apply
+        }
         add("MODEL: ${Build.MODEL}")
         add("MANUFACTURER: ${Build.MANUFACTURER}")
         add("BRAND: ${Build.BRAND}")
@@ -105,7 +111,7 @@ abstract class PFApplication : Application(), Configuration.Provider {
         } else {
             "\n"
         }
-        private var _instance: PFApplication? = null
+        private var _instance: PFModelApplication<*>? = null
         val instance
             get() = _instance ?: throw IllegalStateException("The PFApplication was not instanced")
     }

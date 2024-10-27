@@ -2,12 +2,15 @@ package org.secuso.pfacore.ui.about
 
 import android.content.res.Configuration
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.ClickableText
 import androidx.compose.foundation.verticalScroll
@@ -135,8 +138,9 @@ fun Footer(repo: String) {
 fun AboutVertical(data: About) {
     Column(
         Modifier
-            .fillMaxWidth()
-            .padding(PaddingValues(top = 8.dp))
+            .fillMaxSize()
+            .padding(PaddingValues(top = 8.dp)),
+        verticalArrangement = Arrangement.SpaceEvenly
     ) {
         PfaLogo()
         Header(name = data.name, version = data.version)

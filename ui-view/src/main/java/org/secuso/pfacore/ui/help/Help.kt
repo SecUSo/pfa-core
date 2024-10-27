@@ -7,6 +7,8 @@ import android.view.ViewGroup
 import androidx.lifecycle.LifecycleOwner
 import org.secuso.pfacore.ui.BasicInfo
 import org.secuso.pfacore.ui.Inflatable
+import org.secuso.ui.view.databinding.HelpDescriptionBinding
+import org.secuso.ui.view.databinding.HelpTitleBinding
 import org.secuso.ui.view.databinding.SimpleDescriptionBinding
 import org.secuso.ui.view.databinding.SimpleTitleBinding
 import org.secuso.pfacore.model.help.Help as MHelp
@@ -31,13 +33,13 @@ class Help(override val items: List<HelpData>) : MHelp<HelpData>(items) {
 
         fun title(initializer: BasicInfo.() -> Unit) {
             title = BasicInfo(resources) { text -> Inflatable { inflater: LayoutInflater, root: ViewGroup?, _ ->
-                SimpleTitleBinding.inflate(inflater, root, false).apply { this.text = text }.root
+                HelpTitleBinding.inflate(inflater, root, false).apply { this.text = text }.root
             } }.apply(initializer).build()
         }
 
         fun description(initializer: BasicInfo.() -> Unit) {
             description = BasicInfo(resources) { text -> Inflatable { inflater: LayoutInflater, root: ViewGroup?, _ ->
-                SimpleDescriptionBinding.inflate(inflater, root, false).apply { this.text = text }.root
+                HelpDescriptionBinding.inflate(inflater, root, false).apply { this.text = text }.root
             } }.apply(initializer).build()
         }
     }

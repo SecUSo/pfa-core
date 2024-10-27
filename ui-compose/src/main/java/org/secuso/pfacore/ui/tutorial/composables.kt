@@ -1,5 +1,6 @@
 package org.secuso.pfacore.ui.tutorial
 
+import android.app.Activity
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -26,6 +27,7 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -33,12 +35,18 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Visibility
+import androidx.core.view.WindowCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.WindowInsetsControllerCompat
 import kotlinx.coroutines.launch
 import org.secuso.pfacore.R
 import org.secuso.pfacore.ui.theme.PrivacyFriendlyCoreTheme
@@ -75,13 +83,10 @@ fun TutorialComp(tutorial: Tutorial) {
     val pagerState = rememberPagerState(pageCount = { tutorial.stages.size })
     val coroutineScope = rememberCoroutineScope()
 
-    Column(
-        Modifier
-            .fillMaxSize()
-            .padding(horizontal = 8.dp)) {
+    Column(Modifier.fillMaxSize()) {
         var stage: TutorialStage? = null
         val forwardButtonEnabled = remember {
-            derivedStateOf { stage?.let { it.requirements() } ?: true }
+            derivedStateOf { stage?.requirements?.let { it() } ?: true }
         }
         HorizontalPager(state = pagerState, modifier = Modifier
             .background(MaterialTheme.colorScheme.secusoAccent)
@@ -106,7 +111,7 @@ fun TutorialComp(tutorial: Tutorial) {
                     visibility = if (pagerState.canScrollForward) Visibility.Visible else Visibility.Invisible
                     start.linkTo(parent.start)
                 }
-            ) { Text(text = "Skip") }
+            ) { Text(text = stringResource(R.string.tutorial_skip)) }
             Box(
                 Modifier.constrainAs(pagesRef) {
                     horizontalChainWeight = 1f
@@ -153,7 +158,7 @@ fun TutorialComp(tutorial: Tutorial) {
                     }
                 }
             ) {
-                Text(text = if (pagerState.canScrollForward) "Next" else "Finish")
+                Text(text = stringResource(if (pagerState.canScrollForward) R.string.tutorial_next else R.string.tutorial_finish))
             }
         }
     }

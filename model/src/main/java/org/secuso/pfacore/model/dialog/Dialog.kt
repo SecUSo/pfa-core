@@ -1,6 +1,7 @@
 package org.secuso.pfacore.model.dialog
 
 import android.content.Context
+import androidx.core.content.ContextCompat
 
 interface Dialog {
     val context: Context
@@ -14,8 +15,7 @@ data class InfoDialog(
     val content: () -> String,
     val onClose: () -> Unit
 ): Dialog {
-    class Builder {
-        lateinit var context: Context
+    class Builder(var context: Context) {
         lateinit var title: () -> String
         lateinit var content: () -> String
         var onClose: () -> Unit = { }
@@ -24,7 +24,7 @@ data class InfoDialog(
     }
 
     companion object {
-        fun build(initializer: InfoDialogDSL) = InfoDialog.Builder().apply(initializer).build()
+        fun build(context: Context, initializer: InfoDialogDSL) = InfoDialog.Builder(context).apply(initializer).build()
     }
 }
 
@@ -38,11 +38,10 @@ data class AbortElseDialog(
     val onElse: () -> Unit,
     val handleDismiss: Boolean = true
 ): Dialog {
-    class Builder {
-        lateinit var context: Context
+    class Builder(var context: Context) {
         lateinit var title: () -> String
         lateinit var content: () -> String
-        lateinit var acceptLabel: String
+        var acceptLabel: String = ContextCompat.getString(context, android.R.string.ok)
         var onAbort: () -> Unit = { }
         var onElse: () -> Unit = { }
         var handleDismiss: Boolean = true
@@ -51,7 +50,7 @@ data class AbortElseDialog(
     }
 
     companion object {
-        fun build(initializer: AbortElseDialogDSL) = AbortElseDialog.Builder().apply(initializer).build()
+        fun build(context: Context, initializer: AbortElseDialogDSL) = AbortElseDialog.Builder(context).apply(initializer).build()
     }
 }
 
@@ -64,8 +63,7 @@ data class ValueSelectionDialog<T>(
     val onConfirmation: (T) -> Unit,
     val handleDismiss: Boolean = true
 ): Dialog {
-    class Builder<T> {
-        lateinit var context: Context
+    class Builder<T>(var context: Context) {
         lateinit var title: () -> String
         lateinit var acceptLabel: String
         lateinit var onConfirmation: (T) -> Unit
@@ -76,6 +74,6 @@ data class ValueSelectionDialog<T>(
     }
 
     companion object {
-        fun <T> build(initializer: ValueSelectionDialogDSL<T>) = ValueSelectionDialog.Builder<T>().apply(initializer).build()
+        fun <T> build(context: Context, initializer: ValueSelectionDialogDSL<T>) = ValueSelectionDialog.Builder<T>(context).apply(initializer).build()
     }
 }

@@ -46,10 +46,6 @@
         <item name="colorSurfaceContainer">@color/md_theme_surfaceContainer_mediumContrast</item>
         <item name="colorSurfaceContainerHigh">@color/md_theme_surfaceContainerHigh_mediumContrast</item>
         <item name="colorSurfaceContainerHighest">@color/md_theme_surfaceContainerHighest_mediumContrast</item>
-        <item name="colorSecuso">@color/colorSecuso_mediumContrast</item>
-        <item name="colorOnSecuso">@color/colorOnSecuso_mediumContrast</item>
-        <item name="colorSecusoContainer">@color/colorSecusoContainer_mediumContrast</item>
-        <item name="colorOnSecusoContainer">@color/colorOnSecusoContainer_mediumContrast</item>
     </style>
     <style name="ThemeOverlay.AppTheme.HighContrast" parent="Theme.Material3.Dark.NoActionBar">
         <item name="colorPrimary">@color/md_theme_primary_highContrast</item>
@@ -98,9 +94,5 @@
         <item name="colorSurfaceContainer">@color/md_theme_surfaceContainer_highContrast</item>
         <item name="colorSurfaceContainerHigh">@color/md_theme_surfaceContainerHigh_highContrast</item>
         <item name="colorSurfaceContainerHighest">@color/md_theme_surfaceContainerHighest_highContrast</item>
-        <item name="colorSecuso">@color/colorSecuso_highContrast</item>
-        <item name="colorOnSecuso">@color/colorOnSecuso_highContrast</item>
-        <item name="colorSecusoContainer">@color/colorSecusoContainer_highContrast</item>
-        <item name="colorOnSecusoContainer">@color/colorOnSecusoContainer_highContrast</item>
     </style>
 </resources>

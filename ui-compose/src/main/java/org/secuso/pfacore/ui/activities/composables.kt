@@ -19,8 +19,8 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.text.style.TextOverflow
-import org.secuso.pfacore.application.PFApplication
 import org.secuso.pfacore.model.Theme
+import org.secuso.pfacore.ui.PFApplication
 import org.secuso.pfacore.ui.theme.PrivacyFriendlyCoreTheme
 import org.secuso.pfacore.ui.theme.navbar
 
@@ -39,9 +39,9 @@ fun WithTheme(content: @Composable () -> Unit) {
 
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
-fun TopAppBar(title: State<String?>, onNavigationClick: () -> Unit, actions: (@Composable () -> Unit) = {}, icon: (@Composable () -> Unit)? = null) {
+fun TopAppBar(title: State<String>, onNavigationClick: () -> Unit, actions: (@Composable () -> Unit) = {}, icon: (@Composable () -> Unit)? = null) {
     TopAppBar(
-        title = { Text(text = title.value ?: PFApplication.instance.name, maxLines = 1, overflow = TextOverflow.Ellipsis) },
+        title = { Text(text = title.value, maxLines = 1, overflow = TextOverflow.Ellipsis) },
         navigationIcon = {
             IconButton(onClick = onNavigationClick) {
                 if (icon != null) {

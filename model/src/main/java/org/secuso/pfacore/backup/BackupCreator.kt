@@ -17,11 +17,10 @@ import android.content.Context
 import android.os.Build
 import android.util.JsonWriter
 import android.util.Log
-import org.secuso.pfacore.application.PFApplication
+import org.secuso.pfacore.application.PFModelApplication
 import org.secuso.privacyfriendlybackup.api.backup.DatabaseUtil
 import org.secuso.privacyfriendlybackup.api.backup.PreferenceUtil
 import org.secuso.privacyfriendlybackup.api.pfa.IBackupCreator
-//import org.secuso.pfacore.model.PFApplication
 import java.io.OutputStream
 import java.io.OutputStreamWriter
 import java.nio.charset.StandardCharsets
@@ -40,7 +39,7 @@ class BackupCreator : IBackupCreator {
         try {
             writer.beginObject()
 
-            val dataBase = DatabaseUtil.getSupportSQLiteOpenHelper(context, PFApplication.instance.databaseName).writableDatabase
+            val dataBase = DatabaseUtil.getSupportSQLiteOpenHelper(context, PFModelApplication.instance.databaseName).writableDatabase
 
             Log.d("PFA BackupCreator", "Writing database")
             writer.name("database")
@@ -54,7 +53,7 @@ class BackupCreator : IBackupCreator {
 
             // Do other, app-specific backups
             Log.d("PFA BackupCreator", "Writing app-specific backups")
-            PFApplication.instance.backup.backup(writer)
+            PFModelApplication.instance.backup.backup(writer)
             Log.d("PFA BackupCreator", "finished app-specific backups")
 
             writer.endObject()

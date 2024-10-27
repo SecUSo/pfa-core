@@ -19,7 +19,7 @@ import android.util.JsonReader
 import android.util.Log
 import androidx.preference.PreferenceManager
 import androidx.room.Room
-import org.secuso.pfacore.application.PFApplication
+import org.secuso.pfacore.application.PFModelApplication
 import org.secuso.pfacore.model.preferences.Preferable
 import org.secuso.privacyfriendlybackup.api.backup.DatabaseUtil
 import org.secuso.privacyfriendlybackup.api.backup.FileUtil
@@ -55,7 +55,7 @@ class BackupRestorer : IBackupRestorer {
         }
 
         // create new restore database
-        val restoreDatabase = Room.databaseBuilder(context.applicationContext, PFApplication.instance.database, restoreDatabaseName).build()
+        val restoreDatabase = Room.databaseBuilder(context.applicationContext, PFModelApplication.instance.database, restoreDatabaseName).build()
         val db = restoreDatabase.openHelper.writableDatabase
 
         db.beginTransaction()
@@ -74,9 +74,9 @@ class BackupRestorer : IBackupRestorer {
         reader.endObject()
 
         // copy file to correct location
-        val actualDatabaseFile = context.getDatabasePath(PFApplication.instance.database.name)
+        val actualDatabaseFile = context.getDatabasePath(PFModelApplication.instance.database.name)
 
-        DatabaseUtil.deleteRoomDatabase(context, PFApplication.instance.database.name)
+        DatabaseUtil.deleteRoomDatabase(context, PFModelApplication.instance.database.name)
 
         FileUtil.copyFile(restoreDatabaseFile, actualDatabaseFile)
         Log.d("NoteRestore", "Backup Restored")
@@ -94,7 +94,7 @@ class BackupRestorer : IBackupRestorer {
 
         while (reader.hasNext()) {
             val name = reader.nextName()
-            val pref = PFApplication.instance.data.settings.all.map { it.setting.data }.filterIsInstance<Preferable<*>>().firstOrNull { it.key == name }
+            val pref = PFModelApplication.instance.data.settings.all.map { it.setting.data }.filterIsInstance<Preferable<*>>().firstOrNull { it.key == name }
             if (pref == null) {
                 throw RuntimeException("Unknown preference $name")
             } else {
@@ -121,7 +121,7 @@ class BackupRestorer : IBackupRestorer {
                 when (val type = reader.nextName()) {
                     "database" -> readDatabase(reader, context)
                     "preferences" -> readPreferences(reader, context)
-                    else -> PFApplication.instance.backup.restore(type, reader, context)
+                    else -> PFModelApplication.instance.backup.restore(type, reader, context)
                 }
             }
 

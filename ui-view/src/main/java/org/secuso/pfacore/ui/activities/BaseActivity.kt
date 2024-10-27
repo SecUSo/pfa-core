@@ -6,7 +6,7 @@ import android.os.Bundle
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.TaskStackBuilder
-import org.secuso.pfacore.application.PFApplication
+import org.secuso.pfacore.ui.PFApplication
 
 open class BaseActivity: AppCompatActivity() {
 
@@ -15,6 +15,9 @@ open class BaseActivity: AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        if (!PFApplication.instance.data.theme.hasActiveObservers()) {
+            PFApplication.instance.data.theme.observe(this) { it.apply() }
+        }
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {

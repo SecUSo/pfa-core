@@ -27,8 +27,8 @@ fun PreferenceGroupHeader(modifier: Modifier = Modifier, text: String) {
     Text(
         text = text,
         color = MaterialTheme.colorScheme.primary,
-        modifier = modifier.padding(start = 16.dp, end = 16.dp, top = 8.dp),
-        style = MaterialTheme.typography.bodyMedium
+        modifier = modifier.padding(horizontal = 16.dp, vertical = 8.dp),
+        style = MaterialTheme.typography.titleSmall
     )
 }
 
@@ -40,7 +40,7 @@ fun SettingsMenu(settings: List<SettingCategory>) {
     }
     NavHost(navController = navController, startDestination = "menu") {
         composable("menu") {
-            LazyColumn(Modifier.fillMaxWidth()) {
+            LazyColumn(Modifier.fillMaxWidth().padding(16.dp)) {
                 items(count = settings.size) {
                     val category = settings[it]
                     PreferenceGroupHeader(text = category.name)
@@ -79,7 +79,7 @@ fun SettingsMenuPreview() {
         settings {
             category("General") {
                 switch {
-                    key = "test"
+                    key = "test5"
                     default = false
                     backup = false
                     title { literal("Test setting") }

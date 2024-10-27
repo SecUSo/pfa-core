@@ -31,7 +31,6 @@ import org.secuso.ui.compose.R
 
 val settingModifier = Modifier
     .fillMaxWidth()
-    .padding(start = 16.dp, end = 16.dp)
 
 @Composable
 fun PreferenceLayout(

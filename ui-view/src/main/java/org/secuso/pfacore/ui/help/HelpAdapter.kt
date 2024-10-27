@@ -23,6 +23,7 @@ class HelpAdapter(private val items: List<HelpData>, private val inflater: Layou
     class ViewHolder(val binding: SimpleExpandableItemBinding): RecyclerView.ViewHolder(binding.root) {
         init {
             binding.toggle.setOnClickListener { binding.expanded = !(binding.expanded) }
+            binding.titleWrapper.setOnClickListener { binding.expanded = !(binding.expanded) }
             binding.expanded = false
         }
     }

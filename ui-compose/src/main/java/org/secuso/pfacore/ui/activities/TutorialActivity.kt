@@ -5,16 +5,26 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.runtime.SideEffect
+import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.platform.LocalView
+import androidx.core.view.WindowCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.WindowInsetsControllerCompat
+import com.google.android.material.search.SearchView.Behavior
 import org.secuso.pfacore.activities.SplashActivity
-import org.secuso.pfacore.application.PFApplication
-import org.secuso.pfacore.ui.tutorial.Tutorial
+import org.secuso.pfacore.ui.PFApplication
+import org.secuso.pfacore.ui.theme.secusoAccent
 import org.secuso.pfacore.ui.tutorial.TutorialComp
 
 class TutorialActivity: AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val tutorial = PFApplication.instance.data.tutorial as Tutorial
+        WindowCompat.getInsetsController(window, window.decorView).hide(WindowInsetsCompat.Type.navigationBars())
+
+        val tutorial = PFApplication.instance.data.tutorial
         tutorial.onFinish = {
             val activity: Class<out Activity>? = tutorial.launchActivity ?: run {
                 if (intent.extras?.getBoolean(SplashActivity.EXTRA_LAUNCH_MAIN_ACTIVITY_AFTER_TUTORIAL) == true) {
@@ -28,6 +38,16 @@ class TutorialActivity: AppCompatActivity() {
             }
             finish()
         }
-        setContent { TutorialComp(tutorial) }
+        setContent {
+            val accentColor = MaterialTheme.colorScheme.secusoAccent.toArgb()
+            SideEffect {
+                window.statusBarColor = accentColor
+                WindowCompat.getInsetsController(window, window.decorView).apply {
+                    systemBarsBehavior = WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
+                    hide(WindowInsetsCompat.Type.navigationBars())
+                }
+            }
+            TutorialComp(tutorial)
+        }
     }
 }
