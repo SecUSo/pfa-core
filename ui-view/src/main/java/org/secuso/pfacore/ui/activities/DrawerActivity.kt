@@ -10,6 +10,7 @@ import androidx.core.view.GravityCompat
 import org.secuso.pfacore.R
 import org.secuso.pfacore.model.Drawer
 import org.secuso.pfacore.model.DrawerMenu
+import org.secuso.pfacore.ui.PFApplication
 import org.secuso.ui.view.databinding.ActivityDrawerBinding
 import org.secuso.ui.view.databinding.DrawerNavHeaderBinding
 
@@ -30,10 +31,12 @@ abstract class DrawerActivity: BaseActivity(), Drawer {
                     icon = R.drawable.ic_tutorial
                     clazz = TutorialActivity::class.java
                 }
-                activity {
-                    name = getString(R.string.nav_help)
-                    icon = R.drawable.ic_help
-                    clazz = HelpActivity::class.java
+                if (PFApplication.instance.data.help != null) {
+                    activity {
+                        name = getString(R.string.nav_help)
+                        icon = R.drawable.ic_help
+                        clazz = HelpActivity::class.java
+                    }
                 }
                 activity {
                     name = getString(R.string.nav_settings)

@@ -9,7 +9,7 @@ class HelpActivity: BaseActivity() {
         super.onCreate(savedInstanceState)
         val data = PFApplication.instance.data.help
         val binding = ActivityHelpBinding.inflate(layoutInflater)
-        binding.recyclerView.adapter = data.build(layoutInflater, this)
+        binding.recyclerView.adapter = data!!.build(layoutInflater, this)
         setContentView(binding.root)
     }
 }

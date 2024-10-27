@@ -11,7 +11,7 @@ import org.secuso.pfacore.model.tutorial.Tutorial
 data class PFData<SD: ISettings<*>, HD: Help<*>, TD: Tutorial<*>>(
     val settings: SD,
     val about: About,
-    val help: HD,
+    val help: HD? = null,
     val tutorial: TD,
     val theme: LiveData<Theme>,
     val firstLaunch: Preferable<Boolean>,

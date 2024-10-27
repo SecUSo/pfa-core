@@ -55,7 +55,7 @@ class BackupRestorer : IBackupRestorer {
         }
 
         // create new restore database
-        val restoreDatabase = Room.databaseBuilder(context.applicationContext, PFModelApplication.instance.database, restoreDatabaseName).build()
+        val restoreDatabase = Room.databaseBuilder(context.applicationContext, PFModelApplication.instance.database!!.clazz, restoreDatabaseName).build()
         val db = restoreDatabase.openHelper.writableDatabase
 
         db.beginTransaction()
@@ -74,9 +74,9 @@ class BackupRestorer : IBackupRestorer {
         reader.endObject()
 
         // copy file to correct location
-        val actualDatabaseFile = context.getDatabasePath(PFModelApplication.instance.database.name)
+        val actualDatabaseFile = context.getDatabasePath(PFModelApplication.instance.database!!.name)
 
-        DatabaseUtil.deleteRoomDatabase(context, PFModelApplication.instance.database.name)
+        DatabaseUtil.deleteRoomDatabase(context, PFModelApplication.instance.database!!.name)
 
         FileUtil.copyFile(restoreDatabaseFile, actualDatabaseFile)
         Log.d("NoteRestore", "Backup Restored")

@@ -65,10 +65,12 @@ abstract class DrawerActivity : AppCompatActivity(), Drawer {
                     icon = R.drawable.ic_tutorial
                     clazz = TutorialActivity::class.java
                 }
-                activity {
-                    name = getString(R.string.nav_help)
-                    icon = R.drawable.ic_help
-                    clazz = HelpActivity::class.java
+                if (PFApplication.instance.data.help != null) {
+                    activity {
+                        name = getString(R.string.nav_help)
+                        icon = R.drawable.ic_help
+                        clazz = HelpActivity::class.java
+                    }
                 }
                 activity {
                     name = getString(R.string.nav_settings)

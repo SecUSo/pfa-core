@@ -21,20 +21,25 @@ import org.secuso.privacyfriendlybackup.api.pfa.BackupManager.backupRestorer
 import java.io.File
 import java.io.IOException
 
+data class DatabaseConfig(val name: String, val clazz: Class<out RoomDatabase>)
+
 abstract class PFModelApplication<PFD: PFData<*,*,*>> : Application(), Configuration.Provider {
     abstract val name: String
     abstract val data: PFD
-    abstract val databaseName: String
-    abstract val database: Class<out RoomDatabase>
     abstract val mainActivity: Class<out Activity>
+    val database: DatabaseConfig? = null
     val backup = object : PFAppBackup {}
     private lateinit var errors: File
 
     override fun onCreate() {
         super.onCreate()
         _instance = this
-        backupCreator = BackupCreator()
-        backupRestorer = BackupRestorer()
+
+        if (database != null) {
+            backupCreator = BackupCreator()
+            backupRestorer = BackupRestorer()
+        }
+
         errors = File(applicationContext.filesDir.path + "/errors")
         errors.mkdirs()
 
