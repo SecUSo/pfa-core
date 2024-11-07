@@ -39,22 +39,7 @@ class BackupCreator : IBackupCreator {
         try {
             writer.beginObject()
 
-            val dataBase = DatabaseUtil.getSupportSQLiteOpenHelper(context, PFModelApplication.instance.database!!.name).writableDatabase
-
-            Log.d("PFA BackupCreator", "Writing database")
-            writer.name("database")
-            DatabaseUtil.writeDatabase(writer, dataBase)
-            dataBase.close()
-
-            Log.d("PFA BackupCreator", "Writing preferences")
-            writer.name("preferences")
-            val pref = androidx.preference.PreferenceManager.getDefaultSharedPreferences(context)
-            PreferenceUtil.writePreferences(writer, pref)
-
-            // Do other, app-specific backups
-            Log.d("PFA BackupCreator", "Writing app-specific backups")
-            PFModelApplication.instance.backup.backup(writer)
-            Log.d("PFA BackupCreator", "finished app-specific backups")
+            PFModelApplication.instance.database!!.backup(writer)
 
             writer.endObject()
 

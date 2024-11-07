@@ -31,60 +31,6 @@ import kotlin.system.exitProcess
 
 class BackupRestorer : IBackupRestorer {
 
-    @Throws(IOException::class)
-    private fun readDatabase(reader: JsonReader, context: Context) {
-        reader.beginObject()
-
-        val n1 = reader.nextName()
-        if (n1 != "version") {
-            throw RuntimeException("Unknown value $n1")
-        }
-        val version = reader.nextInt()
-
-        val n2 = reader.nextName()
-        if (n2 != "content") {
-            throw RuntimeException("Unknown value $n2")
-        }
-
-        val restoreDatabaseName = "restoreDatabase"
-
-        // delete if file already exists
-        val restoreDatabaseFile = context.getDatabasePath(restoreDatabaseName)
-        if (restoreDatabaseFile.exists()) {
-            DatabaseUtil.deleteRoomDatabase(context, restoreDatabaseName)
-        }
-
-        // create new restore database
-        val restoreDatabase = Room.databaseBuilder(context.applicationContext, PFModelApplication.instance.database!!.clazz, restoreDatabaseName).build()
-        val db = restoreDatabase.openHelper.writableDatabase
-
-        db.beginTransaction()
-        db.version = version
-
-        // make sure no tables are in the database
-        DatabaseUtil.deleteTables(db)
-
-        // create database from backup
-        DatabaseUtil.readDatabaseContent(reader, db)
-
-        db.setTransactionSuccessful()
-        db.endTransaction()
-        db.close()
-
-        reader.endObject()
-
-        // copy file to correct location
-        val actualDatabaseFile = context.getDatabasePath(PFModelApplication.instance.database!!.name)
-
-        DatabaseUtil.deleteRoomDatabase(context, PFModelApplication.instance.database!!.name)
-
-        FileUtil.copyFile(restoreDatabaseFile, actualDatabaseFile)
-        Log.d("NoteRestore", "Backup Restored")
-
-        // delete restore database
-        DatabaseUtil.deleteRoomDatabase(context, restoreDatabaseName)
-    }
-
     @SuppressLint("ApplySharedPref")
     @Throws(IOException::class)
     private fun readPreferences(reader: JsonReader, context: Context) {
@@ -119,7 +65,7 @@ class BackupRestorer : IBackupRestorer {
 
             while (reader.hasNext()) {
                 when (val type = reader.nextName()) {
-                    "database" -> readDatabase(reader, context)
+                    "database" -> PFModelApplication.instance.database!!.restore(reader)
                     "preferences" -> readPreferences(reader, context)
                     else -> PFModelApplication.instance.backup.restore(type, reader, context)
                 }
