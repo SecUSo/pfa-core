@@ -41,8 +41,8 @@ dependencies {
     val multidexVersion = "2.0.1"
     implementation("androidx.multidex:multidex:$multidexVersion")
 
-    val workVersion = rootProject.extra["workVersion"]
-    implementation("androidx.work:work-runtime:$workVersion")
-    implementation("androidx.work:work-runtime-ktx:$workVersion")
-    androidTestImplementation("androidx.work:work-testing:$workVersion")
+    val roomVersion = rootProject.extra["roomVersion"]
+    implementation("androidx.room:room-runtime:$roomVersion")
+    annotationProcessor("androidx.room:room-compiler:$roomVersion")
+    implementation("androidx.room:room-ktx:$roomVersion")
 }
