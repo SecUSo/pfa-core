@@ -22,7 +22,7 @@ subprojects {
     val androidTestImplementation by configurations
 
     dependencies {
-        val workVersion = "2.10.0"
+        val workVersion = "2.8.1"
         implementation("androidx.work:work-runtime:$workVersion")
         implementation("androidx.work:work-runtime-ktx:$workVersion")
         androidTestImplementation("androidx.work:work-testing:$workVersion")

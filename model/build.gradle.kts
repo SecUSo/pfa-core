@@ -38,11 +38,6 @@ dependencies {
 
     implementation(project(":backup-api"))
 
-    val roomVersion = "2.5.2"
-    implementation("androidx.room:room-runtime:$roomVersion")
-    annotationProcessor("androidx.room:room-compiler:$roomVersion")
-    implementation("androidx.room:room-ktx:$roomVersion")
-
     val multidexVersion = "2.0.1"
     implementation("androidx.multidex:multidex:$multidexVersion")
 }
