@@ -102,10 +102,6 @@ abstract class PFModelApplication<PFD: PFData<*,*,*>> : Application(), Configura
         }
     }
 
-    override val workManagerConfiguration by lazy {
-        Configuration.Builder().setMinimumLoggingLevel(Log.INFO).build()
-    }
-
     companion object {
         private val ERROR_REPORT_DELETE_TIME: Long = 7 * 24 * 60 * 60 * 1000L
         val SEPARATOR = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
