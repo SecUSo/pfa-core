@@ -40,4 +40,9 @@ dependencies {
 
     val multidexVersion = "2.0.1"
     implementation("androidx.multidex:multidex:$multidexVersion")
+
+    val workVersion = rootProject.extra["workVersion"]
+    implementation("androidx.work:work-runtime:$workVersion")
+    implementation("androidx.work:work-runtime-ktx:$workVersion")
+    androidTestImplementation("androidx.work:work-testing:$workVersion")
 }

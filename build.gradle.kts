@@ -5,6 +5,12 @@ plugins {
     id("org.jetbrains.kotlin.plugin.compose") version "2.0.0" apply false
 }
 
+buildscript {
+    extra.apply {
+        set("workVersion", "2.8.1")
+    }
+}
+
 subprojects {
 
     if (this.name.contains("backup-api")) {
@@ -16,15 +22,5 @@ subprojects {
     apply {
         plugin("com.android.library")
         plugin("org.jetbrains.kotlin.android")
-    }
-
-    val implementation by configurations
-    val androidTestImplementation by configurations
-
-    dependencies {
-        val workVersion = "2.8.1"
-        implementation("androidx.work:work-runtime:$workVersion")
-        implementation("androidx.work:work-runtime-ktx:$workVersion")
-        androidTestImplementation("androidx.work:work-testing:$workVersion")
     }
 }
