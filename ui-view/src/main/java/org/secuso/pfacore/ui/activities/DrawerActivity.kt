@@ -61,7 +61,9 @@ abstract class DrawerActivity: BaseActivity(), Drawer {
         drawerBinding = ActivityDrawerBinding.inflate(layoutInflater)
         super.setContentView(drawerBinding.root)
 
-        setSupportActionBar(findViewById(org.secuso.ui.view.R.id.toolbar))
+        if (supportActionBar == null) {
+            setSupportActionBar(findViewById(org.secuso.ui.view.R.id.toolbar))
+        }
         supportActionBar?.setHomeAsUpIndicator(R.drawable.ic_menu)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 

@@ -9,7 +9,6 @@ import android.os.Build
 import android.util.Log
 import androidx.core.content.ContextCompat
 import androidx.multidex.MultiDex
-import androidx.room.RoomDatabase
 import androidx.work.Configuration
 import org.secuso.pfacore.R
 import org.secuso.pfacore.backup.BackupCreator
@@ -103,8 +102,8 @@ abstract class PFModelApplication<PFD: PFData<*,*,*>> : Application(), Configura
         }
     }
 
-    override fun getWorkManagerConfiguration(): Configuration {
-        return Configuration.Builder().setMinimumLoggingLevel(Log.INFO).build()
+    override val workManagerConfiguration by lazy {
+        Configuration.Builder().setMinimumLoggingLevel(Log.INFO).build()
     }
 
     companion object {
