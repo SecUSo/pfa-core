@@ -47,5 +47,7 @@
     <string name="tutorial_next">Weiter</string>
     <string name="tutorial_finish">Okay</string>
     <string name="tutorial_skip">Überspringen</string>
+    <string name="settings_category_general">Allgemein</string>
+    <string name="settings_category_appearance">Darstellung</string>
 
 </resources>

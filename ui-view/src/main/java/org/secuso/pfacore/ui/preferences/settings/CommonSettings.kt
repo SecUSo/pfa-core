@@ -27,6 +27,8 @@ class SettingThemeSelector {
         }
     }
 }
+val Settings.Setting.themeSelector
+    get() = SettingThemeSelector().build().invoke(this)
 
 class PreferenceFirstTimeLaunch {
     companion object {
@@ -42,6 +44,8 @@ class PreferenceFirstTimeLaunch {
         }
     }
 }
+val Preferences.Preference.firstTimeLaunch
+    get() = PreferenceFirstTimeLaunch().build().invoke(this)
 
 class DeviceInformationOnErrorReport {
     companion object {
@@ -59,3 +63,5 @@ class DeviceInformationOnErrorReport {
         }
     }
 }
+val Settings.Setting.deviceInformationOnErrorReport
+    get() = DeviceInformationOnErrorReport().build().invoke(this)

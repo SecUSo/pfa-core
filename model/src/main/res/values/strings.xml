@@ -60,4 +60,7 @@
     <string name="tutorial_next">Next</string>
     <string name="tutorial_finish">Okay</string>
     <string name="tutorial_skip">Skip</string>
+
+    <string name="settings_category_general">General</string>
+    <string name="settings_category_appearance">Appearance</string>
 </resources>
