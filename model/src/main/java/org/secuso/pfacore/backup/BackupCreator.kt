@@ -17,8 +17,9 @@ import android.content.Context
 import android.os.Build
 import android.util.JsonWriter
 import android.util.Log
+import androidx.preference.PreferenceManager
 import org.secuso.pfacore.application.PFModelApplication
-import org.secuso.privacyfriendlybackup.api.backup.DatabaseUtil
+import org.secuso.pfacore.model.preferences.Preferable
 import org.secuso.privacyfriendlybackup.api.backup.PreferenceUtil
 import org.secuso.privacyfriendlybackup.api.pfa.IBackupCreator
 import java.io.OutputStream
@@ -39,7 +40,19 @@ class BackupCreator : IBackupCreator {
         try {
             writer.beginObject()
 
+            Log.e("PFA BackupCreator", "Backup Database")
             PFModelApplication.instance.database!!.backup(writer)
+
+            Log.e("PFA BackupCreator", "Backup Preference")
+            val excludedKeys = PFModelApplication.instance.data
+                .settings
+                .all
+                .map { it.setting.data }
+                .filterIsInstance<Preferable<*>>()
+                .filter { !it.backup }
+                .map { it.key }
+                .toTypedArray()
+            PreferenceUtil.writePreferences(writer, PreferenceManager.getDefaultSharedPreferences(context), excludedKeys)
 
             writer.endObject()
 
