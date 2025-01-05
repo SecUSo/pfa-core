@@ -17,15 +17,36 @@ interface Setting<SI : Info> {
     val data: SI
 }
 
+/**
+ * A pair of a string and a value intended to be used in settings enabling the user to select a value from a list.
+ *
+ * @author Patrick Schneider
+ */
 data class SettingEntry<T>(
     var entry: String,
     var value: T
 )
 
+/**
+ * The data specific to a setting.
+ *
+ * @property enabled An observable value stating if this setting is currently active or if it should be ignored.
+ *
+ * @author Patrick Schneider
+ */
 interface ISettingData<T> : Info, Preferable<T> {
     var enabled: LiveData<Boolean>
 }
 
+/**
+ * The data needed to build a general setting.
+ *
+ * @property dependency A key to another setting in the same category of the setting to be build, determining if the setting is active or not.
+ *
+ * @see PreferableBuildInfo
+ *
+ * @author Patrick Schneider
+ */
 interface ISettingDataBuildInfo<T> : BuildInfo, PreferableBuildInfo<T> {
     var dependency: String?
 }
@@ -34,6 +55,19 @@ open class SettingDataBuildInfo<T>: ISettingDataBuildInfo<T>, PreferenceBuildInf
     override var dependency: String? = null
 }
 
+/**
+ * The minimum required data needed to represent a setting.
+ *
+ * @param state A mutable, observable state of the setting.
+ * @param default The default value of this setting.
+ * @param key The string which identifies this setting to store/load it's value.
+ * @param backup Whether or not this setting shall be included in a backup.
+ * @param value The current value the setting.
+ * @param restorer Restore the setting value from JSON.
+ * @param onUpdate a listener to be notified if the setting changes it's value.
+ *
+ * @author Patrick Schneider
+ */
 open class SettingData<T>(
     state: MutableLiveData<T>,
     override var default: T,

@@ -2,6 +2,11 @@ package org.secuso.pfacore.model
 
 import androidx.appcompat.app.AppCompatDelegate
 
+/**
+ * Supported Theme-Options.
+ *
+ * @author Patrick Schneider.
+ */
 enum class Theme {
     SYSTEM,
     LIGHT,

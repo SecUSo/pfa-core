@@ -1,12 +1,15 @@
 package org.secuso.pfacore.model.preferences.settings
 
-import android.content.SharedPreferences
 import android.content.res.Resources
-import org.secuso.pfacore.model.preferences.PreferenceFactory
 import org.secuso.pfacore.model.preferences.InfoFactory
 import org.secuso.pfacore.model.preferences.BuildInfo
 import org.secuso.pfacore.model.preferences.Info
 
+/**
+ * A DSL-Builder to build a list of [SettingEntry].
+ *
+ * @author Patrick Schneider
+ */
 class Entries<T>(
     private val resources: Resources,
     private var entries: List<String>? = null,
@@ -30,6 +33,12 @@ class Entries<T>(
     }
 }
 
+/**
+ * A bare switch setting without any information to be displayed.
+ * Those will be added in the `ui-*` libraries.
+ *
+ * @author Patrick Schneider
+ */
 abstract class SwitchSetting<SD: SwitchSetting.SwitchData>(override val data: SD): Setting<SD> {
     open class SwitchData(val data: SettingData<Boolean>): ISettingData<Boolean> by data
     interface SwitchBuildInfo: ISettingDataBuildInfo<Boolean>
@@ -38,6 +47,13 @@ abstract class SwitchSetting<SD: SwitchSetting.SwitchData>(override val data: SD
             = settingDataFactory { info, it -> adapt(info, SwitchData(it)) }
     }
 }
+
+/**
+ * A bare radio setting without any information to be displayed.
+ * Those will be added in the `ui-*` libraries.
+ *
+ * @author Patrick Schneider
+ */
 abstract class RadioSetting<T, SD: RadioSetting.RadioData<T>>(override val data: SD): Setting<SD> {
     open class RadioData<T>(val data: SettingData<T>, val entries: List<SettingEntry<T>>): ISettingData<T> by data
     interface RadioBuildInfo<T>: ISettingDataBuildInfo<T> {
@@ -49,6 +65,13 @@ abstract class RadioSetting<T, SD: RadioSetting.RadioData<T>>(override val data:
             = settingDataFactory { info, it -> adapt(info, RadioData(it, info.entries)) }
     }
 }
+
+/**
+ * A bare menu setting without any information to be displayed.
+ * Those will be added in the `ui-*` libraries.
+ *
+ * @author Patrick Schneider
+ */
 abstract class MenuSetting<SD : MenuSetting.MenuData>(override val data: SD): Setting<SD> {
     open class MenuData: Info
     interface MenuBuildInfo: BuildInfo

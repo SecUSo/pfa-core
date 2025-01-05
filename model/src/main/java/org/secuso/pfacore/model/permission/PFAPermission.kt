@@ -11,6 +11,7 @@ import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.annotation.RequiresPermission
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -26,6 +27,17 @@ interface PFAPermissionLifecycleCallbacks: Application.ActivityLifecycleCallback
     override fun onActivityDestroyed(activity: Activity) {}
 }
 
+/**
+ * Define how a requested permission should be handled.
+ * The Android OS decides that an explaining rationale should be shown (e.g. dialog), therefore it is best practice to already explain the usage using [showRationale].
+ *
+ * @param onGranted Executed if the permission is granted by the system and the user.
+ * @param onDenied Executed if the permission is denied.
+ * @param finally Executed at the end of the permission request regardless of the outcome.
+ * @param showRationale Executed if the system decides that a rationale should be shown.
+ *
+ * @author Patrick Schneider
+ */
 class PFAPermissionRequestHandler(
     val onGranted: () -> Unit,
     val onDenied: () -> Unit,
@@ -47,6 +59,35 @@ class PFAPermissionRequestHandler(
     }
 }
 
+/**
+ * This class handles the default request process to obtain and use permissions.
+ * It is intended to be used declarative and _**must**_ be created in the [onCreate][Activity.onCreate] method due to a lifecycle-observer being used.
+ * Use `PFAPermission.*` to see all implemented permissions.
+ * The usage of the permission is defined by the `ui-*` libraries as it depends on the ui technology used. However, the intended API and usage is as follows
+ *
+ * Intended usage:
+ *
+ *      override fun onCreate(savedInstanceState: Bundle?) {
+ *          ...
+ *          val requestPermission = PFAPermission.AccessCoarseLocation.declareUsage(this) {
+ *              onGranted = {
+ *                  Log.d("TestPermission", "permission should be granted: ${ContextCompat.checkSelfPermission(activity, PFAPermission.ScheduleExactAlarm.permission)}")
+ *              }
+ *              onDenied = {
+ *                  Log.d("TestPermission", "permission should be denied: ${ContextCompat.checkSelfPermission(activity, PFAPermission.ScheduleExactAlarm.permission)}")
+ *              }
+ *              showRationale = {
+ *                  rationaleTitle = "This requires the schedule exact alarm permission"
+ *                  rationaleText = "Definitely needed."
+ *              }
+ *          }
+ *          findViewById<FloatingActionButton>(R.id.fab).setOnClickListener { requestPermission() }
+ *          ...
+ *      }
+ *
+ *  @author Patrick Schneider
+ *  @see PFAPermissionRequestHandler
+ */
 sealed class PFAPermission(
     val sinceAPI: Int,
     val permission: String,
@@ -78,7 +119,6 @@ sealed class PFAPermission(
         }
         handler.showRationale { launchPermissionRequest() }
     }
-
 
     data object AccessCoarseLocation: PFAPermission(sinceAPI = Build.VERSION_CODES.BASE, permission = Manifest.permission.ACCESS_COARSE_LOCATION)
     data object AccessFineLocation: PFAPermission(sinceAPI = Build.VERSION_CODES.BASE, permission = Manifest.permission.ACCESS_FINE_LOCATION)

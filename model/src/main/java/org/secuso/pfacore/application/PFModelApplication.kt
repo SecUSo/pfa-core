@@ -20,6 +20,32 @@ import org.secuso.privacyfriendlybackup.api.pfa.BackupManager.backupRestorer
 import java.io.File
 import java.io.IOException
 
+/**
+ * This is meant to be the entry point of any Privacy Friendly App.
+ * It defines and requires the minimum set of data to create the empty-shell for the PFA,
+ * such as drawers or functionality like the settings, help or about sections.
+ *
+ * Using this class also adds a global listener for any unhandled exception and provides functionality to report all exceptions via email.
+ *
+ * Intended Usage:
+ *
+ *      class PFExample : PFApplication() {
+ *          override val name: String
+ *              get() = getString(R.string.app_name)
+ *
+ *          override val database
+ *              get() = RoomDatabaseConfig(baseContext, AppDatabase.DB_NAME, AppDatabase::class.java)
+ *          override val data: PFData
+ *              get() = PFApplicationData.instance(baseContext).data
+ *          override val mainActivity = MainActivity::class.java
+ *      }
+ *
+ * @author Patrick Schneider
+ * @see PFData
+ * @see BackupDatabaseConfig
+ * @see PFAppBackup
+ * @param PFD An instance of [PFData] specifying the preferences, settings and data used by the about and help sections.
+ */
 abstract class PFModelApplication<PFD: PFData<*,*,*>> : Application(), Configuration.Provider {
     abstract val name: String
     abstract val data: PFD
@@ -70,6 +96,7 @@ abstract class PFModelApplication<PFD: PFData<*,*,*>> : Application(), Configura
         try {
             File("${errors.path}/${it.unixTime}").readText()
         } catch (exception: IOException) {
+            exception.printStackTrace()
             null
         }
     }.joinToString(SEPARATOR)

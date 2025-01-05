@@ -23,6 +23,27 @@ interface ISettings<SI: Info> {
     val all: List<SettingComposite<SI, *>>
 }
 
+/**
+ * The base class containing all [Settings][org.secuso.pfacore.model.preferences.settings.Setting].
+ * It is intended to provide the structure to add, observe, store and link together settings whilst being open enough to provide own, concrete implementations of the settings.
+ *
+ * Using it's DSL it is possible to declare the settings declarative.
+ * Intended Usage after specialization:
+ *
+ *          // Note that this does not compile as the [Settings.build] method needs builders for the concrete setting types
+ *          Settings.build() {
+ *              // appearance is also an extension to directly build an appearance section.
+ *              appearance {
+ *                  SettingThemeSelector().build().invoke(this)
+ *              }
+ *              category("Error Report") {
+ *                  // also an extension
+ *                  includeDeviceDataInReport = deviceInformationOnErrorReport
+ *              }
+ *          }
+ *
+ * @author Patrick Schneider
+ */
 abstract class Settings<SI: Info, SHC : SettingCategory<SI>, SHM : SettingMenu<SI, SHC>>(internal val settings: List<SHC>) : ISettings<SI> {
     override val all
         get() = settings.map { it.allSettings() }.flatten()

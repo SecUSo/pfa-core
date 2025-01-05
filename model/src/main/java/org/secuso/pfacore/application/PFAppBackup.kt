@@ -11,16 +11,35 @@ import org.secuso.privacyfriendlybackup.api.backup.DatabaseUtil.getSupportSQLite
 import org.secuso.privacyfriendlybackup.api.backup.DatabaseUtil.writeDatabase
 import org.secuso.privacyfriendlybackup.api.backup.FileUtil
 
+/**
+ * Add custom, app-specific backup and restore functionality to the backup/restore process provided by the PFA-Core library.
+ * This is intended to backup and restore e.g. files.
+ *
+ * @author Patrick Schneider
+ * @see org.secuso.privacyfriendlybackup.api.common.BackupApi
+ */
 interface PFAppBackup {
     fun backup(writer: JsonWriter): JsonWriter = writer
     fun restore(key: String, reader: JsonReader, context: Context): JsonReader = reader
 }
 
+/**
+ * Add a database to the backup/restore process provided by the PFA-Core library.
+ *
+ * @see RoomDatabaseConfig
+ * @see SQLiteHelperConfig
+ * @author Patrick Schneider
+ */
 interface BackupDatabaseConfig {
     fun backup(writer: JsonWriter)
     fun restore(reader: JsonReader)
 }
 
+/**
+ * This is a default implementation to backup and restore a room database and should work out-of-box.
+ *
+ * @author Patrick Schneider
+ */
 open class RoomDatabaseConfig(val context: Context, val name: String, val clazz: Class<out RoomDatabase>): BackupDatabaseConfig {
     companion object {
         val TAG = PFModelApplication.instance.name
@@ -89,6 +108,12 @@ open class RoomDatabaseConfig(val context: Context, val name: String, val clazz:
     }
 }
 
+/**
+ * This is a default implementation to backup and restore a SQLite database and should work for most setups.
+ * Make sure that the backup-process is working fine on your own.
+ *
+ * @author Patrick Schneider
+ */
 open class SQLiteHelperConfig(val context: Context, val name: String): BackupDatabaseConfig {
     companion object {
         val TAG = PFModelApplication.instance.name

@@ -19,6 +19,36 @@ open class TutorialStage(
     }
 }
 
+/**
+ * This class defines all necessary information needed to represent the Tutorial-Activity of a PFA.
+ * It has multiple [Stages][TutorialStage] and launches a final activity at the end.
+ *
+ * The `ui-*` libraries provides methods to instantiate and show the tutorial.
+ *
+ * The class is meant to be build by using it's [build][Tutorial.build] method.
+ *
+ * Intended Usage:
+ *
+ *          val tutorial = Tutorial.build(/* provide your stage builder */ builder) {
+ *               stage {
+ *                   title = context.getString(R.string.slide1_heading)
+ *                   images = listOf(R.mipmap.ic_splash)
+ *                   description = context.getString(R.string.slide1_text)
+ *               }
+ *               stage {
+ *                   title = context.getString(R.string.slide2_heading)
+ *                   images = listOf(R.mipmap.ic_splash)
+ *                   description = context.getString(R.string.slide2_text)
+ *               }
+ *           }
+ *
+ * @param stages The [Stages][TutorialStage] of the tutorial.
+ * @param launchActivity The activity to be launched after the tutorial.
+ * @param extras Any customization to the [Tutorial.launchActivity].
+ * @property onFinish A listener to be invoked if the tutorial is finished.
+ *
+ * @author Patrick Schneider.
+ */
 open class Tutorial<TS: TutorialStage>(
     val stages: List<TS>,
     val launchActivity: Class<out Activity>? = null,

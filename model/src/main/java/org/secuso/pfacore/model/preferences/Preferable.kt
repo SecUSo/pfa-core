@@ -15,18 +15,47 @@ import org.secuso.pfacore.backup.stringRestorer
 interface Info
 interface BuildInfo
 
+/**
+ * The information needed to be supplied to build a [Preferable].
+ *
+ * @param default The default value of this preferable.
+ * @param key The string which identifies this preferable to store/load it's value.
+ * @param backup Whether or not this preferable shall be included in a backup.
+ * @param onUpdate a listener to be notified if the preferable changes it's value.
+ *
+ * @author Patrick Schneider
+ */
 interface PreferableBuildInfo<T> : BuildInfo {
     var default: T?
     var key: String?
     var backup: Boolean
     var onUpdate: (T) -> Unit
 }
+
+/**
+ * Require that the preferable has a default and a key supplied.
+ * @author Patrick Schneider
+ */
 internal fun <T> PreferableBuildInfo<T>.validate() = when {
     default == null -> throw IllegalStateException("A preference needs a defaultValue")
     key == null -> throw IllegalStateException("A preference needs a key")
     else -> Unit
 }
 
+/**
+ * The common interface for anything that acts as a [Preference].
+ *
+ * @param state A mutable, observable state of the preferable.
+ * @param default The default value of this preferable.
+ * @param key The string which identifies this preferable to store/load it's value.
+ * @param backup Whether or not this preferable shall be included in a backup.
+ * @param value The current value the preferable.
+ * @param restore Restore this preferable from JSON.
+ * @param onUpdate a listener to be notified if the preferable changes it's value.
+ *
+ * @see Preference
+ * @author Patrick Schneider
+ */
 interface Preferable<T> : Info {
     val state: MutableLiveData<T>
     val default: T
@@ -44,6 +73,22 @@ open class PreferenceBuildInfo<T>: PreferableBuildInfo<T> {
     override var onUpdate: (T) -> Unit = {}
 }
 
+/**
+ * A preference is a mutable and observable value. It has a default value, can be backuped and restored.
+ * It is uniquely identified by a string.
+ *
+ * Both the key and the default value have to be known at compile-time.
+ *
+ * @param state A mutable, observable state of the preference.
+ * @param default The default value of this preference.
+ * @param key The string which identifies this preference to store/load it's value.
+ * @param backup Whether or not this preference shall be included in a backup.
+ * @param value The current value the preference.
+ * @param restorer Restore the preference value from JSON.
+ * @param onUpdate a listener to be notified if the preference changes it's value.
+ *
+ * @author Patrick Schneider
+ */
 open class Preference<T>(
     override val state: MutableLiveData<T>,
     override val default: T,
@@ -64,12 +109,18 @@ open class Preference<T>(
     }
 }
 
+/**
+ * Builds a [Info] from it's respective [BuildInfo].
+ *
+ * @author Patrick Schneider.
+ */
 fun interface InfoFactory<BI: BuildInfo, SI: Info> {
     fun build(info: BI): () -> SI
 }
 typealias DeriveState<T> = (String, T) -> MutableLiveData<T>
 typealias DataSaverUpdater<T> = (String, T, (T) -> Unit) -> (T) -> Unit
 typealias PreferenceFactory<T, BI, SI> = (DeriveState<T>, (T) -> Restorer<T>, DataSaverUpdater<T>) -> InfoFactory<BI, SI>
+
 fun <T, BI: BuildInfo, SI: Info> BI.build(preferences: SharedPreferences, factory: PreferenceFactory<T, BI, SI>): SI {
     val state = { key: String, value: T ->
         @Suppress("IMPLICIT_CAST_TO_ANY")

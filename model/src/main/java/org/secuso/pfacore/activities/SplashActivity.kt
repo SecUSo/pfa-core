@@ -27,8 +27,10 @@ import org.secuso.pfacore.application.PFModelApplication
  * It will check if the app was started before and start the Tutorial or the MainActivity.
  * The logo for the Splashscreen is set in the style for it.
  *
+ * Originally Created on 22.10.16.
+ * Ported to PFA-Core in 2024.
  * @author Karola Marky (yonjuni), Christopher Beckmann (Kamuno), Patrick Schneider
- * Created on 22.10.16
+ *
  */
 open class SplashActivity(val tutorial: Class<out Activity>) : AppCompatActivity() {
 

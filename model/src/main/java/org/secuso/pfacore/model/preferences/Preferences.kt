@@ -6,6 +6,25 @@ import androidx.preference.PreferenceManager
 import org.secuso.pfacore.model.preferences.settings.ISettings
 import org.secuso.pfacore.model.preferences.Preference as MPreference
 
+/**
+ * This class provides declaring both preferences and settings.
+ * The class is meant to be build in a declarative way using [Preferences.build].
+ *
+ * Intended Usage:
+ *
+ *          Preferences(context, /* supply the concrete Settings-factory */ factory) {
+ *              preferences {
+ *                  ...
+ *              }
+ *              settings {
+ *                  ...
+ *              }
+ *          }
+ *
+ * @see org.secuso.pfacore.model.preferences.settings.Settings
+ *
+ * @author Patrick Schneider
+ */
 class Preferences<B, S: ISettings<*>>(private val context: Context, private val factory: (Context, B.() -> Unit) -> S) {
     private val sharedPreferences: SharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
     private var preferences = listOf<Preferable<*>>()

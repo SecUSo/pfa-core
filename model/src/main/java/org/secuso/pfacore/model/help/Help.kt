@@ -1,5 +1,23 @@
 package org.secuso.pfacore.model.help
 
+/**
+ * The data needed to display the help section.
+ * A instance of this class is intended to be built using a declarative approach:
+ *
+ *      val help = Help.build(context) {
+ *          item {
+ *              title { resource(R.string.help_whatis) }
+ *              description { resource(R.string.help_whatis_answer) }
+ *          }
+ *          item {
+ *              title { resource(R.string.help_feature_one) }
+ *              description { resource(R.string.help_feature_one_answer) }
+ *          }
+ *      }
+ *
+ * @see Help.build
+ * @author Patrick Schneider
+ */
 open class Help<H : IHelpData<H>>(protected open val items: List<H>) {
 
     class HelpItem<H : IHelpData<H>, I : Item<H>>(
