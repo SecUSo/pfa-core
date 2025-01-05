@@ -27,7 +27,7 @@ class SettingThemeSelector {
         }
     }
 }
-val Settings.Setting.themeSelector
+val Settings.Setting.settingThemeSelector
     get() = SettingThemeSelector().build().invoke(this)
 
 class PreferenceFirstTimeLaunch {
@@ -44,7 +44,7 @@ class PreferenceFirstTimeLaunch {
         }
     }
 }
-val Preferences.Preference.firstTimeLaunch
+val Preferences.Preference.preferenceFirstTimeLaunch
     get() = PreferenceFirstTimeLaunch().build().invoke(this)
 
 class DeviceInformationOnErrorReport {
@@ -63,5 +63,5 @@ class DeviceInformationOnErrorReport {
         }
     }
 }
-val Settings.Setting.deviceInformationOnErrorReport
+val Settings.Setting.settingDeviceInformationOnErrorReport
     get() = DeviceInformationOnErrorReport().build().invoke(this)
