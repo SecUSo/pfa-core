@@ -26,11 +26,12 @@
 
     <style name="PrivacyFriendlyCoreTheme.Preference.CategoryTitle" parent="TextAppearance.Material3.TitleSmall">
         <item name="android:textColor">?attr/colorSecondary</item>
-        <item name="android:paddingTop">16dp</item>
-        <item name="android:paddingBottom">16dp</item>
+        <item name="android:paddingTop">24dp</item>
     </style>
 
     <style name="PrivacyFriendlyCoreTheme.Preference.Title" parent="TextAppearance.Material3.TitleMedium">
+        <item name="android:lineSpacingMultiplier">0.8</item>
+        <item name="android:paddingTop">12dp</item>
     </style>
 
     <style name="PrivacyFriendlyCoreTheme.Help.Item" parent="PrivacyFriendlyCoreTheme.Help">
