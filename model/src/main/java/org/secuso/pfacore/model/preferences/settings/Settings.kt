@@ -2,21 +2,11 @@ package org.secuso.pfacore.model.preferences.settings
 
 import android.content.Context
 import android.content.SharedPreferences
-import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.map
-import org.secuso.pfacore.backup.Restorer
-import org.secuso.pfacore.backup.booleanRestorer
-import org.secuso.pfacore.backup.doubleRestorer
-import org.secuso.pfacore.backup.floatRestorer
-import org.secuso.pfacore.backup.intRestorer
-import org.secuso.pfacore.backup.noRestorer
-import org.secuso.pfacore.backup.stringRestorer
-import org.secuso.pfacore.model.preferences.PreferenceFactory
 import org.secuso.pfacore.model.preferences.BuildInfo
-import org.secuso.pfacore.model.preferences.DataSaverUpdater
 import org.secuso.pfacore.model.preferences.Info
-import org.secuso.pfacore.model.preferences.InfoFactory
+import org.secuso.pfacore.model.preferences.PreferenceDSL
 
 interface ISettings<SI: Info> {
     @Suppress("unused")
@@ -44,6 +34,7 @@ interface ISettings<SI: Info> {
  *
  * @author Patrick Schneider
  */
+@PreferenceDSL
 abstract class Settings<SI: Info, SHC : SettingCategory<SI>, SHM : SettingMenu<SI, SHC>>(internal val settings: List<SHC>) : ISettings<SI> {
     override val all
         get() = settings.map { it.allSettings() }.flatten()
@@ -70,6 +61,7 @@ abstract class Settings<SI: Info, SHC : SettingCategory<SI>, SHM : SettingMenu<S
             get() = _menu(this)
     }
 
+    @PreferenceDSL
     abstract class Setting<
             SI: Info,
             SHC : SettingCategory<SI>,
@@ -78,9 +70,9 @@ abstract class Settings<SI: Info, SHC : SettingCategory<SI>, SHM : SettingMenu<S
             C : Category<SI, SHC, SHM, S, C, M>,
             M : Menu<SI, SHC, SHM, S, C, M>
             >(
-        val preferences: SharedPreferences,
-        val settings: MutableList<CategoricalSettingHierarchy<SI>> = mutableListOf(),
-        val builders: SettingsBuilders<SI, SHC, SHM, S, C, M>
+        internal val settings: MutableList<CategoricalSettingHierarchy<SI>> = mutableListOf(),
+        internal val preferences: SharedPreferences,
+        internal val builders: SettingsBuilders<SI, SHC, SHM, S, C, M>
     ) {
         protected val enabled: EnabledByDependency = { dependency ->
             if (dependency == null) {
@@ -107,6 +99,7 @@ abstract class Settings<SI: Info, SHC : SettingCategory<SI>, SHM : SettingMenu<S
         }
     }
 
+    @PreferenceDSL
     open class Category<
             SI: Info,
             SHC : SettingCategory<SI>,
@@ -131,6 +124,7 @@ abstract class Settings<SI: Info, SHC : SettingCategory<SI>, SHM : SettingMenu<S
         }
     }
 
+    @PreferenceDSL
     open class Menu<
             SI: Info,
             SHC : SettingCategory<SI>,

@@ -6,6 +6,9 @@ import androidx.preference.PreferenceManager
 import org.secuso.pfacore.model.preferences.settings.ISettings
 import org.secuso.pfacore.model.preferences.Preference as MPreference
 
+@DslMarker
+annotation class PreferenceDSL
+
 /**
  * This class provides declaring both preferences and settings.
  * The class is meant to be build in a declarative way using [Preferences.build].
@@ -25,6 +28,7 @@ import org.secuso.pfacore.model.preferences.Preference as MPreference
  *
  * @author Patrick Schneider
  */
+@PreferenceDSL
 class Preferences<B, S: ISettings<*>>(private val context: Context, private val factory: (Context, B.() -> Unit) -> S) {
     private val sharedPreferences: SharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
     private var preferences = listOf<Preferable<*>>()
@@ -32,6 +36,7 @@ class Preferences<B, S: ISettings<*>>(private val context: Context, private val 
     val settings
         get() = _settings ?: throw java.lang.IllegalStateException("There are no settings defined. Please specify some settings in you preferences.")
 
+    @PreferenceDSL
     class Preference(private val sharedPreferences: SharedPreferences) {
         val preferences = mutableListOf<Preferable<*>>()
         fun <T> preference(info: PreferenceBuildInfo<T>.() -> Unit): Preferable<T> {
