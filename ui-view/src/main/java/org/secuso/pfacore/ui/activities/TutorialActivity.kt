@@ -60,34 +60,42 @@ class TutorialActivity: AppCompatActivity() {
             }
         }
         binding.viewPager.adapter = adapter
-        binding.viewPager.addOnPageChangeListener(object : OnPageChangeListener {
-            override fun onPageSelected(position: Int) {
-                if (position == tutorial.stages.size - 1) {
-                    binding.btnNext.text = getString(R.string.tutorial_finish)
-                    binding.btnSkip.visibility = View.GONE
+
+        if (adapter.count == 1) {
+            binding.btnNext.text = getString(R.string.tutorial_finish)
+            binding.btnNext.setOnClickListener { tutorial.onFinish() }
+            binding.btnSkip.visibility = View.GONE
+            dots.forEach { it.visibility = View.GONE }
+        } else {
+            binding.viewPager.addOnPageChangeListener(object : OnPageChangeListener {
+                override fun onPageSelected(position: Int) {
+                    if (position == tutorial.stages.size - 1) {
+                        binding.btnNext.text = getString(R.string.tutorial_finish)
+                        binding.btnSkip.visibility = View.GONE
+                    } else {
+                        binding.btnNext.text = getString(R.string.tutorial_next)
+                        binding.btnSkip.visibility = View.VISIBLE
+                    }
+                    dots.forEachIndexed { index, dot ->
+                        dot.setTextColor(resources.getColor(if (index == position) colorActive else colorInactive))
+                    }
+                }
+
+                override fun onPageScrollStateChanged(state: Int) {
+
+                }
+
+                override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {
+
+                }
+            })
+            binding.btnSkip.setOnClickListener { tutorial.onFinish() }
+            binding.btnNext.setOnClickListener {
+                if (binding.viewPager.currentItem + 1 < tutorial.stages.size) {
+                    binding.viewPager.setCurrentItem(binding.viewPager.currentItem + 1)
                 } else {
-                    binding.btnNext.text = getString(R.string.tutorial_next)
-                    binding.btnSkip.visibility = View.VISIBLE
+                    tutorial.onFinish()
                 }
-                dots.forEachIndexed { index, dot ->
-                    dot.setTextColor(resources.getColor(if (index == position) colorActive else colorInactive))
-                }
-            }
-
-            override fun onPageScrollStateChanged(state: Int) {
-
-            }
-
-            override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {
-
-            }
-        })
-        binding.btnSkip.setOnClickListener { tutorial.onFinish() }
-        binding.btnNext.setOnClickListener {
-            if (binding.viewPager.currentItem + 1 < tutorial.stages.size) {
-                binding.viewPager.setCurrentItem(binding.viewPager.currentItem + 1)
-            } else {
-                tutorial.onFinish()
             }
         }
         setContentView(binding.root)
