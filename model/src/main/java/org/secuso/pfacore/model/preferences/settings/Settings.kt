@@ -70,7 +70,7 @@ abstract class Settings<SI: Info, SHC : SettingCategory<SI>, SHM : SettingMenu<S
             C : Category<SI, SHC, SHM, S, C, M>,
             M : Menu<SI, SHC, SHM, S, C, M>
             >(
-        internal val settings: MutableList<CategoricalSettingHierarchy<SI>> = mutableListOf(),
+        val settings: MutableList<CategoricalSettingHierarchy<SI>> = mutableListOf(),
         internal val preferences: SharedPreferences,
         internal val builders: SettingsBuilders<SI, SHC, SHM, S, C, M>
     ) {

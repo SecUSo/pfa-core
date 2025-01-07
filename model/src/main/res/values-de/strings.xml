@@ -49,5 +49,7 @@
     <string name="tutorial_skip">Überspringen</string>
     <string name="settings_category_general">Allgemein</string>
     <string name="settings_category_appearance">Darstellung</string>
+    <string name="error_report_disclosure_attention">Achtung</string>
+    <string name="error_report_disclosure">Jeder Fehlerbericht kann vertrauliche Informationen enthalten. Senden Sie nur Fehlerberichte, wenn Sie mit der Offenlegung solcher Informationen einverstanden sind, und sehen Sie sich die Berichte genau an.</string>
 
 </resources>

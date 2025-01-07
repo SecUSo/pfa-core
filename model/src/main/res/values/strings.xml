@@ -63,4 +63,7 @@
 
     <string name="settings_category_general">General</string>
     <string name="settings_category_appearance">Appearance</string>
+
+    <string name="error_report_disclosure_attention">Please note</string>
+    <string name="error_report_disclosure">Any error report may contain sensitive information. Only submit error reports if you\'re comfortable with disclosure of such information and look at the reports closely.</string>
 </resources>
