@@ -35,6 +35,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
@@ -73,19 +74,20 @@ class ErrorReportActivity: BaseActivity() {
     @Composable
     override fun Content(application: PFApplication) {
         val errors = application.getErrorReports()
-        Box(Modifier.padding(8.dp)) {
-            ErrorReportDisclosure()
-        }
-        Box(Modifier.fillMaxSize().pointerInput(Unit) {
-            detectTapGestures(
-                onTap = {
-                    if (selectedReports.isNotEmpty()) {
-                        selectedReports.clear()
+        if (errors.isEmpty()) {
+            NoErrorReports()
+        } else {
+            Box(Modifier.fillMaxSize().pointerInput(Unit) {
+                detectTapGestures(
+                    onTap = {
+                        if (selectedReports.isNotEmpty()) {
+                            selectedReports.clear()
+                        }
                     }
-                }
-            )
-        }) {
-            ErrorReportList(errors, selectedReports)
+                )
+            }) {
+                ErrorReportList(errors, selectedReports)
+            }
         }
     }
 
@@ -211,25 +213,17 @@ fun ErrorReportList(errorReports: List<ErrorReportHandler>, selectedReports: Sna
 
 @Preview
 @Composable
-fun ErrorReportDisclosure() {
-    Card(
-        colors = CardDefaults.cardColors(MaterialTheme.colorScheme.surfaceVariant),
-    ) {
-        Column(modifier = Modifier.padding(all = 8.dp)) {
-            Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) {
-                Text(
-                    text = stringResource(org.secuso.pfacore.R.string.error_report_disclosure_attention),
-                    fontWeight = FontWeight.Bold,
-                    style = MaterialTheme.typography.titleSmall
-                )
-            }
-            Row(Modifier.fillMaxWidth()) {
-                Text(
-                    text = stringResource(org.secuso.pfacore.R.string.error_report_disclosure),
-                    style = MaterialTheme.typography.bodySmall,
-                )
-            }
-        }
+fun NoErrorReports() {
+    Row(Modifier.fillMaxSize().padding(all = 80.dp), verticalAlignment = Alignment.CenterVertically) {
+       Column(horizontalAlignment = Alignment.CenterHorizontally) {
+           Box(contentAlignment = Alignment.Center) {
+               Text(
+                   text = stringResource(org.secuso.pfacore.R.string.error_report_empty),
+                   textAlign = TextAlign.Center,
+                   color = MaterialTheme.colorScheme.onBackground
+               )
+           }
+       }
     }
 }
 

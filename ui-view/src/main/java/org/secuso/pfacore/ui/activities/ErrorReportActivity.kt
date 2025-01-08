@@ -4,6 +4,7 @@ import android.graphics.Rect
 import android.os.Bundle
 import android.view.Menu
 import android.view.MotionEvent
+import android.view.View
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.selection.SelectionPredicates
 import androidx.recyclerview.selection.SelectionTracker
@@ -46,7 +47,6 @@ class ErrorReportActivity: BaseActivity() {
             }.show()
         }
         binding = ActivityErrorReportBinding.inflate(layoutInflater)
-        binding.errorReports.adapter = adapter
         tracker = SelectionTracker.Builder<Long>(
             "error-report",
             binding.errorReports,
@@ -67,6 +67,13 @@ class ErrorReportActivity: BaseActivity() {
             val reports = application.getErrorReports()
             withContext(Dispatchers.Main) {
                 adapter.setErrorReports(reports)
+                if (reports.isEmpty()) {
+                    binding.emptyText.visibility = View.VISIBLE
+                    binding.errorReports.visibility = View.GONE
+                } else {
+                    binding.emptyText.visibility = View.GONE
+                    binding.errorReports.visibility = View.VISIBLE
+                }
             }
         }
         val ith = ItemTouchHelper(object : ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT) {
