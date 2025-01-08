@@ -67,7 +67,7 @@ abstract class PFModelApplication<PFD: PFData<*,*,*>> : Application(), Configura
         errors.mkdirs()
 
         errors.listFiles()?.forEach {
-            if (it.lastModified() - System.currentTimeMillis() > ERROR_REPORT_DELETE_TIME) {
+            if (System.currentTimeMillis() - it.lastModified() > ERROR_REPORT_DELETE_TIME) {
                 it.delete()
             }
         }
