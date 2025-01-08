@@ -47,6 +47,7 @@ class ErrorReportActivity: BaseActivity() {
             }.show()
         }
         binding = ActivityErrorReportBinding.inflate(layoutInflater)
+        binding.errorReports.adapter = adapter
         tracker = SelectionTracker.Builder<Long>(
             "error-report",
             binding.errorReports,
@@ -84,7 +85,6 @@ class ErrorReportActivity: BaseActivity() {
             }
         })
         ith.attachToRecyclerView(binding.errorReports)
-        binding.errorReports.adapter = adapter
 
         setContentView(binding.root)
     }
