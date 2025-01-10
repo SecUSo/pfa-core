@@ -2,6 +2,7 @@ package org.secuso.pfacore.model.preferences.settings
 
 import android.content.Context
 import android.content.SharedPreferences
+import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.map
 import org.secuso.pfacore.model.preferences.BuildInfo
@@ -74,18 +75,31 @@ abstract class Settings<SI: Info, SHC : SettingCategory<SI>, SHM : SettingMenu<S
         internal val preferences: SharedPreferences,
         internal val builders: SettingsBuilders<SI, SHC, SHM, S, C, M>
     ) {
-        protected val enabled: EnabledByDependency = { dependency ->
-            if (dependency == null) {
+        protected val enabled: EnabledByDependency = { dependencies ->
+            if (dependencies == null) {
                 MutableLiveData(true)
             } else {
-                val state = settings.filterIsInstance<ISettingData<Any>>().find { it.key == dependency }?.state
-                    ?: throw IllegalStateException("Dependency $dependency not found. Dependencies must be in the same category and precede the setting")
-                state.map {
-                    if (it !is Boolean) {
-                        throw IllegalStateException("A Setting can currently only depend on Boolean-Settings")
+
+                // Use a mediator to react on all dependencies
+                val mediatorLiveData: MediatorLiveData<Boolean> = MediatorLiveData()
+                val dependencies = settings
+                    .filterIsInstance<ISettingData<Any>>()
+                    .mapNotNull { setting ->
+                        when(val dependency = dependencies.dependencies.find { (key, _) -> setting.key == key }) {
+                            null -> null
+                            else -> setting to dependency.second
+                        }
                     }
-                    it
-                }
+
+                // add every dependencies state to the mediator
+                // the emitted value is only true iff all conditions are true
+                dependencies.forEach { (setting, _) ->
+                        mediatorLiveData.addSource(setting.state) {
+                            dependencies.map { (setting, condition) -> condition(setting.value) }
+                                .all { condition -> condition == true }
+                        }
+                    }
+                mediatorLiveData
             }
         }
 
