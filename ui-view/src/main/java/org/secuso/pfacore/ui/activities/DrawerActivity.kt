@@ -88,12 +88,12 @@ abstract class DrawerActivity: BaseActivity(), Drawer {
         }
     }
 
-    fun setContent(view: View) {
+    override fun setContentView(view: View) {
         initContent()
         drawerBinding.content.addView(view)
     }
 
-    fun setContent(@LayoutRes layoutResID: Int) {
+    override fun setContentView(@LayoutRes layoutResID: Int) {
         initContent()
         drawerBinding.content.addView(layoutInflater.inflate(layoutResID, drawerBinding.content, false))
     }
