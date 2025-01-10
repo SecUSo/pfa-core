@@ -11,7 +11,7 @@ class SettingThemeSelector {
         const val themeSelectorKey = "settings_day_night_theme"
     }
 
-    fun build(): Settings.Setting.() -> RadioSetting.RadioData<String> {
+    fun build(): DisplayableSetting.() -> RadioSetting.RadioData<String> {
         return {
             radio<String> {
                 key = themeSelectorKey
@@ -27,7 +27,7 @@ class SettingThemeSelector {
         }
     }
 }
-val Settings.Setting.settingThemeSelector
+val DisplayableSetting.settingThemeSelector
     get() = SettingThemeSelector().build().invoke(this)
 
 
@@ -52,7 +52,7 @@ class DeviceInformationOnErrorReport {
     companion object {
         const val includeDeviceDataInReportKey = "includeDeviceDataInReport"
     }
-    fun build(): Settings.Setting.() -> SwitchSetting.SwitchData {
+    fun build(): DisplayableSetting.() -> SwitchSetting.SwitchData {
         return {
             switch {
                 key = includeDeviceDataInReportKey
@@ -64,5 +64,5 @@ class DeviceInformationOnErrorReport {
         }
     }
 }
-val Settings.Setting.settingDeviceInformationOnErrorReport
+val DisplayableSetting.settingDeviceInformationOnErrorReport
     get() = DeviceInformationOnErrorReport().build().invoke(this)

@@ -6,23 +6,28 @@ import android.view.ViewGroup
 import androidx.lifecycle.LifecycleOwner
 import androidx.recyclerview.widget.RecyclerView
 import org.secuso.pfacore.R
+import org.secuso.pfacore.model.preferences.settings.SettingCategory
 import org.secuso.pfacore.model.preferences.settings.SettingComposite
 import org.secuso.pfacore.model.preferences.settings.SettingHierarchy
+import org.secuso.pfacore.model.preferences.settings.SettingMenu
 import org.secuso.pfacore.ui.replace
-import org.secuso.pfacore.ui.preferences.settings.InflatableSetting
-import org.secuso.pfacore.ui.preferences.settings.SettingCategory
-import org.secuso.pfacore.ui.preferences.settings.SettingMenu
+import org.secuso.pfacore.ui.preferences.settings.InflatableSettingInfo
+import org.secuso.pfacore.ui.preferences.settings.InflatableSettingMenu
 import org.secuso.ui.view.databinding.PreferenceBasicBinding
 import org.secuso.ui.view.databinding.PreferenceCategoryBinding
 
-class SettingsMenuAdapter(private val inflater: LayoutInflater, private val owner: LifecycleOwner, private val openMenu: (SettingMenu) -> Unit): RecyclerView.Adapter<RecyclerView.ViewHolder>() {
-    var items: List<SettingHierarchy<InflatableSetting>> = listOf()
+class SettingsMenuAdapter(
+    private val inflater: LayoutInflater,
+    private val owner: LifecycleOwner,
+    private val openMenu: (InflatableSettingMenu) -> Unit
+): RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+    var items: List<SettingHierarchy<InflatableSettingInfo>> = listOf()
         // We want to display the whole menu by using a single recyclerview
         // therefore we want to flatten the hierarchy by treating the category as title only
         // and appending the settings of the category.
         set(value) {
             field = value.map { when(it) {
-                is SettingCategory -> mutableListOf<SettingHierarchy<InflatableSetting>>(it).apply { this.addAll(it.settings) }
+                is SettingCategory -> mutableListOf<SettingHierarchy<InflatableSettingInfo>>(it).apply { this.addAll(it.settings) }
                 else -> listOf(it)
             } }.flatten()
         }
@@ -30,7 +35,7 @@ class SettingsMenuAdapter(private val inflater: LayoutInflater, private val owne
     override fun getItemCount() = items.count()
     override fun getItemViewType(position: Int) = when (items[position]) {
         is SettingCategory -> CATEGORY
-        is SettingComposite<InflatableSetting, *>, is SettingMenu -> SETTING
+        is SettingComposite<InflatableSettingInfo, *>, is SettingMenu<*,*> -> SETTING
         else -> throw IllegalStateException("Class ${items[position]::class.java} is not a valid setting class")
     }
 
@@ -47,9 +52,9 @@ class SettingsMenuAdapter(private val inflater: LayoutInflater, private val owne
             is CategoryViewHolder -> holder.binding.text = (items[position] as SettingCategory).name
             is SettingViewHolder -> {
                 val setting = when (val item = items[position]) {
-                    is SettingComposite<InflatableSetting, *> -> item.setting as InflatableSetting
-                    is SettingMenu -> {
-                        item.setting() as InflatableSetting
+                    is SettingComposite<InflatableSettingInfo, *> -> item.setting as InflatableSettingInfo
+                    is SettingMenu<*,*> -> {
+                        item.setting() as InflatableSettingInfo
                     }
                     else -> throw IllegalStateException("A category cannot contain another category.")
                 }
@@ -77,7 +82,7 @@ class SettingsMenuAdapter(private val inflater: LayoutInflater, private val owne
                             toggle.setOnClickListener {
                                 doToggle()
                                 when (val item = items[holder.adapterPosition]) {
-                                    is SettingMenu -> openMenu(item)
+                                    is SettingMenu<*,*> -> openMenu(item as InflatableSettingMenu)
                                     else -> {}
                                 }
                             }

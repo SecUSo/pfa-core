@@ -39,6 +39,20 @@ interface ISettingData<T> : Info, Preferable<T> {
 }
 
 /**
+ * Declare dependencies between settings by requiring that a condition is met for a specific key.
+ *
+ * @author Patrick Schneider
+ */
+class DependencyRelation(internal val dependencies: MutableList<Pair<String, (Any) -> Boolean>> = mutableListOf()) {
+    infix fun String.on(condition: (Any) -> Boolean) {
+        dependencies.add(this to condition)
+    }
+    infix fun String.on(value: Any) {
+        dependencies.add(this to { it == value })
+    }
+}
+
+/**
  * The data needed to build a general setting.
  *
  * @property dependency A key to another setting in the same category of the setting to be build, determining if the setting is active or not.
@@ -48,11 +62,12 @@ interface ISettingData<T> : Info, Preferable<T> {
  * @author Patrick Schneider
  */
 interface ISettingDataBuildInfo<T> : BuildInfo, PreferableBuildInfo<T> {
-    var dependency: String?
+    var dependency: DependencyRelation.() -> Unit
+
 }
 
 open class SettingDataBuildInfo<T>: ISettingDataBuildInfo<T>, PreferenceBuildInfo<T>() {
-    override var dependency: String? = null
+    override var dependency: DependencyRelation.() -> Unit = {}
 }
 
 /**
@@ -78,31 +93,28 @@ open class SettingData<T>(
     override var enabled: LiveData<Boolean>
 ): ISettingData<T>, Preference<T>(state, default, key, backup, restorer, onUpdate)
 
-typealias EnabledByDependency = (String?) -> LiveData<Boolean>
+typealias EnabledByDependency = (DependencyRelation) -> LiveData<Boolean>
 typealias SettingFactory<BI, SI> = (SharedPreferences, EnabledByDependency) -> InfoFactory<BI, SI>
 
 fun <T, BI: ISettingDataBuildInfo<T>, SI: ISettingData<T>> settingDataFactory(
     adapt: (BI, SettingData<T>) -> SI
 ): SettingFactory<BI, SI> {
-    return { preferences, enabled ->
-        InfoFactory { info ->
-            {
-                adapt(info, info.build<T, BI, SettingData<T>>(preferences) { state, restorer, onUpdate ->
-                    InfoFactory {
-                        {
-                            SettingData(
-                                state(info.key!!, info.default!!),
-                                info.default!!,
-                                info.key!!,
-                                info.backup,
-                                restorer(info.default!!),
-                                onUpdate(info.key!!, info.default!!, info.onUpdate),
-                                enabled(info.dependency)
-                            )
-                        }
+    return { preferences, enabled -> InfoFactory {
+            info -> {
+                val data = info.build<T, BI, SettingData<T>>(preferences) { state, restorer, onUpdate -> InfoFactory {
+                    {
+                        SettingData(
+                            state(info.key!!, info.default!!),
+                            info.default!!,
+                            info.key!!,
+                            info.backup,
+                            restorer(info.default!!),
+                            onUpdate(info.key!!, info.default!!, info.onUpdate),
+                            enabled(DependencyRelation().apply(info.dependency))
+                        )
                     }
-                }
-                )
+                } }
+                adapt(info, data)
             }
         }
     }
