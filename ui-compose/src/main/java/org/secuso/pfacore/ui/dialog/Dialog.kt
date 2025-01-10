@@ -56,7 +56,7 @@ fun AbortElseDialog.register(): DialogHandle {
             },
             dismissButton = {
                 TextButton(onClick = { onAbort(); showDialog.value = false }) {
-                    Text(text = stringResource(android.R.string.cancel))
+                    Text(text = abortLabel)
                 }
             },
             properties = DialogProperties(dismissOnClickOutside = handleDismiss, dismissOnBackPress = handleDismiss)
@@ -91,7 +91,7 @@ fun <T> ShowValueSelectionDialog<T>.register(): DialogHandle {
             },
             dismissButton = {
                 TextButton(onClick = { dialog.onAbort(); showDialog.value = false }) {
-                    Text(text = stringResource(android.R.string.cancel))
+                    Text(text = dialog.abortLabel)
                 }
             },
             properties = DialogProperties(dismissOnClickOutside = dialog.handleDismiss, dismissOnBackPress = dialog.handleDismiss)

@@ -22,7 +22,7 @@ fun AbortElseDialog.show() {
         setIcon(android.R.drawable.ic_dialog_info)
         setTitle(title())
         setMessage(content())
-        setNegativeButton(android.R.string.cancel) { _,_ -> onAbort() }
+        setNegativeButton(abortLabel) { _,_ -> onAbort() }
         setPositiveButton(acceptLabel) { _,_ -> onElse() }
         if (handleDismiss) {
             setOnDismissListener { onAbort() }
@@ -43,7 +43,7 @@ fun <T, B: ViewDataBinding> ShowValueSelectionDialog<T, B>.show() {
         setIcon(android.R.drawable.ic_dialog_info)
         setTitle(title())
         setView(binding.root)
-        setNegativeButton(android.R.string.cancel) { _,_ -> dialog.onAbort() }
+        setNegativeButton(dialog.abortLabel) { _,_ -> dialog.onAbort() }
         setPositiveButton(dialog.acceptLabel) { _,_ -> dialog.onConfirmation(extraction(binding)) }
         if (dialog.handleDismiss) {
             setOnDismissListener { dialog.onAbort() }

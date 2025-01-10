@@ -78,6 +78,7 @@ data class AbortElseDialog(
     override val title: () -> String,
     val content: () -> String,
     val acceptLabel: String,
+    val abortLabel: String,
     val onAbort: () -> Unit,
     val onElse: () -> Unit,
     val handleDismiss: Boolean = true
@@ -86,11 +87,12 @@ data class AbortElseDialog(
         lateinit var title: () -> String
         lateinit var content: () -> String
         var acceptLabel: String = ContextCompat.getString(context, android.R.string.ok)
+        var abortLabel: String = ContextCompat.getString(context, android.R.string.cancel)
         var onAbort: () -> Unit = { }
         var onElse: () -> Unit = { }
         var handleDismiss: Boolean = true
 
-        internal fun build() = AbortElseDialog(context, title, content, acceptLabel, onAbort, onElse, handleDismiss)
+        internal fun build() = AbortElseDialog(context, title, content, acceptLabel, abortLabel, onAbort, onElse, handleDismiss)
     }
 
     companion object {
@@ -126,6 +128,7 @@ data class ValueSelectionDialog<T>(
     override val context: Context,
     override val title: () -> String,
     val acceptLabel: String,
+    val abortLabel: String,
     val onAbort: () -> Unit,
     val onConfirmation: (T) -> Unit,
     val handleDismiss: Boolean = true
@@ -134,10 +137,11 @@ data class ValueSelectionDialog<T>(
         lateinit var title: () -> String
         lateinit var acceptLabel: String
         lateinit var onConfirmation: (T) -> Unit
+        var abortLabel: String = ContextCompat.getString(context, android.R.string.cancel)
         var onAbort: () -> Unit = { }
         var handleDismiss: Boolean = true
 
-        internal fun build() = ValueSelectionDialog(context, title, acceptLabel, onAbort, onConfirmation, handleDismiss)
+        internal fun build() = ValueSelectionDialog(context, title, acceptLabel, abortLabel, onAbort, onConfirmation, handleDismiss)
     }
 
     companion object {
