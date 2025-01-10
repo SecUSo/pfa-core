@@ -48,12 +48,12 @@ abstract class Settings<SI: Info>(internal val settings: List<SettingCategory<SI
         private val addSetting: (CategoricalSettingHierarchy<SI>) -> Unit,
     ) {
         val enabled: EnabledByDependency = { dependencies ->
-            if (dependencies == null) {
+            if (dependencies.dependencies.isEmpty()) {
                 MutableLiveData(true)
             } else {
-                // Use a mediator to react on all dependencies
-                val mediatorLiveData: MediatorLiveData<Boolean> = MediatorLiveData()
+
                 val dependencies = allSettings()
+                    .map { it.setting().data }
                     .filterIsInstance<ISettingData<Any>>()
                     .mapNotNull { setting ->
                         when(val dependency = dependencies.dependencies.find { (key, _) -> setting.key == key }) {
@@ -61,12 +61,17 @@ abstract class Settings<SI: Info>(internal val settings: List<SettingCategory<SI
                             else -> setting to dependency.second
                         }
                     }
-
+                // Use a mediator to react on all dependencies
+                val mediatorLiveData: MediatorLiveData<Boolean> = MediatorLiveData()
+                mediatorLiveData.value = dependencies
+                    .map { (setting, condition) -> condition(setting.value) }
+                    .all { condition -> condition == true }
                 // add every dependencies state to the mediator
                 // the emitted value is only true iff all conditions are true
                 dependencies.forEach { (setting, _) ->
                     mediatorLiveData.addSource(setting.state) {
-                        dependencies.map { (setting, condition) -> condition(setting.value) }
+                        mediatorLiveData.value = dependencies
+                            .map { (setting, condition) -> condition(setting.value) }
                             .all { condition -> condition == true }
                     }
                 }

@@ -62,12 +62,12 @@ class DependencyRelation(internal val dependencies: MutableList<Pair<String, (An
  * @author Patrick Schneider
  */
 interface ISettingDataBuildInfo<T> : BuildInfo, PreferableBuildInfo<T> {
-    var dependency: (DependencyRelation.() -> Unit)?
+    var dependency: DependencyRelation.() -> Unit
 
 }
 
 open class SettingDataBuildInfo<T>: ISettingDataBuildInfo<T>, PreferenceBuildInfo<T>() {
-    override var dependency: (DependencyRelation.() -> Unit)? = null
+    override var dependency: DependencyRelation.() -> Unit = {}
 }
 
 /**
@@ -93,7 +93,7 @@ open class SettingData<T>(
     override var enabled: LiveData<Boolean>
 ): ISettingData<T>, Preference<T>(state, default, key, backup, restorer, onUpdate)
 
-typealias EnabledByDependency = (DependencyRelation?) -> LiveData<Boolean>
+typealias EnabledByDependency = (DependencyRelation) -> LiveData<Boolean>
 typealias SettingFactory<BI, SI> = (SharedPreferences, EnabledByDependency) -> InfoFactory<BI, SI>
 
 fun <T, BI: ISettingDataBuildInfo<T>, SI: ISettingData<T>> settingDataFactory(
@@ -110,7 +110,7 @@ fun <T, BI: ISettingDataBuildInfo<T>, SI: ISettingData<T>> settingDataFactory(
                             info.backup,
                             restorer(info.default!!),
                             onUpdate(info.key!!, info.default!!, info.onUpdate),
-                            enabled(info.dependency?.let { DependencyRelation().apply(it) })
+                            enabled(DependencyRelation().apply(info.dependency))
                         )
                     }
                 } }
