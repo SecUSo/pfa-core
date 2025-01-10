@@ -16,10 +16,13 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import org.secuso.pfacore.model.preferences.settings.SettingCategory
+import org.secuso.pfacore.model.preferences.settings.SettingMenu
 import org.secuso.pfacore.ui.preferences.settings.DisplayableSettingInfo
-import org.secuso.pfacore.ui.preferences.settings.SettingCategory
-import org.secuso.pfacore.ui.preferences.settings.SettingMenu
 import org.secuso.pfacore.ui.preferences.appPreferences
+import org.secuso.pfacore.ui.preferences.settings.menu
+import org.secuso.pfacore.ui.preferences.settings.radio
+import org.secuso.pfacore.ui.preferences.settings.switch
 import org.secuso.pfacore.ui.theme.PrivacyFriendlyCoreTheme
 
 @Composable
@@ -33,10 +36,10 @@ fun PreferenceGroupHeader(modifier: Modifier = Modifier, text: String) {
 }
 
 @Composable
-fun SettingsMenu(settings: List<SettingCategory>) {
+fun SettingsMenu(settings: List<SettingCategory<DisplayableSettingInfo>>) {
     val navController = rememberNavController()
     val menus = remember {
-        settings.map { it.settings }.flatten().filterIsInstance<SettingMenu>()
+        settings.map { it.settings }.flatten().filterIsInstance<SettingMenu<DisplayableSettingInfo, SettingCategory<DisplayableSettingInfo>>>()
     }
     NavHost(navController = navController, startDestination = "menu") {
         composable("menu") {
@@ -47,7 +50,7 @@ fun SettingsMenu(settings: List<SettingCategory>) {
                     category.settings
                         .map { setting ->
                             Pair(setting.setting(), when(setting) {
-                                is SettingMenu -> ({ navController.navigate("_${setting.name}") })
+                                is SettingMenu<*,*> -> ({ navController.navigate("_${setting.name}") })
                                 else -> ({})
                             })
                         }
@@ -94,6 +97,9 @@ fun SettingsMenuPreview() {
                     entries {
                         entries(listOf("A", "B", "C"))
                         values(listOf(1, 2, 3))
+                    }
+                    dependency = {
+                        "test5" on { it == true }
                     }
                 }
                 menu("Next Menu") {

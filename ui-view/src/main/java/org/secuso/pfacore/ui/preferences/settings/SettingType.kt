@@ -8,7 +8,6 @@ import org.secuso.pfacore.model.preferences.settings.SettingData
 import org.secuso.pfacore.model.preferences.settings.SettingDataBuildInfo
 import org.secuso.pfacore.model.preferences.settings.SettingEntry
 import org.secuso.pfacore.model.preferences.settings.Entries
-import org.secuso.pfacore.model.preferences.PreferenceFactory
 import org.secuso.pfacore.model.preferences.settings.SettingFactory
 import org.secuso.pfacore.model.preferences.settings.MenuSetting as MMenuSetting
 import org.secuso.pfacore.model.preferences.settings.RadioSetting as MRadioSetting
@@ -74,7 +73,7 @@ open class BasicDisplaySetting(private val resources: Resources) {
 }
 
 
-class SwitchSetting(data: SwitchData) : MSwitchSetting<SwitchSetting.SwitchData>(data), InflatableSetting {
+class SwitchSetting(data: SwitchData) : MSwitchSetting<SwitchSetting.SwitchData>(data), InflatableSettingInfo {
     companion object {
         fun factory(): SettingFactory<SwitchBuildInfo, SwitchData> = factory { info, data -> SwitchData(data.data, info.requireTitle(), info.requireSummary()) }
     }
@@ -110,7 +109,7 @@ class SwitchSetting(data: SwitchData) : MSwitchSetting<SwitchSetting.SwitchData>
         }
 }
 
-class RadioSetting<T>(data: RadioData<T>) : MRadioSetting<T, RadioSetting.RadioData<T>>(data), InflatableSetting {
+class RadioSetting<T>(data: RadioData<T>) : MRadioSetting<T, RadioSetting.RadioData<T>>(data), InflatableSettingInfo {
     companion object {
         fun <T> factory(): SettingFactory<RadioBuildInfo<T>, RadioData<T>> = factory() { info, data -> RadioData(data.data, info.entries, info.requireTitle(), info.requireSummary()) }
     }
@@ -146,7 +145,7 @@ class RadioSetting<T>(data: RadioData<T>) : MRadioSetting<T, RadioSetting.RadioD
         }
 }
 
-class MenuSetting(data: MenuData) : MMenuSetting<MenuSetting.MenuData>(data), InflatableSetting {
+class MenuSetting(data: MenuData) : MMenuSetting<MenuSetting.MenuData>(data), InflatableSettingInfo {
     companion object {
         fun factory(): SettingFactory<MenuBuildInfo, MenuData> = factory() { info, data -> MenuData(info.requireTitle(), info.summary) }
     }

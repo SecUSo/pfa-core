@@ -99,25 +99,22 @@ typealias SettingFactory<BI, SI> = (SharedPreferences, EnabledByDependency) -> I
 fun <T, BI: ISettingDataBuildInfo<T>, SI: ISettingData<T>> settingDataFactory(
     adapt: (BI, SettingData<T>) -> SI
 ): SettingFactory<BI, SI> {
-    return { preferences, enabled ->
-        InfoFactory { info ->
-            {
-                adapt(info, info.build<T, BI, SettingData<T>>(preferences) { state, restorer, onUpdate ->
-                    InfoFactory {
-                        {
-                            SettingData(
-                                state(info.key!!, info.default!!),
-                                info.default!!,
-                                info.key!!,
-                                info.backup,
-                                restorer(info.default!!),
-                                onUpdate(info.key!!, info.default!!, info.onUpdate),
-                                enabled(info.dependency?.let { DependencyRelation().apply(it) })
-                            )
-                        }
+    return { preferences, enabled -> InfoFactory {
+            info -> {
+                val data = info.build<T, BI, SettingData<T>>(preferences) { state, restorer, onUpdate -> InfoFactory {
+                    {
+                        SettingData(
+                            state(info.key!!, info.default!!),
+                            info.default!!,
+                            info.key!!,
+                            info.backup,
+                            restorer(info.default!!),
+                            onUpdate(info.key!!, info.default!!, info.onUpdate),
+                            enabled(info.dependency?.let { DependencyRelation().apply(it) })
+                        )
                     }
-                }
-                )
+                } }
+                adapt(info, data)
             }
         }
     }

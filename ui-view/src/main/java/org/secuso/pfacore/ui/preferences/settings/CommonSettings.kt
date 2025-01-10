@@ -1,6 +1,5 @@
 package org.secuso.pfacore.ui.preferences.settings
 
-import androidx.appcompat.app.AppCompatDelegate
 import org.secuso.pfacore.R
 import org.secuso.pfacore.model.Theme
 import org.secuso.pfacore.model.preferences.Preferable
@@ -11,7 +10,7 @@ class SettingThemeSelector {
         const val themeSelectorKey = "settings_day_night_theme"
     }
 
-    fun build(): Settings.Setting.() -> RadioSetting.RadioData<String> {
+    fun build(): InflatableSetting.() -> RadioSetting.RadioData<String> {
         return {
             radio<String> {
                 key = themeSelectorKey
@@ -27,7 +26,7 @@ class SettingThemeSelector {
         }
     }
 }
-val Settings.Setting.settingThemeSelector
+val InflatableSetting.settingThemeSelector
     get() = SettingThemeSelector().build().invoke(this)
 
 class PreferenceFirstTimeLaunch {
@@ -51,7 +50,7 @@ class DeviceInformationOnErrorReport {
     companion object {
         const val includeDeviceDataInReportKey = "includeDeviceDataInReport"
     }
-    fun build(): Settings.Setting.() -> SwitchSetting.SwitchData {
+    fun build(): InflatableSetting.() -> SwitchSetting.SwitchData {
         return {
             switch {
                 key = includeDeviceDataInReportKey
@@ -63,5 +62,5 @@ class DeviceInformationOnErrorReport {
         }
     }
 }
-val Settings.Setting.settingDeviceInformationOnErrorReport
+val InflatableSetting.settingDeviceInformationOnErrorReport
     get() = DeviceInformationOnErrorReport().build().invoke(this)

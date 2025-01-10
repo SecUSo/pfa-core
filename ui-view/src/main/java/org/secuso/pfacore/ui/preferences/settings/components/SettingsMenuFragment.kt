@@ -5,13 +5,13 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import org.secuso.pfacore.ui.preferences.settings.SettingCategory
+import org.secuso.pfacore.ui.preferences.settings.InflatableSettingCategory
 import org.secuso.ui.view.databinding.FragmentPreferenceMenuBinding
 
 class SettingsMenuFragment: Fragment() {
     private var binding: FragmentPreferenceMenuBinding? = null
     var openMenu: ((SettingsMenuFragment) -> Unit)? = null
-    var categories: List<SettingCategory> = listOf()
+    var categories: List<InflatableSettingCategory> = listOf()
         set(value) {
             if (binding != null && binding!!.settings.adapter != null) {
                 (binding!!.settings.adapter!! as SettingsMenuAdapter).apply { items = value }
@@ -24,7 +24,7 @@ class SettingsMenuFragment: Fragment() {
             settings.adapter = SettingsMenuAdapter(inflater, this@SettingsMenuFragment) {
                 SettingsMenuFragment().apply {
                     categories = it.settings
-                    openMenu = this@SettingsMenuFragment.openMenu
+                    this.openMenu = this@SettingsMenuFragment.openMenu
                     openMenu!!(this)
                 }
             }.apply { items = categories }

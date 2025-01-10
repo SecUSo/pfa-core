@@ -5,6 +5,7 @@ import android.content.SharedPreferences
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.map
+import androidx.preference.PreferenceManager
 import org.secuso.pfacore.model.preferences.BuildInfo
 import org.secuso.pfacore.model.preferences.Info
 import org.secuso.pfacore.model.preferences.PreferenceDSL
@@ -36,53 +37,23 @@ interface ISettings<SI: Info> {
  * @author Patrick Schneider
  */
 @PreferenceDSL
-abstract class Settings<SI: Info, SHC : SettingCategory<SI>, SHM : SettingMenu<SI, SHC>>(internal val settings: List<SHC>) : ISettings<SI> {
+abstract class Settings<SI: Info>(internal val settings: List<SettingCategory<SI>>) : ISettings<SI> {
     override val all
         get() = settings.map { it.allSettings() }.flatten()
 
-    data class SettingsBuilders<
-            SI: Info,
-            SHC : SettingCategory<SI>,
-            SHM : SettingMenu<SI, SHC>,
-            S : Setting<SI, SHC, SHM, S, C, M>,
-            C : Category<SI, SHC, SHM, S, C, M>,
-            M : Menu<SI, SHC, SHM, S, C, M>,
-            >(
-        private val _setting: (SettingsBuilders<SI, SHC, SHM, S, C, M>) -> S,
-        private val _category: (SettingsBuilders<SI, SHC, SHM, S, C, M>) -> C,
-        private val _menu: (SettingsBuilders<SI, SHC, SHM, S, C, M>) -> M,
-        val shc: (String, S) -> SHC,
-        val shm: (String, M) -> SHM
-    ) {
-        val setting
-            get() = _setting(this)
-        val category
-            get() = _category(this)
-        val menu
-            get() = _menu(this)
-    }
-
     @PreferenceDSL
-    abstract class Setting<
-            SI: Info,
-            SHC : SettingCategory<SI>,
-            SHM : SettingMenu<SI, SHC>,
-            S : Setting<SI, SHC, SHM, S, C, M>,
-            C : Category<SI, SHC, SHM, S, C, M>,
-            M : Menu<SI, SHC, SHM, S, C, M>
-            >(
-        val settings: MutableList<CategoricalSettingHierarchy<SI>> = mutableListOf(),
-        internal val preferences: SharedPreferences,
-        internal val builders: SettingsBuilders<SI, SHC, SHM, S, C, M>
+    class Setting<SI: Info>(
+        val context: Context,
+        private val allSettings: () -> List<CategoricalSettingHierarchy<SI>>,
+        private val addSetting: (CategoricalSettingHierarchy<SI>) -> Unit,
     ) {
-        protected val enabled: EnabledByDependency = { dependencies ->
+        val enabled: EnabledByDependency = { dependencies ->
             if (dependencies == null) {
                 MutableLiveData(true)
             } else {
-
                 // Use a mediator to react on all dependencies
                 val mediatorLiveData: MediatorLiveData<Boolean> = MediatorLiveData()
-                val dependencies = settings
+                val dependencies = allSettings()
                     .filterIsInstance<ISettingData<Any>>()
                     .mapNotNull { setting ->
                         when(val dependency = dependencies.dependencies.find { (key, _) -> setting.key == key }) {
@@ -94,91 +65,79 @@ abstract class Settings<SI: Info, SHC : SettingCategory<SI>, SHM : SettingMenu<S
                 // add every dependencies state to the mediator
                 // the emitted value is only true iff all conditions are true
                 dependencies.forEach { (setting, _) ->
-                        mediatorLiveData.addSource(setting.state) {
-                            dependencies.map { (setting, condition) -> condition(setting.value) }
-                                .all { condition -> condition == true }
-                        }
+                    mediatorLiveData.addSource(setting.state) {
+                        dependencies.map { (setting, condition) -> condition(setting.value) }
+                            .all { condition -> condition == true }
                     }
+                }
                 mediatorLiveData
             }
         }
 
-        protected fun <BI: BuildInfo, SI: Info> BI.build(factory: SettingFactory<BI, SI>): SI {
-            return factory(preferences, enabled).build(this).invoke()
+        fun <BI: BuildInfo, SI: Info> BI.build(factory: SettingFactory<BI, SI>): SI {
+            return factory(PreferenceManager.getDefaultSharedPreferences(context), enabled).build(this).invoke()
         }
-        protected fun <S: org.secuso.pfacore.model.preferences.settings.Setting<*>> S.register(): S = this.apply { settings.add(SettingComposite(this as org.secuso.pfacore.model.preferences.settings.Setting<SI>)) }
+        fun <S: org.secuso.pfacore.model.preferences.settings.Setting<*>> S.register(): S = this.apply { addSetting(SettingComposite(this as org.secuso.pfacore.model.preferences.settings.Setting<SI>)) }
 
-        fun menu(menu: String, initializer: M.() -> Unit) {
-            this.settings.add(builders.shm(menu, builders.menu.apply(initializer)))
+        fun menu(menu: String, initializer: Menu<SI>.() -> Unit) {
+            val settingMenu = Menu(context, allSettings).apply(initializer)
+            addSetting(SettingMenu(menu, settingMenu.setting!!, settingMenu.settings))
         }
     }
 
     @PreferenceDSL
-    open class Category<
-            SI: Info,
-            SHC : SettingCategory<SI>,
-            SHM : SettingMenu<SI, SHC>,
-            S : Setting<SI, SHC, SHM, S, C, M>,
-            C : Category<SI, SHC, SHM, S, C, M>,
-            M : Menu<SI, SHC, SHM, S, C, M>
-            >(
+    class Category<SI: Info>(
         private val context: Context,
-        private val builders: SettingsBuilders<SI, SHC, SHM, S, C, M>,
     ) {
-        val categories: MutableList<SHC> = mutableListOf()
+        val categories: MutableList<SettingCategory<SI>> = mutableListOf()
+        val allSettings: MutableList<CategoricalSettingHierarchy<SI>> = mutableListOf()
 
         @Suppress("Unused")
-        fun category(category: String, initializer: S.() -> Unit) {
-            this.categories.add(builders.shc(category, builders.setting.apply(initializer)))
+        fun category(category: String, initializer: Setting<SI>.() -> Unit) {
+            val settings = mutableListOf<CategoricalSettingHierarchy<SI>>()
+            Setting(context, { allSettings }) {
+                settings.add(it)
+                allSettings.add(it)
+            }.apply(initializer)
+            categories.add(SettingCategory(category, settings))
         }
 
         @Suppress("Unused")
-        fun category(categoryId: Int, initializer: S.() -> Unit) {
-            this.categories.add(builders.shc(context.getString(categoryId), builders.setting.apply(initializer)))
+        fun category(categoryId: Int, initializer: Setting<SI>.() -> Unit) {
+            category(context.getString(categoryId), initializer)
         }
     }
 
     @PreferenceDSL
-    open class Menu<
-            SI: Info,
-            SHC : SettingCategory<SI>,
-            SHM : SettingMenu<SI, SHC>,
-            S : Setting<SI, SHC, SHM, S, C, M>,
-            C : Category<SI, SHC, SHM, S, C, M>,
-            M : Menu<SI, SHC, SHM, S, C, M>
-            >(
-        private val builders: SettingsBuilders<SI, SHC, SHM, S, C, M>,
+    class Menu<SI: Info, >(
+        private val context: Context,
+        private val allSettings: () -> List<CategoricalSettingHierarchy<SI>>,
     ) {
         var setting: SettingComposite<SI, *>? = null
             private set
             get() = (field ?: throw IllegalStateException("A menu needs a setting to click on."))
-        val settings: MutableList<SHC> = mutableListOf()
+        val settings: MutableList<SettingCategory<SI>> = mutableListOf()
 
-        fun setting(initializer: S.() -> Unit) {
-            this.setting = builders.setting.apply(initializer).settings.single().allSettings().single()
+        fun setting(initializer: Setting<SI>.() -> Unit) {
+            val settings = mutableListOf<CategoricalSettingHierarchy<SI>>()
+            Setting(context, allSettings) {
+                settings.add(it)
+            }.apply(initializer)
         }
 
-        fun content(initializer: C.() -> Unit) {
-            this.settings.addAll(builders.category.apply(initializer).categories)
+        fun content(initializer: Category<SI>.() -> Unit) {
+            this.settings.addAll(Category<SI>(context).apply(initializer).categories)
         }
     }
 
     companion object {
         @Suppress("Unused")
-        fun <
-                SI: Info,
-                SHC : SettingCategory<SI>,
-                SHM : SettingMenu<SI, SHC>,
-                S : Setting<SI, SHC, SHM, S, C, M>,
-                C : Category<SI, SHC, SHM, S, C, M>,
-                M : Menu<SI, SHC, SHM, S, C, M>,
-                Set : Settings<SI, SHC, SHM>
-                > build(
-            builder: (settings: List<SHC>) -> Set,
-            builders: SettingsBuilders<SI, SHC, SHM, S, C, M>,
-            initializer: C.() -> Unit,
+        fun <SI: Info, Set : Settings<SI>> build(
+            context: Context,
+            builder: (settings: List<SettingCategory<SI>>) -> Set,
+            initializer: Category<SI>.() -> Unit,
         ): Set {
-            return builder(builders.category.apply(initializer).categories)
+            return builder(Category<SI>(context).apply(initializer).categories)
         }
     }
 
