@@ -6,6 +6,8 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Build
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import androidx.core.content.ContextCompat
 import androidx.multidex.MultiDex
@@ -54,6 +56,8 @@ abstract class PFModelApplication<PFD: PFData<*,*,*>> : Application(), Configura
     open val backup = object : PFAppBackup {}
     private lateinit var errors: File
 
+    abstract fun onCrash(error: ErrorReportHandler)
+
     override fun onCreate() {
         super.onCreate()
         _instance = this
@@ -74,7 +78,20 @@ abstract class PFModelApplication<PFD: PFData<*,*,*>> : Application(), Configura
 
         val defaultHandler = Thread.getDefaultUncaughtExceptionHandler()
         Thread.setDefaultUncaughtExceptionHandler { t, e ->
-            File( "${errors.path}/${System.currentTimeMillis()}").writeText(e.stackTraceToString())
+
+            val time = System.currentTimeMillis()
+            val error =  ErrorReportHandler(
+                report = ErrorReport(time, e.stackTraceToString()),
+                deleteReport = { report -> File("${errors.path}/${report.unixTime}").delete() },
+                sendReport = { report -> sendEmailErrorReport(report) }
+            )
+
+            File( "${errors.path}/${time}").writeText(e.stackTraceToString())
+
+            Handler(Looper.getMainLooper()).post {
+                onCrash(error)
+            }
+
             defaultHandler?.uncaughtException(t, e)
         }
     }
