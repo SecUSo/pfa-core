@@ -1,5 +1,6 @@
 package org.secuso.pfacore.ui.dialog
 
+import androidx.appcompat.app.AlertDialog
 import androidx.databinding.ViewDataBinding
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import org.secuso.pfacore.R
@@ -39,7 +40,7 @@ data class ShowValueSelectionDialog<T, B: ViewDataBinding>(
 fun <T,B: ViewDataBinding> ValueSelectionDialog<T>.content(binding: B, extraction: (B) -> T) = ShowValueSelectionDialog<T, B>(binding, extraction, this@content)
 
 fun <T, B: ViewDataBinding> ShowValueSelectionDialog<T, B>.show() {
-    MaterialAlertDialogBuilder(context).apply {
+    MaterialAlertDialogBuilder(dialog.context).apply {
         setIcon(android.R.drawable.ic_dialog_info)
         setTitle(title())
         setView(binding.root)
@@ -48,7 +49,12 @@ fun <T, B: ViewDataBinding> ShowValueSelectionDialog<T, B>.show() {
         if (dialog.handleDismiss) {
             setOnDismissListener { dialog.onAbort() }
         }
-        show()
+        val alertDialog = show()
+        val isValid = dialog.isValid()
+        isValid.observe(dialog.lifecycleOwner) {
+            alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).isEnabled = it
+        }
+        alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).isEnabled = isValid.value != false
     }
 }
 
