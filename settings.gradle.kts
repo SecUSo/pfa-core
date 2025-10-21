@@ -18,6 +18,10 @@ dependencyResolutionManagement {
         google()
         mavenCentral()
     }
+
+    libs {
+        from(files("libs.versions.toml"))
+    }
 }
 
 rootProject.name = "PrivacyFriendlyCore"

@@ -1,4 +1,10 @@
 group = "org.secuso.pfa-core"
+
+plugins {
+    alias(libs.plugins.android.lib)
+    alias(libs.plugins.kotlin.android)
+}
+
 android {
     namespace = "org.secuso.pfacore"
     compileSdk = 34
@@ -28,21 +34,23 @@ android {
 
 dependencies {
 
-    implementation("androidx.core:core-ktx:1.12.0")
-    implementation("androidx.appcompat:appcompat:1.6.1")
-    implementation("com.google.android.material:material:1.11.0")
-    testImplementation("junit:junit:4.13.2")
-    androidTestImplementation("androidx.test.ext:junit:1.1.5")
-    androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
-    implementation("androidx.preference:preference-ktx:1.2.1")
+    implementation(libs.ax.core.ktx)
+    implementation(libs.ax.appcompat)
+    implementation(libs.material)
+    testImplementation(libs.junit)
+    androidTestImplementation(libs.ax.test.junit)
+    androidTestImplementation(libs.espresso)
+    implementation(libs.ax.pref)
+    implementation(libs.multidex)
+
+    implementation(libs.ax.room)
+    annotationProcessor(libs.ax.room.compiler)
+    implementation(libs.ax.room.ktx)
+
+    implementation(libs.ax.work.runtime)
+    implementation(libs.ax.work.runtime.ktx)
+    androidTestImplementation(libs.ax.work.testing)
 
     implementation(project(":backup-api"))
 
-    val multidexVersion = "2.0.1"
-    implementation("androidx.multidex:multidex:$multidexVersion")
-
-    val roomVersion = rootProject.extra["roomVersion"]
-    implementation("androidx.room:room-runtime:$roomVersion")
-    annotationProcessor("androidx.room:room-compiler:$roomVersion")
-    implementation("androidx.room:room-ktx:$roomVersion")
 }
