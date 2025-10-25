@@ -3,15 +3,31 @@ package org.secuso.pfacore.model.tutorial
 import android.app.Activity
 import android.content.Intent
 
+enum class Gravity(val gravity: Int) {
+    CENTER(android.view.Gravity.CENTER),
+    START(android.view.Gravity.START),
+    END(android.view.Gravity.END),
+    UNDEFINED(android.view.Gravity.NO_GRAVITY)
+}
+
+sealed class ImageLayoutInfos {
+    data object None: ImageLayoutInfos()
+    data class Single(val image: Int): ImageLayoutInfos()
+    data class Multiple(
+        var images: List<Pair<Int, Gravity>> = listOf(),
+        var columns: Int = 2,
+    ): ImageLayoutInfos()
+}
+
 open class TutorialStage(
     val title: String,
-    val images: List<Int>,
+    val images: ImageLayoutInfos,
     val description: String?,
     open val requirements: () -> Boolean
 ) {
     abstract class Builder<TS: TutorialStage> {
         lateinit var title: String
-        var images: List<Int> = listOf()
+        var images: ImageLayoutInfos = ImageLayoutInfos.None
         var description: String? = null
         var requirements: () -> Boolean = { true }
 
