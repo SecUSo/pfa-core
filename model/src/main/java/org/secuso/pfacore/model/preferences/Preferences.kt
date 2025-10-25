@@ -36,6 +36,8 @@ class Preferences<B, S: ISettings<*>>(private val context: Context, private val 
     val settings
         get() = _settings ?: throw java.lang.IllegalStateException("There are no settings defined. Please specify some settings in you preferences.")
 
+    private var onFinish = {}
+
     @PreferenceDSL
     class Preference(private val sharedPreferences: SharedPreferences) {
         val preferences = mutableListOf<Preferable<*>>()
@@ -71,6 +73,10 @@ class Preferences<B, S: ISettings<*>>(private val context: Context, private val 
         _settings = factory(context, initializer)
     }
 
+    fun onFinish(action: () -> Unit) {
+        onFinish = action
+    }
+
 
     val all: List<Preferable<*>>
         get() = mutableListOf<Preferable<*>>().apply {
@@ -82,7 +88,7 @@ class Preferences<B, S: ISettings<*>>(private val context: Context, private val 
 
     companion object {
         fun <B, S: ISettings<*>> build(context: Context, factory: (Context, B.() -> Unit) -> S, initializer: Preferences<B,S>.() -> Unit): Preferences<B,S> {
-            return Preferences<B,S>(context, factory).apply(initializer)
+            return Preferences<B,S>(context, factory).apply(initializer).apply { onFinish() }
         }
     }
 }

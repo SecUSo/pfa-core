@@ -46,6 +46,23 @@ class PreferenceFirstTimeLaunch {
 val Preferences.Preference.preferenceFirstTimeLaunch
     get() = PreferenceFirstTimeLaunch().build().invoke(this)
 
+class PreferenceFirstTimePFACoreLaunch {
+    companion object {
+        const val firstTimePFACoreLaunchKey = "IsFirstTimePFACoreLaunch"
+    }
+    fun build(): Preferences.Preference.() -> Preferable<Boolean> {
+        return {
+            preference {
+                key = firstTimePFACoreLaunchKey
+                default = true
+                backup = true
+            }
+        }
+    }
+}
+val Preferences.Preference.preferenceFirstTimePFACoreLaunch
+    get() = PreferenceFirstTimePFACoreLaunch().build().invoke(this)
+
 class DeviceInformationOnErrorReport {
     companion object {
         const val includeDeviceDataInReportKey = "includeDeviceDataInReport"
