@@ -88,6 +88,24 @@ abstract class DrawerActivity: BaseActivity(), Drawer {
         }
     }
 
+    fun reloadDrawer() {
+        val drawer = drawer()
+        drawerBinding.navView.menu.clear()
+        drawer.sections.forEachIndexed { index, section ->
+            section.items.forEach {
+                drawerBinding.navView.menu.add(index, Menu.NONE, Menu.NONE, it.name).apply {
+                    if (it.icon != null) {
+                        setIcon(it.icon!!)
+                    }
+                    if (isActiveDrawerElement(it)) {
+                        isChecked = true
+                    }
+                    setOnMenuItemClickListener {  _ -> it.onClick(this@DrawerActivity); true }
+                }
+            }
+        }
+    }
+
     override fun setContentView(view: View) {
         initContent()
         drawerBinding.content.addView(view)

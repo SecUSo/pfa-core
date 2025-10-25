@@ -1,7 +1,7 @@
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 
 plugins {
-    id("org.jetbrains.kotlin.plugin.compose")
+    alias(libs.plugins.kotlin.compose)
 }
 
 group = "org.secuso.pfa-core"
@@ -33,13 +33,20 @@ android {
 
 dependencies {
 
-    implementation("androidx.core:core-ktx:1.13.0")
-    implementation("androidx.appcompat:appcompat:1.6.1")
-    implementation("com.google.android.material:material:1.11.0")
-    testImplementation("junit:junit:4.13.2")
-    androidTestImplementation("androidx.test.ext:junit:1.1.5")
-    androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
-    implementation("androidx.preference:preference-ktx:1.2.1")
+    implementation(libs.ax.core.ktx)
+    implementation(libs.ax.appcompat)
+    implementation(libs.material)
+    testImplementation(libs.junit)
+    androidTestImplementation(libs.ax.test.junit)
+    androidTestImplementation(libs.espresso)
+    implementation(libs.ax.pref)
+
+    implementation(libs.ax.work.runtime)
+    implementation(libs.ax.work.runtime.ktx)
+    androidTestImplementation(libs.ax.work.testing)
+
+    // compose
+    implementation(platform(libs.ax.compose.bom))
 
     implementation(project(":model"))
 

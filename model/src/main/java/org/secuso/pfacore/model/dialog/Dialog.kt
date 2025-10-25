@@ -1,7 +1,11 @@
 package org.secuso.pfacore.model.dialog
 
 import android.content.Context
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 
 /**
  * A Dialog consist at least of a title.
@@ -127,9 +131,11 @@ typealias ValueSelectionDialogDSL<T> = ValueSelectionDialog.Builder<T>.() -> Uni
 data class ValueSelectionDialog<T>(
     override val context: Context,
     override val title: () -> String,
+    val lifecycleOwner: LifecycleOwner,
     val acceptLabel: String,
     val abortLabel: String,
     val onAbort: () -> Unit,
+    val isValid: () -> LiveData<Boolean>,
     val onConfirmation: (T) -> Unit,
     val handleDismiss: Boolean = true
 ): Dialog {
@@ -137,14 +143,31 @@ data class ValueSelectionDialog<T>(
         lateinit var title: () -> String
         lateinit var acceptLabel: String
         lateinit var onConfirmation: (T) -> Unit
+        lateinit var lifecycleOwner: LifecycleOwner
         var abortLabel: String = ContextCompat.getString(context, android.R.string.cancel)
         var onAbort: () -> Unit = { }
         var handleDismiss: Boolean = true
+        var isValid = { MutableLiveData(true) }
 
-        internal fun build() = ValueSelectionDialog(context, title, acceptLabel, abortLabel, onAbort, onConfirmation, handleDismiss)
+        internal fun build() = ValueSelectionDialog(
+            context,
+            title,
+            lifecycleOwner,
+            acceptLabel,
+            abortLabel,
+            onAbort,
+            isValid,
+            onConfirmation,
+            handleDismiss
+        )
     }
 
     companion object {
         fun <T> build(context: Context, initializer: ValueSelectionDialogDSL<T>) = ValueSelectionDialog.Builder<T>(context).apply(initializer).build()
+        fun <T> build(activity: AppCompatActivity, initializer: ValueSelectionDialogDSL<T>) = ValueSelectionDialog.Builder<T>(activity)
+            .apply(initializer)
+            .apply {
+                lifecycleOwner = activity
+            }.build()
     }
 }

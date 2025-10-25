@@ -1,0 +1,71 @@
+[versions]
+agp = "8.5.2"
+ktx = "2.2.20"
+ksp = "2.2.20-2.0.4"
+work = "2.8.1"
+room = "2.6.1"
+ax-core = "1.12.0"
+ax-appcompat = "1.6.1"
+ax-recyclerview-selection = "1.1.0"
+ax-pref = "1.2.1"
+ax-constraintlayuout = "2.0.1"
+ax-lifecycle = "2.2.0"
+ax-lifecycle-ext = "2.2.0"
+material = "1.11.0"
+junit = "4.13.2"
+ax-test-junit = "1.1.5"
+espresso = "3.5.1"
+multidex = "2.0.1"
+compose-bom = "2024.04.01"
+compose = "1.7.3"
+compose-material = "1.4.0"
+compose-runtime = "1.9.3"
+navigation-compose = "2.7.7"
+ktx-serializtion-json = "1.9.0"
+
+[libraries]
+ax-work-runtime = { group = "androidx.work", name = "work-runtime", version.ref = "work" }
+ax-work-runtime-ktx = { group = "androidx.work", name = "work-runtime-ktx", version.ref = "work" }
+ax-work-testing = { group = "androidx.work", name = "work-testing", version.ref = "work" }
+ax-room = { group = "androidx.room", name = "room-runtime", version.ref = "room"}
+ax-room-compiler = { group = "androidx.room", name = "room-compiler", version.ref = "room"}
+ax-room-ktx = { group = "androidx.room", name = "room-ktx", version.ref = "room"}
+ax-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "ax-core"}
+ax-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "ax-appcompat"}
+ax-pref = { group = "androidx.preference", name = "preference-ktx", version.ref = "ax-pref"}
+ax-recyclerview-selection = { group = "androidx.recyclerview", name = "recyclerview-selection", version.ref = "ax-recyclerview-selection"}
+ax-constraintlayout = { group = "androidx.constraintlayout", name = "constraintlayout", version.ref = "ax-constraintlayuout"}
+ax-lifecycle-ext = { group = "androidx.lifecycle", name = "lifecycle-extensions", version.ref = "ax-lifecycle-ext" }
+ax-lifecycle-viewmodel = { group = "androidx.lifecycle", name = "lifecycle-viewmodel-ktx", version.ref = "ax-lifecycle"}
+ax-lifecycle-runtime = { group = "androidx.lifecycle", name = "lifecycle-runtime-ktx", version.ref = "ax-lifecycle"}
+ax-compose-bom = { group = "androidx.compose", name = "compose-bom", version.ref = "compose-bom"}
+ax-compose-ui-graphics = { group = "androidx.compose.ui", name = "ui-graphics", version.ref = "compose"}
+ax-compose-ui-tooling = { group = "androidx.compose.ui", name = "ui-tooling", version.ref = "compose"}
+ax-compose-ui-tooling-preview = { group = "androidx.compose.ui", name = "ui-tooling-preview", version.ref = "compose"}
+ax-compose-material3 = { group = "androidx.compose.material3", name = "material3", version.ref = "compose-material"}
+ax-compose-runtime-livedata = { group = "androidx.compose.runtime", name = "runtime-livedata", version.ref = "compose-runtime"}
+ax-compose-foundation = { group = "androidx.compose.foundation", name = "foundation", version.ref = "compose"}
+ax-compose-ui-test-junit = { group = "androidx.compose.ui", name = "ui-test-junit4", version.ref = "compose"}
+ax-compose-ui-test-manifest = { group = "androidx.compose.ui", name = "ui-test-manifest", version.ref = "compose"}
+ax-navigation-compose = { group = "androidx.navigation", name = "navigation-compose", version.ref = "navigation-compose"}
+material = { group = "com.google.android.material", name = "material", version.ref = "material"}
+junit = { group = "junit", name = "junit", version.ref = "junit"}
+ax-test-junit = { group = "androidx.test.ext", name = "junit", version.ref = "ax-test-junit"}
+espresso = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espresso"}
+multidex = { group = "androidx.multidex", name = "multidex", version.ref = "multidex"}
+ktx-serialization-json = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json", version.ref = "ktx-serializtion-json" }
+
+agp = { group = "com.android.tools.build", name = "gradle", version.ref = "agp" }
+agp-kotlin = { group = "org.jetbrains.kotlin", name = "kotlin-gradle-plugin", version.ref="ktx" }
+
+[bundles]
+ax-lifecycle = ["ax-lifecycle-ext", "ax-lifecycle-runtime", "ax-lifecycle-viewmodel"]
+
+[plugins]
+android-lib = { id = "com.android.library", version.ref = "agp" }
+android-app = { id = "com.android.application", version.ref = "agp" }
+kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "ktx" }
+kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "ktx" }
+kotlin-kapt = { id = "org.jetbrains.kotlin.kapt", version.ref = "ktx" }
+ksp = { id = "com.google.devtools.ksp", version.ref = "ksp"}
+ktx-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "ktx" }
