@@ -11,8 +11,6 @@ import org.secuso.pfacore.ui.BasicInfo
 import org.secuso.pfacore.ui.Inflatable
 import org.secuso.ui.view.databinding.HelpDescriptionBinding
 import org.secuso.ui.view.databinding.HelpTitleBinding
-import org.secuso.ui.view.databinding.SimpleDescriptionBinding
-import org.secuso.ui.view.databinding.SimpleTitleBinding
 import org.secuso.pfacore.model.help.Help as MHelp
 
 class Help(override val items: List<HelpData>) : MHelp<HelpData>(items) {
@@ -52,9 +50,10 @@ class Help(override val items: List<HelpData>) : MHelp<HelpData>(items) {
                         orientation = LinearLayout.VERTICAL
                         showDividers = LinearLayout.SHOW_DIVIDER_MIDDLE
                     }
-                    descs.forEach { desc ->
+                    for (desc in descs) {
                         layout.addView(HelpDescriptionBinding.inflate(inflater, layout, false).apply { this.text = context.getString(desc) }.root)
                     }
+
                     layout.rootView
                 }
             }.build()
