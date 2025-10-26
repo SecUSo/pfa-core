@@ -3,7 +3,9 @@ package org.secuso.pfacore.ui.help
 import android.content.Context
 import android.content.res.Resources
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
+import android.widget.LinearLayout
 import androidx.lifecycle.LifecycleOwner
 import org.secuso.pfacore.ui.BasicInfo
 import org.secuso.pfacore.ui.Inflatable
@@ -41,6 +43,21 @@ class Help(override val items: List<HelpData>) : MHelp<HelpData>(items) {
             description = BasicInfo(resources) { text -> Inflatable { inflater: LayoutInflater, root: ViewGroup?, _ ->
                 HelpDescriptionBinding.inflate(inflater, root, false).apply { this.text = text }.root
             } }.apply(initializer).build()
+        }
+
+        fun descriptions(context: Context, descs: List<Int>) {
+            description = BasicInfo(resources, { Inflatable { _, _, _ -> View(context) } }).apply {
+                custom { inflater, root, owner ->
+                    val layout = LinearLayout(context).apply {
+                        orientation = LinearLayout.VERTICAL
+                        showDividers = LinearLayout.SHOW_DIVIDER_MIDDLE
+                    }
+                    descs.forEach { desc ->
+                        layout.addView(HelpDescriptionBinding.inflate(inflater, layout, false).apply { this.text = context.getString(desc) }.root)
+                    }
+                    layout.rootView
+                }
+            }.build()
         }
     }
 
