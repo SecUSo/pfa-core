@@ -5,6 +5,7 @@ import org.secuso.pfacore.model.Theme
 import org.secuso.pfacore.model.about.About
 import org.secuso.pfacore.model.help.Help
 import org.secuso.pfacore.model.preferences.Preferable
+import org.secuso.pfacore.model.preferences.Preferences
 import org.secuso.pfacore.model.preferences.settings.ISettings
 import org.secuso.pfacore.model.tutorial.Tutorial
 
@@ -103,7 +104,7 @@ import org.secuso.pfacore.model.tutorial.Tutorial
  * @author Patrick Schneider
  */
 data class PFData<SD: ISettings<*>, HD: Help<*>, TD: Tutorial<*>>(
-    val settings: SD,
+    val preferences: Preferences<*, SD>,
     val about: About,
     val help: HD? = null,
     val tutorial: TD,

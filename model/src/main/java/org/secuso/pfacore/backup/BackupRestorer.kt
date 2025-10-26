@@ -40,7 +40,7 @@ class BackupRestorer : IBackupRestorer {
 
         while (reader.hasNext()) {
             val name = reader.nextName()
-            val pref = PFModelApplication.instance.data.settings.all.map { it.setting.data }.filterIsInstance<Preferable<*>>().firstOrNull { it.key == name }
+            val pref = PFModelApplication.instance.data.preferences.all.firstOrNull { it.key == name }
             if (pref == null) {
                 throw RuntimeException("Unknown preference $name")
             } else {
@@ -67,7 +67,7 @@ class BackupRestorer : IBackupRestorer {
                 when (val type = reader.nextName()) {
                     "database" -> PFModelApplication.instance.database!!.restore(reader)
                     "preferences" -> readPreferences(reader, context)
-                    else -> PFModelApplication.instance.backup.restore(type, reader, context)
+                    else -> PFModelApplication.instance.appBackup.find { it.key == type }!!.restore(type, reader, context)
                 }
             }
 
@@ -76,7 +76,7 @@ class BackupRestorer : IBackupRestorer {
             // END
 
             // stop app to trigger migration on wakeup
-            Log.d("NoteRestore", "Restore completed successfully.")
+            Log.d("PFA Backup Restore", "Restore completed successfully.")
             exitProcess(0)
         } catch (e: Exception) {
             e.printStackTrace()

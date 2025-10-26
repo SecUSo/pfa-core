@@ -51,14 +51,15 @@ abstract class PFModelApplication<PFD: PFData<*,*,*>> : Application(), Configura
     abstract val data: PFD
     abstract val mainActivity: Class<out Activity>
     open val database: BackupDatabaseConfig? = null
-    open val backup = object : PFAppBackup {}
+    open val createBackup = true
+    open val appBackup: List<PFAppBackup> = listOf()
     private lateinit var errors: File
 
     override fun onCreate() {
         super.onCreate()
         _instance = this
 
-        if (database != null) {
+        if (createBackup) {
             backupCreator = BackupCreator()
             backupRestorer = BackupRestorer()
         }

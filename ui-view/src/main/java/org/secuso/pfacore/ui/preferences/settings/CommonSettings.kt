@@ -15,6 +15,7 @@ class SettingThemeSelector {
             radio<String> {
                 key = themeSelectorKey
                 default = Theme.SYSTEM.toString()
+                backup = true
                 onUpdate = { Theme.valueOf(it).apply() }
                 title { resource(R.string.select_day_night_theme) }
                 summary { transform { state, value -> state.entries.find { it.value == value }!!.entry } }

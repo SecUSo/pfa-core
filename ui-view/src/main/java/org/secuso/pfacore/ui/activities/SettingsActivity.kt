@@ -8,7 +8,7 @@ class SettingsActivity: BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_settings)
-        val settings = PFApplication.instance.data.settings
+        val settings = PFApplication.instance.data.preferences.settings
         supportFragmentManager.beginTransaction().add(R.id.fragment, settings.build(R.id.fragment, supportFragmentManager), null).commit()
     }
 }

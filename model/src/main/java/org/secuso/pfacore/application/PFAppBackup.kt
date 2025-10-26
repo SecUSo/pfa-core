@@ -19,6 +19,7 @@ import org.secuso.privacyfriendlybackup.api.backup.FileUtil
  * @see org.secuso.privacyfriendlybackup.api.common.BackupApi
  */
 interface PFAppBackup {
+    val key: String
     fun backup(writer: JsonWriter): JsonWriter = writer
     fun restore(key: String, reader: JsonReader, context: Context): JsonReader = reader
 }

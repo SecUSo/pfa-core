@@ -40,18 +40,23 @@ class BackupCreator : IBackupCreator {
         try {
             writer.beginObject()
 
-            Log.e("PFA BackupCreator", "Backup Database")
-            PFModelApplication.instance.database!!.backup(writer)
+            Log.d("PFA BackupCreator", "Creating app backup")
+            PFModelApplication.instance.appBackup.forEach {
+                Log.d("PFA BackupCreator", "Creating backup for ${it.key}")
+                it.backup(writer)
+                Log.d("PFA BackupCreator", "Finished backup for ${it.key}")
+            }
+            Log.d("PFA BackupCreator", "Finished app backup")
 
-            Log.e("PFA BackupCreator", "Backup Preference")
+            Log.d("PFA BackupCreator", "Backup Preference")
             val excludedKeys = PFModelApplication.instance.data
-                .settings
+                .preferences
                 .all
-                .map { it.setting.data }
-                .filterIsInstance<Preferable<*>>()
                 .filter { !it.backup }
                 .map { it.key }
                 .toTypedArray()
+            Log.d("PFA BackupCreator", "Found ${excludedKeys.size} keys to exclude. \n ${excludedKeys.joinToString(",")}")
+            writer.name("preferences")
             PreferenceUtil.writePreferences(writer, PreferenceManager.getDefaultSharedPreferences(context), excludedKeys)
 
             writer.endObject()
