@@ -4,8 +4,11 @@ ktx = "2.2.20"
 ksp = "2.2.20-2.0.4"
 work = "2.8.1"
 room = "2.6.1"
+ax-sqlite-ktx = "2.3.1"
 ax-core = "1.12.0"
 ax-appcompat = "1.6.1"
+ax-cardview = "1.0.0"
+ax-recyclerview = "1.2.0"
 ax-recyclerview-selection = "1.1.0"
 ax-pref = "1.2.1"
 ax-constraintlayuout = "2.0.1"
@@ -24,6 +27,9 @@ compose-runtime = "1.9.3"
 navigation-compose = "2.7.7"
 ktx-serializtion-json = "1.9.0"
 glide = "4.9.0"
+desugar_jdk = "2.1.5"
+
+quadflask-colorpicker = "0.0.13"
 
 [libraries]
 ax-work-runtime = { group = "androidx.work", name = "work-runtime", version.ref = "work" }
@@ -32,9 +38,12 @@ ax-work-testing = { group = "androidx.work", name = "work-testing", version.ref 
 ax-room = { group = "androidx.room", name = "room-runtime", version.ref = "room"}
 ax-room-compiler = { group = "androidx.room", name = "room-compiler", version.ref = "room"}
 ax-room-ktx = { group = "androidx.room", name = "room-ktx", version.ref = "room"}
+ax-sqlite-ktx = { group = "androidx.sqlite", name = "sqlite-ktx", version.ref = "ax-sqlite-ktx" }
 ax-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "ax-core"}
 ax-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "ax-appcompat"}
 ax-pref = { group = "androidx.preference", name = "preference-ktx", version.ref = "ax-pref"}
+ax-cardview = { group = "androidx.cardview", name = "cardview", version.ref = "ax-cardview" }
+ax-recyclerview = { group = "androidx.recyclerview", name = "recyclerview", version.ref = "ax-recyclerview" }
 ax-recyclerview-selection = { group = "androidx.recyclerview", name = "recyclerview-selection", version.ref = "ax-recyclerview-selection"}
 ax-constraintlayout = { group = "androidx.constraintlayout", name = "constraintlayout", version.ref = "ax-constraintlayuout"}
 ax-lifecycle-ext = { group = "androidx.lifecycle", name = "lifecycle-extensions", version.ref = "ax-lifecycle-ext" }
@@ -59,6 +68,8 @@ multidex = { group = "androidx.multidex", name = "multidex", version.ref = "mult
 ktx-serialization-json = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json", version.ref = "ktx-serializtion-json" }
 glide = { group = "com.github.bumptech.glide", name = "glide", version.ref = "glide" }
 
+quadflask-colorpicker = { group = "com.github.QuadFlask", name = "colorpicker", version.ref = "quadflask-colorpicker" }
+desugar_jdk = { group = "com.android.tools", name = "desugar_jdk_libs", version.ref = "desugar_jdk" }
 
 agp = { group = "com.android.tools.build", name = "gradle", version.ref = "agp" }
 agp-kotlin = { group = "org.jetbrains.kotlin", name = "kotlin-gradle-plugin", version.ref="ktx" }
