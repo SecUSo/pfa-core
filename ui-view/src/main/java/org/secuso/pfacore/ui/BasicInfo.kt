@@ -4,7 +4,7 @@ import android.content.res.Resources
 
 class BasicInfo(
     private val resources: Resources,
-    private val default: (String) -> org.secuso.pfacore.ui.Inflatable
+    private val default: (CharSequence) -> org.secuso.pfacore.ui.Inflatable
 ) {
     private var composable: (org.secuso.pfacore.ui.Inflatable)? = null
 
@@ -16,7 +16,7 @@ class BasicInfo(
     }
 
     @Suppress("Unused")
-    fun literal(text: String) {
+    fun literal(text: CharSequence) {
         this.composable = default(text)
     }
 
@@ -28,7 +28,7 @@ class BasicInfo(
 
 class TransformableInfo<D, S>(
     private val resources: Resources,
-    private val default: ((D, S) -> String) -> (D, S) -> org.secuso.pfacore.ui.Inflatable
+    private val default: ((D, S) -> CharSequence) -> (D, S) -> org.secuso.pfacore.ui.Inflatable
 ) {
     private var composable: ((D, S) -> org.secuso.pfacore.ui.Inflatable)? = null
 
@@ -40,12 +40,12 @@ class TransformableInfo<D, S>(
     }
 
     @Suppress("Unused")
-    fun literal(text: String) {
+    fun literal(text: CharSequence) {
         this.composable = default { _, _ -> text }
     }
 
     @Suppress("Unused")
-    fun transform(transformer: (D, S) -> String) {
+    fun transform(transformer: (D, S) -> CharSequence) {
         this.composable = default(transformer)
     }
 
