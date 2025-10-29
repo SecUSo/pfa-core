@@ -3,7 +3,7 @@
     <data>
         <variable
             name="text"
-            type="String" />
+            type="CharSequence" />
     </data>
     <TextView xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
