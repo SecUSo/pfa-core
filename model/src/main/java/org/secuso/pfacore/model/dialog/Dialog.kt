@@ -39,14 +39,18 @@ data class InfoDialog(
     override val context: Context,
     override val title: () -> String,
     val content: () -> String,
-    val onClose: () -> Unit
+    val onClose: () -> Unit,
+    val onShow: () -> Unit,
+    val icon: Int?
 ): Dialog {
     class Builder(var context: Context) {
         lateinit var title: () -> String
         lateinit var content: () -> String
         var onClose: () -> Unit = { }
+        var onShow: () -> Unit = { }
+        var icon: Int? = null
 
-        internal fun build() = InfoDialog(context, title, content, onClose)
+        internal fun build() = InfoDialog(context, title, content, onClose, onShow, icon)
     }
 
     companion object {
@@ -85,6 +89,8 @@ data class AbortElseDialog(
     val abortLabel: String,
     val onAbort: () -> Unit,
     val onElse: () -> Unit,
+    val onShow: () -> Unit,
+    val icon: Int?,
     val handleDismiss: Boolean = true
 ): Dialog {
     class Builder(var context: Context) {
@@ -94,9 +100,23 @@ data class AbortElseDialog(
         var abortLabel: String = ContextCompat.getString(context, android.R.string.cancel)
         var onAbort: () -> Unit = { }
         var onElse: () -> Unit = { }
+
+        var onShow: () -> Unit = { }
+        var icon: Int? = null
         var handleDismiss: Boolean = true
 
-        internal fun build() = AbortElseDialog(context, title, content, acceptLabel, abortLabel, onAbort, onElse, handleDismiss)
+        internal fun build() = AbortElseDialog(
+            context,
+            title,
+            content,
+            acceptLabel,
+            abortLabel,
+            onAbort,
+            onElse,
+            onShow,
+            icon,
+            handleDismiss
+        )
     }
 
     companion object {
@@ -137,6 +157,8 @@ data class ValueSelectionDialog<T>(
     val onAbort: () -> Unit,
     val isValid: () -> LiveData<Boolean>,
     val onConfirmation: (T) -> Unit,
+    val onShow: () -> Unit,
+    val icon: Int?,
     val handleDismiss: Boolean = true
 ): Dialog {
     class Builder<T>(var context: Context) {
@@ -148,6 +170,8 @@ data class ValueSelectionDialog<T>(
         var onAbort: () -> Unit = { }
         var handleDismiss: Boolean = true
         var isValid = { MutableLiveData(true) }
+        var onShow: () -> Unit = { }
+        var icon: Int? = null
 
         internal fun build() = ValueSelectionDialog(
             context,
@@ -158,6 +182,8 @@ data class ValueSelectionDialog<T>(
             onAbort,
             isValid,
             onConfirmation,
+            onShow,
+            icon,
             handleDismiss
         )
     }

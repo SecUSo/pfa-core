@@ -10,19 +10,22 @@ import org.secuso.pfacore.model.dialog.InfoDialog
 import org.secuso.pfacore.model.dialog.ValueSelectionDialog
 
 fun InfoDialog.show() {
-    MaterialAlertDialogBuilder(context)
-        .setIcon(android.R.drawable.ic_dialog_info)
-        .setTitle(title())
-        .setMessage(content())
-        .setNeutralButton(R.string.okay) { _, _ -> onClose() }
-        .show()
+    MaterialAlertDialogBuilder(context).apply {
+        setIcon(icon ?: android.R.drawable.ic_dialog_info)
+        setTitle(title())
+        setMessage(content())
+        setNeutralButton(R.string.okay) { _, _ -> onClose() }
+
+        onShow()
+        show()
+    }
 }
 
 fun AbortElseDialog.show() {
     // To prevent calling onAbort twice (once per abort button and once on dismiss)
     var aborted = false
     MaterialAlertDialogBuilder(context).apply {
-        setIcon(android.R.drawable.ic_dialog_info)
+        setIcon(icon ?: android.R.drawable.ic_dialog_info)
         setTitle(title())
         setMessage(content())
         setNegativeButton(abortLabel) { _,_ ->
@@ -37,6 +40,7 @@ fun AbortElseDialog.show() {
                 }
             }
         }
+        onShow()
         show()
     }
 }
@@ -52,10 +56,13 @@ fun <T, B: ViewDataBinding> ShowValueSelectionDialog<T, B>.show() {
     // To prevent calling onAbort twice (once per abort button and once on dismiss)
     var aborted = false
     MaterialAlertDialogBuilder(dialog.context).apply {
-        setIcon(android.R.drawable.ic_dialog_info)
+        setIcon(dialog.icon ?: android.R.drawable.ic_dialog_info)
         setTitle(title())
         setView(binding.root)
-        setNegativeButton(dialog.abortLabel) { _,_ -> dialog.onAbort() }
+        setNegativeButton(dialog.abortLabel) { _,_ ->
+            aborted = true
+            dialog.onAbort()
+        }
         setPositiveButton(dialog.acceptLabel) { _,_ -> dialog.onConfirmation(extraction(binding)) }
         if (dialog.handleDismiss) {
             setOnDismissListener {
@@ -64,6 +71,7 @@ fun <T, B: ViewDataBinding> ShowValueSelectionDialog<T, B>.show() {
                 }
             }
         }
+        dialog.onShow()
         val alertDialog = show()
         val isValid = dialog.isValid()
         isValid.observe(dialog.lifecycleOwner) {
