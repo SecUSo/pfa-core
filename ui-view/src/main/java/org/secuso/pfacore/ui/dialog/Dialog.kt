@@ -59,9 +59,13 @@ fun <T, B: ViewDataBinding> ShowValueSelectionDialog<T, B>.show() {
         setIcon(dialog.icon ?: android.R.drawable.ic_dialog_info)
         setTitle(title())
         setView(binding.root)
-        setNegativeButton(dialog.abortLabel) { _,_ ->
-            aborted = true
-            dialog.onAbort()
+        if (!dialog.required) {
+            setNegativeButton(dialog.abortLabel) { _,_ ->
+                aborted = true
+                dialog.onAbort()
+            }
+        } else {
+            setCancelable(false)
         }
         setPositiveButton(dialog.acceptLabel) { _,_ -> dialog.onConfirmation(extraction(binding)) }
         if (dialog.handleDismiss) {

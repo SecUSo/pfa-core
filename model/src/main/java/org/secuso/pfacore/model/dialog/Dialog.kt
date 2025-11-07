@@ -159,6 +159,7 @@ data class ValueSelectionDialog<T>(
     val onConfirmation: (T) -> Unit,
     val onShow: () -> Unit,
     val icon: Int?,
+    val required: Boolean,
     val handleDismiss: Boolean = true
 ): Dialog {
     class Builder<T>(var context: Context) {
@@ -170,6 +171,7 @@ data class ValueSelectionDialog<T>(
         var onAbort: () -> Unit = { }
         var handleDismiss: Boolean = true
         var isValid = { MutableLiveData(true) }
+        var required = false
         var onShow: () -> Unit = { }
         var icon: Int? = null
 
@@ -184,6 +186,7 @@ data class ValueSelectionDialog<T>(
             onConfirmation,
             onShow,
             icon,
+            required,
             handleDismiss
         )
     }
