@@ -15,7 +15,7 @@ import org.secuso.ui.view.databinding.ActivityDrawerBinding
 import org.secuso.ui.view.databinding.DrawerNavHeaderBinding
 
 
-abstract class DrawerActivity: BaseActivity(), Drawer {
+abstract class DrawerActivity: BaseActivity(base = false), Drawer {
     private lateinit var drawerBinding: ActivityDrawerBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -61,9 +61,7 @@ abstract class DrawerActivity: BaseActivity(), Drawer {
         drawerBinding = ActivityDrawerBinding.inflate(layoutInflater)
         super.setContentView(drawerBinding.root)
 
-        if (supportActionBar == null) {
-            setSupportActionBar(findViewById(org.secuso.ui.view.R.id.toolbar))
-        }
+        setSupportActionBar(findViewById(org.secuso.ui.view.R.id.toolbar))
         supportActionBar?.setHomeAsUpIndicator(R.drawable.ic_menu)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 

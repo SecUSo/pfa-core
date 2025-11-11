@@ -4,13 +4,17 @@ import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.view.MenuItem
+import android.view.View
+import androidx.annotation.LayoutRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.TaskStackBuilder
 import org.secuso.pfacore.ui.PFApplication
+import org.secuso.ui.view.databinding.ActivityBaseBinding
 
-open class BaseActivity: AppCompatActivity() {
+open class BaseActivity(val base: Boolean = true): AppCompatActivity() {
 
     open val parentActivity: Class<out Activity> = PFApplication.instance.mainActivity
+    private lateinit var binding: ActivityBaseBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -38,5 +42,34 @@ open class BaseActivity: AppCompatActivity() {
             }
             else -> super.onOptionsItemSelected(item)
         }
+    }
+
+    private fun initContent() {
+        binding = ActivityBaseBinding.inflate(layoutInflater)
+        super.setContentView(binding.root)
+
+        if (supportActionBar == null ) {
+            setSupportActionBar(findViewById(org.secuso.ui.view.R.id.toolbar))
+        }
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+    }
+
+    override fun setContentView(view: View) {
+        if (base) {
+            initContent()
+            binding.content.addView(view)
+        } else {
+            super.setContentView(view)
+        }
+    }
+
+    override fun setContentView(@LayoutRes layoutResID: Int) {
+        if (base) {
+            initContent()
+            layoutInflater.inflate(layoutResID, binding.content, true)
+        } else {
+            super.setContentView(layoutResID)
+        }
+
     }
 }
