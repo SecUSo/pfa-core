@@ -25,7 +25,7 @@ import org.secuso.ui.view.databinding.ActivityAboutBinding
 /**
  * Activity that gives information about the developers.
  */
-class AboutActivity : BaseActivity() {
+class AboutActivity : BaseActivity(base = false) {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 

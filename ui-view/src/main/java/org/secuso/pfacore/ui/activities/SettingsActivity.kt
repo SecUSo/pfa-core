@@ -4,7 +4,7 @@ import android.os.Bundle
 import org.secuso.pfacore.ui.PFApplication
 import org.secuso.ui.view.R
 
-class SettingsActivity: BaseActivity() {
+class SettingsActivity: BaseActivity(base = false) {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_settings)

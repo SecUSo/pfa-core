@@ -4,7 +4,7 @@ import android.os.Bundle
 import org.secuso.pfacore.ui.PFApplication
 import org.secuso.ui.view.databinding.ActivityHelpBinding
 
-class HelpActivity: BaseActivity() {
+class HelpActivity: BaseActivity(base = false) {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val data = PFApplication.instance.data.help

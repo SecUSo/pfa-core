@@ -23,7 +23,7 @@ import org.secuso.ui.view.R
 import org.secuso.pfacore.R as CoreR
 import org.secuso.ui.view.databinding.ActivityErrorReportBinding
 
-class ErrorReportActivity: BaseActivity() {
+class ErrorReportActivity: BaseActivity(base = false) {
 
     private lateinit var tracker: SelectionTracker<Long>
     private lateinit var binding: ActivityErrorReportBinding
