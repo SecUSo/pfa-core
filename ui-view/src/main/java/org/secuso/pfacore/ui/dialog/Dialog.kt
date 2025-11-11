@@ -129,15 +129,16 @@ fun ShowSelectOptionDialog.show() {
 }
 
 data class ShowValueSelectionDialog<T, B: ViewDataBinding>(
-    val binding: B,
+    val bindingSupplier: () -> B,
     val extraction: (B) -> T,
     val dialog: ValueSelectionDialog<T>
 ): Dialog by dialog
-fun <T,B: ViewDataBinding> ValueSelectionDialog<T>.content(binding: B, extraction: (B) -> T) = ShowValueSelectionDialog<T, B>(binding, extraction, this@content)
+fun <T,B: ViewDataBinding> ValueSelectionDialog<T>.content(bindingSupplier: () -> B, extraction: (B) -> T) = ShowValueSelectionDialog<T, B>(bindingSupplier, extraction, this@content)
 
 fun <T, B: ViewDataBinding> ShowValueSelectionDialog<T, B>.show() {
     // To prevent calling onAbort twice (once per abort button and once on dismiss)
     var aborted = false
+    val binding = bindingSupplier()
     MaterialAlertDialogBuilder(dialog.context).apply {
         setIcon(dialog.icon ?: android.R.drawable.ic_dialog_info)
         setTitle(title())
