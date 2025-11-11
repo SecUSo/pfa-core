@@ -200,3 +200,74 @@ data class ValueSelectionDialog<T>(
             }.build()
     }
 }
+
+typealias SelectOptionDialogDSL = SelectOptionDialog.Builder.() -> Unit
+
+/**
+ * A dialog which is intended to interact with the user with multiple options to choose one from.
+ * To show the dialog, some additional calls may be needed depending on the ui implementation.
+ *
+ * Intended Usage:
+ *
+ *      val dialog = AbortElseDialog.build(context) {
+ *          title { "super important title, x: $x" }
+ *          content { "Do you want to continue and delete all those entries? \n entries: ${entries.joinToString { ',' } }" }
+ *          acceptLabel = "Yes, please delete"
+ *          onAbort { doNotDelete() }
+ *          onElse { delete() }
+ *      }
+ *      dialog.show()
+ *
+ * @param onElse Will be executed if the user clicks on the positive button acknowledging the intention of the dialog.
+ * @param onAbort Will be executed if the user clicks on the abort button.
+ * @param handleDismiss Shall the dialog being closed by dismissal (return, touch outside, ...) be treated as abort?
+ *
+ * @author Patrick Schneider
+ */
+data class SelectOptionDialog(
+    override val context: Context,
+    override val title: () -> String,
+    val icon: Int?,
+    val entries: List<Entry>,
+    val abortLabel: String,
+    val onAbort: () -> Unit,
+    val onShow: () -> Unit,
+    val handleDismiss: Boolean = true
+): Dialog {
+    class Entry {
+        lateinit var title: String
+        var description: String? = null
+        lateinit var onClick: () -> Unit
+        var icon: Int? = null
+    }
+    class Builder(var context: Context) {
+        lateinit var title: () -> String
+        private var entries: MutableList<Entry> = mutableListOf()
+
+        var abortLabel: String = ContextCompat.getString(context, android.R.string.cancel)
+        var onAbort: () -> Unit = { }
+
+        var onShow: () -> Unit = { }
+        var icon: Int? = null
+        var handleDismiss: Boolean = true
+
+        internal fun build() = SelectOptionDialog(
+            context,
+            title,
+            icon,
+            entries,
+            abortLabel,
+            onAbort,
+            onShow,
+            handleDismiss
+        )
+
+        fun entry(initializer: Entry.() -> Unit) {
+            entries.add(Entry().apply(initializer))
+        }
+    }
+
+    companion object {
+        fun build(context: Context, initializer: SelectOptionDialogDSL) = SelectOptionDialog.Builder(context).apply(initializer).build()
+    }
+}
