@@ -12,7 +12,7 @@ ax-recyclerview = "1.2.0"
 ax-recyclerview-selection = "1.1.0"
 ax-pref = "1.2.1"
 ax-constraintlayuout = "2.0.1"
-ax-lifecycle = "2.2.0"
+ax-lifecycle = "2.5.0"
 ax-lifecycle-ext = "2.2.0"
 ax-legacy-v4 = "1.0.0"
 material = "1.11.0"
@@ -26,6 +26,7 @@ compose-material = "1.4.0"
 compose-runtime = "1.9.3"
 navigation-compose = "2.7.7"
 ktx-serializtion-json = "1.9.0"
+camerax = "1.2.2"
 glide = "4.9.0"
 desugar_jdk = "2.1.5"
 
@@ -68,6 +69,12 @@ multidex = { group = "androidx.multidex", name = "multidex", version.ref = "mult
 ktx-serialization-json = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json", version.ref = "ktx-serializtion-json" }
 glide = { group = "com.github.bumptech.glide", name = "glide", version.ref = "glide" }
 
+camerax-core = { group = "androidx.camera", name = "camera-core", version.ref = "camerax" }
+camerax-camera2 = { group = "androidx.camera", name = "camera-camera2", version.ref = "camerax" }
+camerax-lifecycle = { group = "androidx.camera", name = "camera-lifecycle", version.ref = "camerax" }
+camerax-video = { group = "androidx.camera", name = "camera-video", version.ref = "camerax" }
+camerax-view = { group = "androidx.camera", name = "camera-view", version.ref = "camerax" }
+camerax-extensions = { group = "androidx.camera", name = "camera-extensions", version.ref = "camerax" }
 quadflask-colorpicker = { group = "com.github.QuadFlask", name = "colorpicker", version.ref = "quadflask-colorpicker" }
 desugar_jdk = { group = "com.android.tools", name = "desugar_jdk_libs", version.ref = "desugar_jdk" }
 
@@ -76,6 +83,7 @@ agp-kotlin = { group = "org.jetbrains.kotlin", name = "kotlin-gradle-plugin", ve
 
 [bundles]
 ax-lifecycle = ["ax-lifecycle-ext", "ax-lifecycle-runtime", "ax-lifecycle-viewmodel"]
+camerax = ["camerax-core", "camerax-camera2", "camerax-extensions", "camerax-lifecycle"]
 
 [plugins]
 android-lib = { id = "com.android.library", version.ref = "agp" }
