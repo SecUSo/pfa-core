@@ -58,6 +58,46 @@ data class InfoDialog(
     }
 }
 
+typealias CustomInfoDialogDSL = CustomInfoDialog.Builder.() -> Unit
+
+/**
+ * A dialog which is intended to show a helpful information which can be acknowledged.
+ * To show the dialog, some additional calls may be needed depending on the ui implementation.
+ *
+ * Intended Usage:
+ *
+ *      val dialog = InfoDialog.build(context) {
+ *          title { "super important title, x: $x" }
+ *          content { /* Here custom UI */ }
+ *          onClose { doSomethingOnClose }
+ *      }
+ *      dialog.show()
+ *
+ * @author Patrick Schneider
+ */
+data class CustomInfoDialog(
+    override val context: Context,
+    override val title: () -> String,
+    val acceptLabel: String,
+    val onClose: () -> Unit,
+    val onShow: () -> Unit,
+    val icon: Int?
+): Dialog {
+    class Builder(var context: Context) {
+        lateinit var title: () -> String
+        var onClose: () -> Unit = { }
+        var onShow: () -> Unit = { }
+        var icon: Int? = null
+        var acceptLabel = ContextCompat.getString(context, android.R.string.ok)
+
+        internal fun build() = CustomInfoDialog(context, title, acceptLabel, onClose, onShow, icon)
+    }
+
+    companion object {
+        fun build(context: Context, initializer: CustomInfoDialogDSL) = CustomInfoDialog.Builder(context).apply(initializer).build()
+    }
+}
+
 typealias AbortElseDialogDSL = AbortElseDialog.Builder.() -> Unit
 
 /**

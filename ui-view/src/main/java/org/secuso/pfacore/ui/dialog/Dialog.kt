@@ -1,5 +1,6 @@
 package org.secuso.pfacore.ui.dialog
 
+import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -8,9 +9,12 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.ViewDataBinding
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.viewbinding.ViewBinding
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import org.secuso.pfacore.R
 import org.secuso.pfacore.model.dialog.AbortElseDialog
+import org.secuso.pfacore.model.dialog.CustomInfoDialog
+import org.secuso.pfacore.model.dialog.CustomInfoDialogDSL
 import org.secuso.pfacore.model.dialog.Dialog
 import org.secuso.pfacore.model.dialog.InfoDialog
 import org.secuso.pfacore.model.dialog.SelectOptionDialog
@@ -27,6 +31,29 @@ fun InfoDialog.show() {
         setNeutralButton(R.string.okay) { _, _ -> onClose() }
 
         onShow()
+        show()
+    }
+}
+
+data class ShowCustomInfoDialog<B: ViewBinding>(
+    val bindingSupplier: () -> B,
+    val dialog: CustomInfoDialog
+): Dialog by dialog {
+    constructor(context: Context, binding: B, initializer: CustomInfoDialogDSL)
+            : this({ binding }, CustomInfoDialog.build(context, initializer))
+
+    constructor(context: Context, bindingSupplier: () -> B, initializer: CustomInfoDialogDSL)
+            : this(bindingSupplier, CustomInfoDialog.build(context, initializer))
+}
+
+fun <B: ViewBinding> ShowCustomInfoDialog<B>.show() {
+    MaterialAlertDialogBuilder(context).apply {
+        setIcon(dialog.icon ?: android.R.drawable.ic_dialog_info)
+        setTitle(title())
+        setView(bindingSupplier().root)
+        setNeutralButton(R.string.okay) { _, _ -> dialog.onClose() }
+
+        dialog.onShow()
         show()
     }
 }
