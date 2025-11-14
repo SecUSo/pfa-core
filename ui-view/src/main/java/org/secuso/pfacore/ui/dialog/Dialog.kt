@@ -84,10 +84,13 @@ fun AbortElseDialog.show() {
 
 data class ShowSelectOptionDialog(
     val layoutInflater: LayoutInflater,
-    val dialog: SelectOptionDialog
+    val dialog: SelectOptionDialog,
+    val description: String? = null
 ): Dialog by dialog {
     constructor(activity: AppCompatActivity, initializer: SelectOptionDialogDSL)
         : this(activity.layoutInflater, SelectOptionDialog.build(activity, initializer))
+    constructor(activity: AppCompatActivity, description: String?, initializer: SelectOptionDialogDSL)
+            : this(activity.layoutInflater, SelectOptionDialog.build(activity, initializer),description)
 
     class OptionAdapter(
         val layoutInflater: LayoutInflater,
@@ -129,6 +132,10 @@ fun ShowSelectOptionDialog.show() {
     // To prevent calling onAbort twice (once per abort button and once on dismiss)
     var aborted = false
     val binding = DialogOptionBinding.inflate(layoutInflater)
+    if (description != null) {
+        binding.description.text = description
+        binding.description.visibility = View.VISIBLE
+    }
     binding.recyclerView.apply {
         layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
         adapter = ShowSelectOptionDialog.OptionAdapter(layoutInflater, dialog.entries)
