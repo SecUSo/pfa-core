@@ -17,6 +17,10 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.getSystemService
 
+interface PFAPermissionOwner {
+    fun registerPFAPermissionInitialization(action: () -> Unit)
+}
+
 interface PFAPermissionLifecycleCallbacks: Application.ActivityLifecycleCallbacks {
     override fun onActivityCreated(activity: Activity, savedInstanceState: Bundle?) {}
     override fun onActivityStarted(activity: Activity) {}
@@ -146,4 +150,5 @@ sealed class PFAPermission(
     }
     data object RecordAudio: PFAPermission(sinceAPI = Build.VERSION_CODES.BASE, permission = Manifest.permission.RECORD_AUDIO)
     data object WriteExternalStorage: PFAPermission(sinceAPI = Build.VERSION_CODES.DONUT, permission = Manifest.permission.WRITE_EXTERNAL_STORAGE)
+    data object ReadContacts: PFAPermission(sinceAPI = Build.VERSION_CODES.BASE, permission = Manifest.permission.READ_CONTACTS)
 }

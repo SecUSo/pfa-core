@@ -8,16 +8,26 @@ import android.view.View
 import androidx.annotation.LayoutRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.TaskStackBuilder
+import org.secuso.pfacore.model.permission.PFAPermissionLifecycleCallbacks
+import org.secuso.pfacore.model.permission.PFAPermissionOwner
 import org.secuso.pfacore.ui.PFApplication
 import org.secuso.ui.view.databinding.ActivityBaseBinding
 
-open class BaseActivity(val base: Boolean = true): AppCompatActivity() {
+open class BaseActivity(val base: Boolean = true): AppCompatActivity(), PFAPermissionOwner {
 
     open val parentActivity: Class<out Activity> = PFApplication.instance.mainActivity
     private lateinit var binding: ActivityBaseBinding
+    private val permissionCallbacks: MutableList<() -> Unit> = mutableListOf()
+
+    override fun registerPFAPermissionInitialization(action: () -> Unit) {
+        permissionCallbacks.add(action)
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        permissionCallbacks.forEach { it() }
+
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         if (!PFApplication.instance.data.theme.hasActiveObservers()) {
             PFApplication.instance.data.theme.observe(this) { it.apply() }

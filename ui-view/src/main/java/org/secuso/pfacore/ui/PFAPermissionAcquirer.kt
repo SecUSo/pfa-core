@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.appcompat.app.AppCompatActivity
 import org.secuso.pfacore.model.dialog.AbortElseDialog
 import org.secuso.pfacore.model.permission.PFAPermission
+import org.secuso.pfacore.model.permission.PFAPermissionOwner
 import org.secuso.pfacore.model.permission.PFAPermissionRequestHandler
 import org.secuso.pfacore.ui.dialog.show
 
@@ -50,25 +51,38 @@ class PFAPermissionAcquirer(
     }
 }
 
-fun PFAPermission.declareUsage(activity: AppCompatActivity, activator: (() -> Unit) -> org.secuso.pfacore.ui.Inflatable, initializer: org.secuso.pfacore.ui.PFAPermissionAcquirer.Builder.() -> Unit) =
+fun <A> PFAPermission.declareUsage(activity: A, activator: (() -> Unit) -> org.secuso.pfacore.ui.Inflatable, initializer: org.secuso.pfacore.ui.PFAPermissionAcquirer.Builder.() -> Unit)
+    where
+        A: AppCompatActivity,
+        A: PFAPermissionOwner =
     this.declareUsage(activator, org.secuso.pfacore.ui.PFAPermissionAcquirer.Companion.build(activity, initializer))
 fun PFAPermission.declareUsage(activator: (() -> Unit) -> org.secuso.pfacore.ui.Inflatable, requester: org.secuso.pfacore.ui.PFAPermissionAcquirer): org.secuso.pfacore.ui.Inflatable {
     this.initiatePermissionRequestLauncher(requester.activity, requester.handler)
     return requester.request(this, activator)
 }
 
-fun List<PFAPermission>.declareUsage(activator: (() -> Unit) -> org.secuso.pfacore.ui.Inflatable, requester: org.secuso.pfacore.ui.PFAPermissionAcquirer): org.secuso.pfacore.ui.Inflatable {
-    return activator { this.declareUsage(requester) }
+fun List<PFAPermission>.declareUsage(owner: PFAPermissionOwner, activator: (() -> Unit) -> org.secuso.pfacore.ui.Inflatable, requester: org.secuso.pfacore.ui.PFAPermissionAcquirer): org.secuso.pfacore.ui.Inflatable {
+    return activator { this.declareUsage(owner, requester) }
 }
 
-fun PFAPermission.declareUsage(activity: AppCompatActivity, initializer: org.secuso.pfacore.ui.PFAPermissionAcquirer.Builder.() -> Unit) =
-    this.declareUsage(org.secuso.pfacore.ui.PFAPermissionAcquirer.Companion.build(activity, initializer))
-fun PFAPermission.declareUsage(requester: org.secuso.pfacore.ui.PFAPermissionAcquirer): () -> Unit {
-    this.initiatePermissionRequestLauncher(requester.activity, requester.handler)
+fun <A> PFAPermission.declareUsage(activity: A, initializer: org.secuso.pfacore.ui.PFAPermissionAcquirer.Builder.() -> Unit)
+    where
+        A: AppCompatActivity,
+        A: PFAPermissionOwner =
+    this.declareUsage(activity, org.secuso.pfacore.ui.PFAPermissionAcquirer.Companion.build(activity, initializer))
+fun PFAPermission.declareUsage(owner: PFAPermissionOwner, requester: org.secuso.pfacore.ui.PFAPermissionAcquirer): () -> Unit {
+    owner.registerPFAPermissionInitialization {
+        this.initiatePermissionRequestLauncher(requester.activity, requester.handler)
+    }
     return requester.request(this)
 }
 
-fun List<PFAPermission>.declareUsage(requester: org.secuso.pfacore.ui.PFAPermissionAcquirer): () -> Unit {
+fun <A> List<PFAPermission>.declareUsage(activity: A, initializer: org.secuso.pfacore.ui.PFAPermissionAcquirer.Builder.() -> Unit)
+    where
+        A: AppCompatActivity,
+        A: PFAPermissionOwner =
+    this.declareUsage(activity, PFAPermissionAcquirer.build(activity, initializer))
+fun List<PFAPermission>.declareUsage(owner: PFAPermissionOwner, requester: org.secuso.pfacore.ui.PFAPermissionAcquirer): () -> Unit {
     val permissionStatus = mutableListOf<Pair<PFAPermission, Boolean>>()
     val permissions = this
     val rationaleShown = false
@@ -99,8 +113,8 @@ fun List<PFAPermission>.declareUsage(requester: org.secuso.pfacore.ui.PFAPermiss
                 }
             }
         }
-        it.initiatePermissionRequestLauncher(acquirer.activity, acquirer.handler)
-        acquirer.request(it)
+
+        return@map it.declareUsage(owner, acquirer)
     }
     return {
         permissionAcquirers.forEach { it() }
