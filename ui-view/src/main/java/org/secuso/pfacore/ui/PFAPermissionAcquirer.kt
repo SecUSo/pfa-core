@@ -8,13 +8,24 @@ import org.secuso.pfacore.model.permission.PFAPermissionOwner
 import org.secuso.pfacore.model.permission.PFAPermissionRequestHandler
 import org.secuso.pfacore.ui.dialog.show
 
+interface PFAPermissionLauncher {
+    operator fun invoke()
+}
+fun (() -> Unit).asLauncher() = object : PFAPermissionLauncher {
+    override fun invoke() {
+        this@asLauncher()
+    }
+}
+fun PFAPermissionLauncher.asFunction() = { this() }
+
+typealias PFAPermissionDSL = org.secuso.pfacore.ui.PFAPermissionAcquirer.Builder.() -> Unit
 class PFAPermissionAcquirer(
     internal val activity: AppCompatActivity,
     val handler: PFAPermissionRequestHandler
 ) {
 
     fun request(permission: PFAPermission, activator:(() -> Unit) -> org.secuso.pfacore.ui.Inflatable): org.secuso.pfacore.ui.Inflatable = activator { permission.request(activity, handler) }
-    fun request(permission: PFAPermission): () -> Unit = { permission.request(activity, handler) }
+    fun request(permission: PFAPermission): PFAPermissionLauncher = { permission.request(activity, handler) }.asLauncher()
 
     class Builder(val activity: AppCompatActivity) {
         lateinit var onGranted: () -> Unit
@@ -23,19 +34,19 @@ class PFAPermissionAcquirer(
         lateinit var showRationale: org.secuso.pfacore.ui.PFAPermissionAcquirer.Builder.RationaleOrDialog.() -> Unit
 
         internal fun build(): org.secuso.pfacore.ui.PFAPermissionAcquirer {
-            val handler = PFAPermissionRequestHandler( onGranted, onDenied, finally, org.secuso.pfacore.ui.PFAPermissionAcquirer.Builder.RationaleOrDialog().apply(showRationale).rationale(activity))
+            val handler = PFAPermissionRequestHandler( onGranted, onDenied, finally, RationaleOrDialog().apply(showRationale).rationale(activity))
             return org.secuso.pfacore.ui.PFAPermissionAcquirer(activity, handler)
         }
 
 
         class RationaleOrDialog {
-            var rationaleTitle: String? = null
-            var rationaleText: String? = null
+            var rationaleTitle: ((Context) -> String)? = null
+            var rationaleText: ((Context) -> String)? = null
             var rationale: (Context) -> (doRequest: () -> Unit) -> Unit = { ctx ->
                 { doRequest ->
                     AbortElseDialog.build(ctx) {
-                        title = { rationaleTitle ?: throw IllegalStateException("Either specify a custom rationale or specify a title for the default rationale.") }
-                        content = { rationaleText ?: throw IllegalStateException("Either specify a custom rationale or specify a content for the default rationale.") }
+                        title = { rationaleTitle?.invoke(ctx) ?: throw IllegalStateException("Either specify a custom rationale or specify a title for the default rationale.") }
+                        content = { rationaleText?.invoke(ctx) ?: throw IllegalStateException("Either specify a custom rationale or specify a content for the default rationale.") }
                         acceptLabel = ctx.getString(android.R.string.ok)
                         onElse = { doRequest() }
                     }.show()
@@ -45,13 +56,13 @@ class PFAPermissionAcquirer(
     }
 
     companion object {
-        fun build(activity: AppCompatActivity, initializer: org.secuso.pfacore.ui.PFAPermissionAcquirer.Builder.() -> Unit) = org.secuso.pfacore.ui.PFAPermissionAcquirer.Builder(
+        fun build(activity: AppCompatActivity, initializer: PFAPermissionDSL) = org.secuso.pfacore.ui.PFAPermissionAcquirer.Builder(
             activity
         ).apply(initializer).build()
     }
 }
 
-fun <A> PFAPermission.declareUsage(activity: A, activator: (() -> Unit) -> org.secuso.pfacore.ui.Inflatable, initializer: org.secuso.pfacore.ui.PFAPermissionAcquirer.Builder.() -> Unit)
+fun <A> PFAPermission.declareUsage(activity: A, activator: (() -> Unit) -> org.secuso.pfacore.ui.Inflatable, initializer: PFAPermissionDSL)
     where
         A: AppCompatActivity,
         A: PFAPermissionOwner =
@@ -65,24 +76,24 @@ fun List<PFAPermission>.declareUsage(owner: PFAPermissionOwner, activator: (() -
     return activator { this.declareUsage(owner, requester) }
 }
 
-fun <A> PFAPermission.declareUsage(activity: A, initializer: org.secuso.pfacore.ui.PFAPermissionAcquirer.Builder.() -> Unit)
+fun <A> PFAPermission.declareUsage(activity: A, initializer: PFAPermissionDSL)
     where
         A: AppCompatActivity,
         A: PFAPermissionOwner =
     this.declareUsage(activity, org.secuso.pfacore.ui.PFAPermissionAcquirer.Companion.build(activity, initializer))
-fun PFAPermission.declareUsage(owner: PFAPermissionOwner, requester: org.secuso.pfacore.ui.PFAPermissionAcquirer): () -> Unit {
+fun PFAPermission.declareUsage(owner: PFAPermissionOwner, requester: org.secuso.pfacore.ui.PFAPermissionAcquirer): PFAPermissionLauncher {
     owner.registerPFAPermissionInitialization {
         this.initiatePermissionRequestLauncher(requester.activity, requester.handler)
     }
     return requester.request(this)
 }
 
-fun <A> List<PFAPermission>.declareUsage(activity: A, initializer: org.secuso.pfacore.ui.PFAPermissionAcquirer.Builder.() -> Unit)
+fun <A> List<PFAPermission>.declareUsage(activity: A, initializer: PFAPermissionDSL)
     where
         A: AppCompatActivity,
         A: PFAPermissionOwner =
     this.declareUsage(activity, PFAPermissionAcquirer.build(activity, initializer))
-fun List<PFAPermission>.declareUsage(owner: PFAPermissionOwner, requester: org.secuso.pfacore.ui.PFAPermissionAcquirer): () -> Unit {
+fun List<PFAPermission>.declareUsage(owner: PFAPermissionOwner, requester: org.secuso.pfacore.ui.PFAPermissionAcquirer): PFAPermissionLauncher {
     val permissionStatus = mutableListOf<Pair<PFAPermission, Boolean>>()
     val permissions = this
     val rationaleShown = false
@@ -118,5 +129,5 @@ fun List<PFAPermission>.declareUsage(owner: PFAPermissionOwner, requester: org.s
     }
     return {
         permissionAcquirers.forEach { it() }
-    }
+    }.asLauncher()
 }

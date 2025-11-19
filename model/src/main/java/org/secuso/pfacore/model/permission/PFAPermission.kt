@@ -63,6 +63,8 @@ class PFAPermissionRequestHandler(
     }
 }
 
+interface PFAPermissionUsage<P: PFAPermission>
+
 /**
  * This class handles the default request process to obtain and use permissions.
  * It is intended to be used declarative and _**must**_ be created in the [onCreate][Activity.onCreate] method due to a lifecycle-observer being used.
