@@ -26,7 +26,9 @@ open class BaseActivity(val base: Boolean = true): AppCompatActivity(), PFAPermi
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        permissionCallbacks.forEach { it() }
+        for (callback in permissionCallbacks) {
+            callback()
+        }
 
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         if (!PFApplication.instance.data.theme.hasActiveObservers()) {
