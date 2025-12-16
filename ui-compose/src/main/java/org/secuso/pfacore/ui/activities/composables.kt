@@ -52,7 +52,7 @@ fun TopAppBar(title: State<String>, onNavigationClick: () -> Unit, actions: (@Co
             }
         },
         colors = topAppBarColors(
-            containerColor = MaterialTheme.colorScheme.navbar,
+            containerColor = MaterialTheme.colorScheme.primary,
             titleContentColor = Color.White
         ),
         actions = {

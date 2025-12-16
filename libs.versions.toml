@@ -22,7 +22,8 @@ espresso = "3.5.1"
 multidex = "2.0.1"
 compose-bom = "2024.04.01"
 compose = "1.7.3"
-compose-material = "1.4.0"
+activity-compose = "1.9.0"
+compose-material = "1.3.0"
 compose-runtime = "1.9.3"
 navigation-compose = "2.7.7"
 ktx-serializtion-json = "1.9.0"
@@ -51,7 +52,9 @@ ax-lifecycle-ext = { group = "androidx.lifecycle", name = "lifecycle-extensions"
 ax-lifecycle-viewmodel = { group = "androidx.lifecycle", name = "lifecycle-viewmodel-ktx", version.ref = "ax-lifecycle"}
 ax-lifecycle-runtime = { group = "androidx.lifecycle", name = "lifecycle-runtime-ktx", version.ref = "ax-lifecycle"}
 ax-legacy-v4 = { group = "androidx.legacy", name = "legacy-support-v4", version.ref = "ax-legacy-v4" }
+ax-activity-compose = { group = "androidx.activity", name = "activity-compose", version.ref = "activity-compose"}
 ax-compose-bom = { group = "androidx.compose", name = "compose-bom", version.ref = "compose-bom"}
+ax-compose-ui = { group = "androidx.compose.ui", name = "ui", version.ref = "compose"}
 ax-compose-ui-graphics = { group = "androidx.compose.ui", name = "ui-graphics", version.ref = "compose"}
 ax-compose-ui-tooling = { group = "androidx.compose.ui", name = "ui-tooling", version.ref = "compose"}
 ax-compose-ui-tooling-preview = { group = "androidx.compose.ui", name = "ui-tooling-preview", version.ref = "compose"}

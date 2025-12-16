@@ -7,6 +7,7 @@ import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -102,6 +103,7 @@ abstract class DrawerActivity : AppCompatActivity(), Drawer {
             WithTheme {
                 window.statusBarColor = MaterialTheme.colorScheme.secuso.toArgb()
                 ModalNavigationDrawer(
+                    gesturesEnabled = false,
                     drawerState = drawerState,
                     drawerContent = {
                         ModalDrawerSheet {
@@ -116,7 +118,11 @@ abstract class DrawerActivity : AppCompatActivity(), Drawer {
                             }
                         }
                     ) {
-                        Box(modifier = Modifier.padding(it)) {
+                        val modifier = Modifier.padding(it)
+                        if (drawerState.isOpen) {
+                            modifier.clickable { scope.launch { drawerState.close() } }
+                        }
+                        Box(modifier) {
                             Content(application)
                         }
                     }
@@ -132,7 +138,7 @@ fun DrawerHeader(drawer: DrawerMenu) {
         Modifier
             .fillMaxWidth()
             .height(128.dp)
-            .background(MaterialTheme.colorScheme.secuso)) {
+            .background(MaterialTheme.colorScheme.primary)) {
         Box(
             Modifier
                 .padding(start = 8.dp, end = 8.dp, bottom = 12.dp)
@@ -163,8 +169,8 @@ fun DrawerMenuComp(drawer: DrawerMenu, selected: (DrawerElement) -> Boolean) {
                 icon = if (item.icon != null) { -> Icon(painter = painterResource(item.icon!!), contentDescription = item.name) } else null,
                 onClick = { if (context is Activity) item.onClick(context) },
                 colors = NavigationDrawerItemDefaults.colors(
-                    selectedTextColor = MaterialTheme.colorScheme.onPrimaryContainer,
-                    selectedIconColor = MaterialTheme.colorScheme.onPrimaryContainer,
+                    selectedTextColor = Color.White,
+                    selectedIconColor = Color.White,
                     selectedContainerColor = MaterialTheme.colorScheme.primaryContainer
                 ),
                 selected = selected(item)

@@ -14,6 +14,6 @@ class SettingsActivity : BaseActivity() {
     }
 
     @Composable
-    override fun Content(application: PFApplication) = (application.data.settings as Displayable).Display {}
+    override fun Content(application: PFApplication) = (application.data.preferences.settings as Displayable).Display {}
 
 }

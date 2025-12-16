@@ -3,7 +3,9 @@ package org.secuso.pfacore.model
 import android.app.Activity
 import android.content.Intent
 import android.content.res.Resources
+import android.os.Build
 import androidx.annotation.DrawableRes
+import androidx.annotation.RequiresApi
 import kotlin.properties.Delegates
 
 /**
@@ -48,11 +50,15 @@ sealed interface DrawerElement {
  *  @see extras Optionally customise the intent which will be used to launch the activity
  */
 open class ActivityDrawerElement(override val name: String, @DrawableRes override val icon: Int?, private val clazz: Class<out Activity>, private val extras: (Intent) -> Intent = { it }): DrawerElement {
+    @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
     override fun onClick(activity: Activity) {
         if (activity.javaClass == clazz) {
             return
         }
-        activity.startActivity(extras(Intent(activity, clazz)))
+        val intent = Intent(activity, clazz)
+        intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
+        activity.startActivity(extras(intent))
+        activity.finishAffinity()
     }
 
     class Builder {

@@ -1,13 +1,14 @@
 package org.secuso.pfacore.ui.tutorial
 
 import androidx.compose.runtime.Composable
+import org.secuso.pfacore.model.tutorial.ImageLayoutInfos
 import org.secuso.pfacore.model.tutorial.Tutorial as MTutorial
 import org.secuso.pfacore.ui.Displayable
 import org.secuso.pfacore.model.tutorial.TutorialStage as MTutorialStage
 
 class TutorialStage(
     title: String,
-    images: List<Int>,
+    images: ImageLayoutInfos,
     description: String?,
     requirements: () -> Boolean,
     val content: @Composable (TutorialStage) -> Unit = {

@@ -1,6 +1,8 @@
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 
 plugins {
+    alias(libs.plugins.android.lib)
+    alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
 }
 
@@ -23,11 +25,8 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
-    }
-    kotlinOptions {
-        jvmTarget = "1.8"
+        sourceCompatibility = JavaVersion.VERSION_21
+        targetCompatibility = JavaVersion.VERSION_21
     }
 }
 
@@ -47,8 +46,9 @@ dependencies {
 
     // compose
     implementation(platform(libs.ax.compose.bom))
+    implementation(libs.ax.activity.compose)
 
-    implementation(project(":model"))
+    implementation("org.secuso.pfacore:model")
 
     val composeVersion = "2024.04.01"
     implementation(platform("androidx.compose:compose-bom:$composeVersion"))

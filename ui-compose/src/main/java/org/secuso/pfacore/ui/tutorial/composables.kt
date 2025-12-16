@@ -49,6 +49,8 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import kotlinx.coroutines.launch
 import org.secuso.pfacore.R
+import org.secuso.pfacore.model.tutorial.Gravity
+import org.secuso.pfacore.model.tutorial.ImageLayoutInfos
 import org.secuso.pfacore.ui.theme.PrivacyFriendlyCoreTheme
 import org.secuso.pfacore.ui.theme.secusoAccent
 import org.secuso.pfacore.ui.theme.secusoDotListActive
@@ -56,20 +58,24 @@ import org.secuso.pfacore.ui.theme.secusoDotListInActive
 import kotlin.math.min
 
 @Composable
-fun TutorialStageComp(title: String, images: List<Int>, description: String?) {
+fun TutorialStageComp(title: String, images: ImageLayoutInfos, description: String?) {
     Column(Modifier.fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.Center) {
         Text(text = title, modifier = Modifier.padding(16.dp), textAlign = TextAlign.Center, style = MaterialTheme.typography.headlineLarge, color = Color.White)
-        if (images.isNotEmpty()) {
-            LazyVerticalGrid(
-                columns = GridCells.Fixed(min(images.size, 2)),
+        when (images) {
+            is ImageLayoutInfos.Single -> Box(Modifier.padding(8.dp), contentAlignment = Alignment.Center) {
+                Image(painter = painterResource(images.image), contentDescription = "")
+            }
+            is ImageLayoutInfos.Multiple -> LazyVerticalGrid(
+                columns = GridCells.Fixed(min(images.images.size, 2)),
                 contentPadding = PaddingValues(16.dp),
             ) {
-                items(images) {
+                items(images.images) {
                     Box(Modifier.padding(8.dp), contentAlignment = Alignment.Center) {
-                        Image(painter = painterResource(it), contentDescription = "")
+                        Image(painter = painterResource(it.first), contentDescription = "")
                     }
                 }
             }
+            else -> {}
         }
         if (description != null) {
             Text(text = description, modifier = Modifier.padding(16.dp), textAlign = TextAlign.Center, style = MaterialTheme.typography.bodyLarge, color = Color.White)
@@ -171,22 +177,22 @@ fun PrevTutorialComp() {
         stage {
             title = "Test Stage 1"
             description = "Test Description 1"
-            images = listOf()
+            images = ImageLayoutInfos.None
         }
         stage {
             title = "Test Stage 2"
-            images = listOf(R.drawable.privacyfriendlyappslogo, R.drawable.secuso_logo_blau_blau)
+            images = ImageLayoutInfos.Multiple(listOf(R.drawable.privacyfriendlyappslogo to Gravity.UNDEFINED, R.drawable.secuso_logo_blau_blau to Gravity.UNDEFINED))
         }
         stage {
             title = "Test Stage 3"
             description = "This is a longer description to test if everything is displayed as expected"
-            images = listOf(R.drawable.privacyfriendlyappslogo)
+            images = ImageLayoutInfos.Single(R.drawable.privacyfriendlyappslogo)
             content = { Text("This should be the only thing displayed") }
         }
         stage {
             title = "Test Stage 4 -- Correct"
             description = "This is a longer description to test if everything is displayed as expected"
-            images = listOf(R.drawable.privacyfriendlyappslogo)
+            images = ImageLayoutInfos.Single(R.drawable.privacyfriendlyappslogo)
         }
     }
     PrivacyFriendlyCoreTheme {
