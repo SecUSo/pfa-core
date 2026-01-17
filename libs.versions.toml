@@ -26,6 +26,7 @@ compose-material = "1.4.0"
 compose-runtime = "1.9.3"
 navigation-compose = "2.7.7"
 ktx-serializtion-json = "1.9.0"
+ktx-coroutines = "1.6.4"
 camerax = "1.2.2"
 glide = "4.9.0"
 desugar_jdk = "2.1.5"
@@ -81,9 +82,13 @@ desugar_jdk = { group = "com.android.tools", name = "desugar_jdk_libs", version.
 agp = { group = "com.android.tools.build", name = "gradle", version.ref = "agp" }
 agp-kotlin = { group = "org.jetbrains.kotlin", name = "kotlin-gradle-plugin", version.ref="ktx" }
 
+ktx-coroutines-android = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-android", version.ref = "ktx-coroutines" }
+ktx-coroutines-core = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core", version.ref = "ktx-coroutines" }
+
 [bundles]
 ax-lifecycle = ["ax-lifecycle-ext", "ax-lifecycle-runtime", "ax-lifecycle-viewmodel"]
 camerax = ["camerax-core", "camerax-camera2", "camerax-extensions", "camerax-lifecycle"]
+ktx-coroutines = ["ktx-coroutines-android", "ktx-coroutines-core"]
 
 [plugins]
 android-lib = { id = "com.android.library", version.ref = "agp" }
