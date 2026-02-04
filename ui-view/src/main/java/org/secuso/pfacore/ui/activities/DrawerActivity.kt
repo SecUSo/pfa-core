@@ -44,14 +44,14 @@ abstract class DrawerActivity: BaseActivity(base = false), Drawer {
                     clazz = SettingsActivity::class.java
                 }
                 activity {
-                    name = getString(R.string.nav_bugs)
-                    icon = R.drawable.ic_bugs
-                    clazz = ErrorReportActivity::class.java
-                }
-                activity {
                     name = getString(R.string.nav_about)
                     icon = R.drawable.ic_info
                     clazz = AboutActivity::class.java
+                }
+                activity {
+                    name = getString(R.string.nav_bugs)
+                    icon = R.drawable.ic_bugs
+                    clazz = ErrorReportActivity::class.java
                 }
             }
         }

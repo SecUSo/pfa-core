@@ -18,7 +18,7 @@
     <string name="okay">Okay</string>
 
     <string name="select_day_night_theme">Aussehen</string>
-    <string name="nav_bugs">Fehler</string>
+    <string name="nav_bugs">Fehler melden</string>
     <string name="include_device_info_error_title">Geräteinformationen in Fehlerbericht einschließen</string>
     <string name="include_device_info_error_summary">Falls diese Option aktiviert ist, enthält der Fehlerbericht nützliche Informationen zu diesem Gerät, z. B.B. den Hersteller oder die installierte Android-Version.</string>
     <string name="error_report_email_body">
