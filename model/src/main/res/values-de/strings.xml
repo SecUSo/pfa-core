@@ -49,6 +49,6 @@
     <string name="tutorial_skip">Überspringen</string>
     <string name="settings_category_general">Allgemein</string>
     <string name="settings_category_appearance">Darstellung</string>
-    <string name="error_report_empty">Ein Grund zum Feiern, es scheint keine Fehler in den letzten 7 Tagen gegeben zu haben! :D</string>
+    <string name="error_report_empty">Es wurden keine Fehlermeldungen in den letzten 7 Tagen gespeichert. Falls Sie ein anderes Problem melden möchten, schreiben Sie uns eine E-Mail an <a href="mailto:pfa@secuso.org">pfa@secuso.org</a></string>
 
 </resources>

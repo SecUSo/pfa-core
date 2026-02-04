@@ -63,7 +63,7 @@
 
     <string name="settings_category_general">General</string>
     <string name="settings_category_appearance">Appearance</string>
-    <string name="error_report_empty">A reason to celebrate, there seem to have been no errors in the last 7 days! :D</string>
+    <string name="error_report_empty">No crash reports were logged in the last 7 days. If you want to report an other issue, please send a mail to <a href="mailto:pfa@secuso.org">pfa@secuso.org</a></string>
 
     <string name="camera_default_rationale_title">Camera permission required</string>
     <string name="camera_default_rationale_description">This feature requires access to your camera to either take a picture or a video. If you want to use this feature, you have to grant the camera permission at least for one usage.</string>

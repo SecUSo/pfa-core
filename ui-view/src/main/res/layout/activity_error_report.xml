@@ -10,6 +10,7 @@
             android:layout_height="match_parent"
             android:text="@string/error_report_empty"
             android:layout_margin="60dp"
+            android:autoLink="email"
             android:gravity="center" />
 
         <androidx.recyclerview.widget.RecyclerView

@@ -49,5 +49,5 @@
     <string name="tutorial_skip">スキップ</string>
     <string name="settings_category_general">全般</string>
     <string name="settings_category_appearance">様子</string>
-    <string name="error_report_empty">過去 7 日間にエラーはなかったようです。これを祝う理由があります。 :D</string>
+    <string name="error_report_empty">過去7日間に保存されたエラーレポートはありません。その他の問題について報告が必要な場合は、<a href="mailto:pfa@secuso.org">pfa@secuso.org</a> までメールでお問い合わせください。</string>
 </resources>
