@@ -4,13 +4,16 @@ pluginManagement {
         mavenCentral()
         gradlePluginPortal()
     }
-//    resolutionStrategy {
-//        eachPlugin {
+    resolutionStrategy {
+        eachPlugin {
+            if (requested.id.id == "com.google.android.gms.oss-licenses-plugin") {
+                useModule("com.google.android.gms:oss-licenses-plugin:0.11.0")
+            }
 //            if(requested.id.namespace == "com.android") {
 //                useModule("com.android.tools.build:gradle:${requested.version}")
 //            }
-//        }
-//    }
+        }
+    }
 }
 dependencyResolutionManagement {
     repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
@@ -19,8 +22,10 @@ dependencyResolutionManagement {
         mavenCentral()
     }
 
-    libs {
-        from(files("libs.versions.toml"))
+    versionCatalogs {
+        create("libs") {
+            from(files("libs.versions.toml"))
+        }
     }
 }
 

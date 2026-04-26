@@ -13,11 +13,13 @@
  */
 package org.secuso.pfacore.ui.activities
 
+import android.content.Intent
 import android.os.Bundle
 import android.text.SpannableString
 import android.text.Spanned
 import android.text.method.LinkMovementMethod
 import android.text.style.URLSpan
+import com.google.android.gms.oss.licenses.OssLicensesMenuActivity
 import org.secuso.pfacore.R
 import org.secuso.pfacore.ui.PFApplication
 import org.secuso.ui.view.databinding.ActivityAboutBinding
@@ -36,6 +38,8 @@ class AboutActivity : BaseActivity(base = false) {
         }
         binding.aboutGithubUrl.movementMethod = LinkMovementMethod.getInstance()
         binding.aboutSecusoWebsite.movementMethod = LinkMovementMethod.getInstance()
+        OssLicensesMenuActivity.setActivityTitle(getString(R.string.activity_oss_licenses_title))
+        binding.ossButton.setOnClickListener { startActivity(Intent(this, OssLicensesMenuActivity::class.java)) }
         setContentView(binding.root)
     }
 }

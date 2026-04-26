@@ -33,6 +33,12 @@
             android:label="@string/activity_report_errors_title"
             android:theme="@style/PrivacyFriendlyCoreTheme">
         </activity>
+        <activity
+            android:name="com.google.android.gms.oss.licenses.OssLicensesMenuActivity"
+            android:label="@string/activity_oss_licenses_title"
+            tools:replace="android:theme,android:label"
+            android:parentActivityName="org.secuso.pfacore.ui.activities.AboutActivity"
+            android:theme="@style/PrivacyFriendlyCoreTheme" />
         <provider
             android:name="androidx.startup.InitializationProvider"
             android:authorities="${applicationId}.androidx-startup"

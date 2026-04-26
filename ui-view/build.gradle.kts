@@ -2,6 +2,7 @@ group = "org.secuso.pfa-core"
 plugins {
     alias(libs.plugins.android.lib)
     alias(libs.plugins.kotlin.android)
+    alias(libs.plugins.oss.licenses)
 }
 android {
     namespace = "org.secuso.ui.view"
@@ -51,4 +52,6 @@ dependencies {
     implementation(libs.ax.work.runtime)
     implementation(libs.ax.work.runtime.ktx)
     androidTestImplementation(libs.ax.work.testing)
+
+    implementation(libs.oss.licenses)
 }

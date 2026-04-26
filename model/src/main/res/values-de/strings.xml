@@ -41,6 +41,8 @@
     <string name="activity_help_title">Hilfe</string>
     <string name="activity_settings_title">Einstellungen</string>
     <string name="activity_report_errors_title">Fehler melden</string>
+    <string name="activity_oss_licenses_title">Open-Source-Lizenzen</string>
+
     <string name="dialog_report_sensitive_information_title">Vertrauliche Informationen</string>
     <string name="dialog_report_sensitive_information_content">Bitte beachten Sie, dass Fehlerberichte vertrauliche Informationen enthalten können. Senden Sie uns daher nur dann einen Bericht, wenn Sie damit einverstanden sind, vertrauliche Informationen an uns weiterzugeben und nur, nachdem Sie diese überprüft haben. Sie können alle vertraulichen Teile eines Berichts zensieren.</string>
     <string name="dialog_button_understood">Ich habe verstanden</string>
@@ -50,5 +52,5 @@
     <string name="settings_category_general">Allgemein</string>
     <string name="settings_category_appearance">Darstellung</string>
     <string name="error_report_empty">Es wurden keine Fehlermeldungen in den letzten 7 Tagen gespeichert. Falls Sie ein anderes Problem melden möchten, schreiben Sie uns eine E-Mail an <a href="mailto:pfa@secuso.org">pfa@secuso.org</a></string>
-
+    <string name="open_source_licenses_button">Open-Source-Lizenzen</string>
 </resources>

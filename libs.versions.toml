@@ -32,6 +32,8 @@ glide = "4.9.0"
 desugar_jdk = "2.1.5"
 
 quadflask-colorpicker = "0.0.13"
+oss-licenses-plugin = "0.11.0"
+oss-licenses = "12.0.1" # Tested to work with older versions
 
 [libraries]
 ax-work-runtime = { group = "androidx.work", name = "work-runtime", version.ref = "work" }
@@ -85,6 +87,8 @@ agp-kotlin = { group = "org.jetbrains.kotlin", name = "kotlin-gradle-plugin", ve
 ktx-coroutines-android = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-android", version.ref = "ktx-coroutines" }
 ktx-coroutines-core = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core", version.ref = "ktx-coroutines" }
 
+oss-licenses = { group = "com.google.android.gms", name = "play-services-oss-licenses", version.ref = "oss-licenses" }
+
 [bundles]
 ax-lifecycle = ["ax-lifecycle-ext", "ax-lifecycle-runtime", "ax-lifecycle-viewmodel"]
 camerax = ["camerax-core", "camerax-camera2", "camerax-extensions", "camerax-lifecycle"]
@@ -98,3 +102,4 @@ kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kt
 kotlin-kapt = { id = "org.jetbrains.kotlin.kapt", version.ref = "ktx" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp"}
 ktx-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "ktx" }
+oss-licenses = { id = "com.google.android.gms.oss-licenses-plugin",  version.ref = "oss-licenses-plugin" }

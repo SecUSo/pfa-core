@@ -147,6 +147,12 @@
                 android:layout_gravity="center_horizontal"
                 android:gravity="center_horizontal"
                 android:textStyle="bold" />
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/oss_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:text="@string/open_source_licenses_button" />
         </LinearLayout>
     </ScrollView>
 </layout>

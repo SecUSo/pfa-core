@@ -52,6 +52,7 @@
     <string name="activity_help_title">Help</string>
     <string name="activity_settings_title">Settings</string>
     <string name="activity_report_errors_title">Report Problems</string>
+    <string name="activity_oss_licenses_title">Open-Source-Licenses</string>
 
     <string name="dialog_report_sensitive_information_title">Confidential Information</string>
     <string name="dialog_report_sensitive_information_content">Please note that any bug report may contain confidential information, so please submit a report only if you agree to share confidential information with us and only after reviewing it. You can censor any confidential part of a report.</string>
@@ -67,5 +68,5 @@
 
     <string name="camera_default_rationale_title">Camera permission required</string>
     <string name="camera_default_rationale_description">This feature requires access to your camera to either take a picture or a video. If you want to use this feature, you have to grant the camera permission at least for one usage.</string>
-
+    <string name="open_source_licenses_button">Open-Source-Licenses</string>
 </resources>
