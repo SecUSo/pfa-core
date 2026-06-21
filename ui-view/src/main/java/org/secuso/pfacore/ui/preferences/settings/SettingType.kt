@@ -180,7 +180,7 @@ class ActionSetting(data: ActionData) : MActionSetting<ActionSetting.ActionData>
     ): MActionSetting.ActionData(onClick) {
         fun create() = ActionSetting(this)
     }
-    class ActionBuildInfo(resources: Resources, override var onClick: () -> Unit): BasicDisplaySetting(resources), MActionSetting.ActionBuildInfo
+    class ActionBuildInfo(resources: Resources, override var onClick: () -> Unit = {}): BasicDisplaySetting(resources), MActionSetting.ActionBuildInfo
 
     override val expandable: Boolean
         get() = false
@@ -188,4 +188,8 @@ class ActionSetting(data: ActionData) : MActionSetting<ActionSetting.ActionData>
         get() = data.title
     override val description: Inflatable?
         get() = data.summary
+    override fun expandableIcon(expanded: Boolean): Int {
+        return 0
+    }
+    override val onClick: () -> Unit = data.onClick
 }

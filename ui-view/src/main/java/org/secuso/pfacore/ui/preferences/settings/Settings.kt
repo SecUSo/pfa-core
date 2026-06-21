@@ -47,6 +47,10 @@ fun InflatableSetting.menu(initializer: MenuSetting.MenuBuildInfo.() -> Unit) {
     MenuSetting.MenuBuildInfo(context.resources).apply(initializer).build(MenuSetting.factory()).create().register()
 }
 
+fun InflatableSetting.action(initializer: ActionSetting.ActionBuildInfo.() -> Unit) {
+    ActionSetting.ActionBuildInfo(context.resources).apply(initializer).build(ActionSetting.factory()).create().register()
+}
+
 interface InflatableSettingInfo: Info {
 
     val enabled: LiveData<Boolean>
@@ -56,6 +60,8 @@ interface InflatableSettingInfo: Info {
         get() = null
     val title: Inflatable
     val description: Inflatable?
+    val onClick: (() -> Unit)?
+        get() = null
 
     /**
      * Use another icon to display the expand-toggle state. Returning null uses the default icons.
