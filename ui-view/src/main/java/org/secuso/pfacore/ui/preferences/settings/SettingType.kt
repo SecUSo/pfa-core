@@ -10,6 +10,7 @@ import org.secuso.pfacore.model.preferences.settings.SettingEntry
 import org.secuso.pfacore.model.preferences.settings.Entries
 import org.secuso.pfacore.model.preferences.settings.SettingFactory
 import org.secuso.pfacore.model.preferences.settings.MenuSetting as MMenuSetting
+import org.secuso.pfacore.model.preferences.settings.ActionSetting as MActionSetting
 import org.secuso.pfacore.model.preferences.settings.RadioSetting as MRadioSetting
 import org.secuso.pfacore.model.preferences.settings.SwitchSetting as MSwitchSetting
 import org.secuso.pfacore.ui.BasicInfo
@@ -166,5 +167,25 @@ class MenuSetting(data: MenuData) : MMenuSetting<MenuSetting.MenuData>(data), In
     override fun expandableIcon(expanded: Boolean): Int {
         return R.drawable.baseline_keyboard_arrow_right_24
     }
+}
 
+class ActionSetting(data: ActionData) : MActionSetting<ActionSetting.ActionData>(data), InflatableSettingInfo {
+    companion object {
+        fun factory(): SettingFactory<ActionBuildInfo, ActionData> = factory() { info, data -> ActionData(data.onClick, info.requireTitle(), info.summary) }
+    }
+    class ActionData(
+        onClick: () -> Unit,
+        val title: Inflatable,
+        val summary: Inflatable?,
+    ): MActionSetting.ActionData(onClick) {
+        fun create() = ActionSetting(this)
+    }
+    class ActionBuildInfo(resources: Resources, override var onClick: () -> Unit): BasicDisplaySetting(resources), MActionSetting.ActionBuildInfo
+
+    override val expandable: Boolean
+        get() = false
+    override val title: Inflatable
+        get() = data.title
+    override val description: Inflatable?
+        get() = data.summary
 }
