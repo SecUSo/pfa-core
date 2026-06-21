@@ -4,6 +4,7 @@ import android.util.Log
 import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.LifecycleOwner
 import androidx.recyclerview.widget.RecyclerView
 import org.secuso.pfacore.R
@@ -18,6 +19,7 @@ import org.secuso.ui.view.databinding.PreferenceBasicBinding
 import org.secuso.ui.view.databinding.PreferenceCategoryBinding
 
 class SettingsMenuAdapter(
+    private val activity: AppCompatActivity,
     private val inflater: LayoutInflater,
     private val owner: LifecycleOwner,
     private val openMenu: (InflatableSettingMenu) -> Unit
@@ -81,7 +83,7 @@ class SettingsMenuAdapter(
                             val view = toggle.replace(inflater, owner, setting.action!!)
                             holder.binding.root.setOnClickListener { view.callOnClick() }
                         } else if (setting.onClick != null) {
-                            holder.binding.root.setOnClickListener { setting.onClick?.invoke() }
+                            holder.binding.root.setOnClickListener { setting.onClick?.invoke(activity) }
                         } else {
                             // Item is toggable, therefore
                             toggle.setOnClickListener {

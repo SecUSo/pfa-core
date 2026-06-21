@@ -1,6 +1,7 @@
 package org.secuso.pfacore.ui.preferences.settings
 
 import android.content.res.Resources
+import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.LiveData
 import org.secuso.pfacore.model.preferences.settings.ISettingData
 import org.secuso.pfacore.model.preferences.settings.ISettingDataBuildInfo
@@ -174,13 +175,13 @@ class ActionSetting(data: ActionData) : MActionSetting<ActionSetting.ActionData>
         fun factory(): SettingFactory<ActionBuildInfo, ActionData> = factory() { info, data -> ActionData(data.onClick, info.requireTitle(), info.summary) }
     }
     class ActionData(
-        onClick: () -> Unit,
+        onClick: (AppCompatActivity) -> Unit,
         val title: Inflatable,
         val summary: Inflatable?,
     ): MActionSetting.ActionData(onClick) {
         fun create() = ActionSetting(this)
     }
-    class ActionBuildInfo(resources: Resources, override var onClick: () -> Unit = {}): BasicDisplaySetting(resources), MActionSetting.ActionBuildInfo
+    class ActionBuildInfo(resources: Resources, override var onClick: (AppCompatActivity) -> Unit = {}): BasicDisplaySetting(resources), MActionSetting.ActionBuildInfo
 
     override val expandable: Boolean
         get() = false
@@ -191,5 +192,5 @@ class ActionSetting(data: ActionData) : MActionSetting<ActionSetting.ActionData>
     override fun expandableIcon(expanded: Boolean): Int {
         return 0
     }
-    override val onClick: () -> Unit = data.onClick
+    override val onClick: (AppCompatActivity) -> Unit = data.onClick
 }

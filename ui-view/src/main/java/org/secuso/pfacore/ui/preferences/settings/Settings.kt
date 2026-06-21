@@ -1,6 +1,7 @@
 package org.secuso.pfacore.ui.preferences.settings
 
 import android.content.Context
+import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -60,7 +61,7 @@ interface InflatableSettingInfo: Info {
         get() = null
     val title: Inflatable
     val description: Inflatable?
-    val onClick: (() -> Unit)?
+    val onClick: ((AppCompatActivity) -> Unit)?
         get() = null
 
     /**

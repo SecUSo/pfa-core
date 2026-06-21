@@ -1,6 +1,7 @@
 package org.secuso.pfacore.model.preferences.settings
 
 import android.content.res.Resources
+import androidx.appcompat.app.AppCompatActivity
 import org.secuso.pfacore.model.preferences.InfoFactory
 import org.secuso.pfacore.model.preferences.BuildInfo
 import org.secuso.pfacore.model.preferences.Info
@@ -88,9 +89,9 @@ abstract class MenuSetting<SD : MenuSetting.MenuData>(override val data: SD): Se
  * @author Patrick Schneider
  */
 abstract class ActionSetting<SD : ActionSetting.ActionData>(override val data: SD): Setting<SD> {
-    open class ActionData(val onClick: () -> Unit): Info
+    open class ActionData(val onClick: (AppCompatActivity) -> Unit): Info
     interface ActionBuildInfo: BuildInfo {
-        var onClick: () -> Unit
+        var onClick: (AppCompatActivity) -> Unit
 
     }
     companion object {
