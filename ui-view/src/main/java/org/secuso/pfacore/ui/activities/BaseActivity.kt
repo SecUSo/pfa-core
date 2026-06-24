@@ -3,6 +3,7 @@ package org.secuso.pfacore.ui.activities
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.MenuItem
 import android.view.View
 import androidx.annotation.LayoutRes
@@ -32,7 +33,9 @@ open class BaseActivity(val base: Boolean = true): AppCompatActivity(), PFAPermi
 
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         if (!PFApplication.instance.data.theme.hasActiveObservers()) {
-            PFApplication.instance.data.theme.observe(this) { it.apply() }
+            PFApplication.instance.data.theme.observe(this) {
+                it.apply()
+            }
         }
     }
 

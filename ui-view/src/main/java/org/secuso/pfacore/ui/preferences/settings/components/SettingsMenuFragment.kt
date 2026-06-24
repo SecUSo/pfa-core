@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import org.secuso.pfacore.ui.preferences.settings.InflatableSettingCategory
 import org.secuso.ui.view.databinding.FragmentPreferenceMenuBinding
@@ -21,7 +22,7 @@ class SettingsMenuFragment: Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         binding = FragmentPreferenceMenuBinding.inflate(inflater, container, false).apply {
-            settings.adapter = SettingsMenuAdapter(inflater, this@SettingsMenuFragment) {
+            settings.adapter = SettingsMenuAdapter(requireActivity() as AppCompatActivity, inflater, this@SettingsMenuFragment) {
                 SettingsMenuFragment().apply {
                     categories = it.settings
                     this.openMenu = this@SettingsMenuFragment.openMenu

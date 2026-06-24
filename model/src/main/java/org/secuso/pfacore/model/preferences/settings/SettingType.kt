@@ -1,6 +1,7 @@
 package org.secuso.pfacore.model.preferences.settings
 
 import android.content.res.Resources
+import androidx.appcompat.app.AppCompatActivity
 import org.secuso.pfacore.model.preferences.InfoFactory
 import org.secuso.pfacore.model.preferences.BuildInfo
 import org.secuso.pfacore.model.preferences.Info
@@ -77,5 +78,23 @@ abstract class MenuSetting<SD : MenuSetting.MenuData>(override val data: SD): Se
     interface MenuBuildInfo: BuildInfo
     companion object {
         fun <SI: MenuBuildInfo, SD: MenuData> factory(adapt: (SI, MenuData) -> SD): SettingFactory<SI, SD> = { _, _ -> InfoFactory { info -> { adapt(info, MenuData()) } } }
+    }
+}
+
+/**
+ * A bare action setting without any information to be displayed.
+ * This represents a simple entry in the settings with an on-click-action.
+ * Those will be added in the `ui-*` libraries.
+ *
+ * @author Patrick Schneider
+ */
+abstract class ActionSetting<SD : ActionSetting.ActionData>(override val data: SD): Setting<SD> {
+    open class ActionData(val onClick: (AppCompatActivity) -> Unit): Info
+    interface ActionBuildInfo: BuildInfo {
+        var onClick: (AppCompatActivity) -> Unit
+
+    }
+    companion object {
+        fun <SI: ActionBuildInfo, SD: ActionData> factory(adapt: (SI, ActionData) -> SD): SettingFactory<SI, SD> = { _, _ -> InfoFactory { info -> { adapt(info, ActionData(info.onClick)) } } }
     }
 }

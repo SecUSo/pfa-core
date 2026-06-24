@@ -1,6 +1,8 @@
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 
 plugins {
+    alias(libs.plugins.android.lib)
+    alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
 }
 

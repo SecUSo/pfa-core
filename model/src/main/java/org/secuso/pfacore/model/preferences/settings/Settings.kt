@@ -124,9 +124,8 @@ abstract class Settings<SI: Info>(internal val settings: List<SettingCategory<SI
         val settings: MutableList<SettingCategory<SI>> = mutableListOf()
 
         fun setting(initializer: Setting<SI>.() -> Unit) {
-            val settings = mutableListOf<CategoricalSettingHierarchy<SI>>()
-            Setting(context, allSettings) {
-                settings.add(it)
+            Setting<SI>(context, allSettings) {
+                setting = it as SettingComposite<SI, *>
             }.apply(initializer)
         }
 

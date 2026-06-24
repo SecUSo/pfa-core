@@ -14,8 +14,9 @@
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingTop="12dp"
-        android:paddingBottom="12dp">
+        android:clickable="true"
+        android:focusable="true"
+        style="?attr/stylePreferenceItem">
         <LinearLayout
             android:baselineAligned="false"
             android:orientation="horizontal"
@@ -57,6 +58,13 @@
         <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"
+            app:cardCornerRadius="8dp"
+            app:contentPaddingBottom="8dp"
+            app:contentPaddingTop="8dp"
+            app:contentPaddingLeft="16dp"
+            app:contentPaddingRight="16dp"
             android:visibility="@{expanded ? View.VISIBLE : View.GONE}">
             <View
                 android:id="@+id/action"
