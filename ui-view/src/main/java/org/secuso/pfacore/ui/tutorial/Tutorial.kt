@@ -21,7 +21,7 @@ class TutorialStage(
     requirements: () -> Boolean,
     val content: ((TutorialStage) -> Inflatable)? = null,
 ): MTutorialStage(title, images, description, requirements), Inflatable {
-    override fun inflate(inflater: LayoutInflater, root: ViewGroup, owner: LifecycleOwner): View {
+    override fun inflate(inflater: LayoutInflater, root: ViewGroup?, owner: LifecycleOwner): View {
         return content?.invoke(this)?.inflate(inflater, root, owner) ?: run {
             val binding = TutorialStageBinding.inflate(inflater, root, false)
             binding.title = this.title
@@ -30,13 +30,13 @@ class TutorialStage(
                 val imgs = images as ImageLayoutInfos.Multiple
                 binding.images.columnCount = min(imgs.columns, imgs.images.size)
                 for ((image, gravity) in imgs.images) {
-                    val img = ImageView(root.context)
+                    val img = ImageView(binding.root.context)
                     img.setImageResource(image)
                     img.layoutParams = GridLayout.LayoutParams().apply { setGravity(gravity.gravity) }
                     binding.images.addView(img)
                 }
             } else if (images is ImageLayoutInfos.Single) {
-                binding.images.addView(ImageView(root.context).apply {
+                binding.images.addView(ImageView(binding.root.context).apply {
                     setImageResource((images as ImageLayoutInfos.Single).image)
                 })
             }
