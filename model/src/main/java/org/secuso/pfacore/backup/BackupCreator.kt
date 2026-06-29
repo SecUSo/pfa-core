@@ -39,6 +39,9 @@ class BackupCreator : IBackupCreator {
 
         try {
             writer.beginObject()
+            Log.d("PFA BackupCreator", "Creating app database backup")
+            PFModelApplication.instance.database?.backup(writer)
+            Log.d("PFA BackupCreator", "Finished app database backup")
 
             Log.d("PFA BackupCreator", "Creating app backup")
             for (backupManager in PFModelApplication.instance.appBackup) {
