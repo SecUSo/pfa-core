@@ -10,6 +10,7 @@ val booleanRestorer: Restorer<Boolean> = { it.nextBoolean() }
 val doubleRestorer: Restorer<Double> = { it.nextDouble() }
 val floatRestorer: Restorer<Float> = { it.nextDouble().toFloat() }
 val intRestorer: Restorer<Int> = { it.nextInt() }
+val longRestorer: Restorer<Long> = { it.nextLong() }
 fun <T> restoreList(restorer: Restorer<T>): Restorer<List<T>> = {
     it.beginArray()
     val list = mutableListOf<T>()

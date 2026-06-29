@@ -9,6 +9,7 @@ import org.secuso.pfacore.backup.booleanRestorer
 import org.secuso.pfacore.backup.doubleRestorer
 import org.secuso.pfacore.backup.floatRestorer
 import org.secuso.pfacore.backup.intRestorer
+import org.secuso.pfacore.backup.longRestorer
 import org.secuso.pfacore.backup.noRestorer
 import org.secuso.pfacore.backup.stringRestorer
 
@@ -131,7 +132,9 @@ fun <T, BI: BuildInfo, SI: Info> BI.build(preferences: SharedPreferences, factor
                 is String -> preferences.getString(key, value as String)
                 is Int -> preferences.getInt(key, value as Int)
                 is Float -> preferences.getFloat(key, value as Float)
+                // Double is not supported by PreferenceManager. Workaround: Restore the long bitwise
                 is Double -> Double.fromBits(preferences.getLong(key, (value as Double).toRawBits()))
+                is Long -> preferences.getLong(key, value as Long)
                 else -> throw UnsupportedOperationException("The given type ${value!!::class.java} is no valid setting type")
             } as T
         )
@@ -144,7 +147,9 @@ fun <T, BI: BuildInfo, SI: Info> BI.build(preferences: SharedPreferences, factor
                 is String -> putString(key, value as String)
                 is Int -> putInt(key, value as Int)
                 is Float -> putFloat(key, value as Float)
+                // Double is not supported by PreferenceManager. Workaround: Interpret it as double and store the raw bits
                 is Double -> putLong(key, (value as Double).toRawBits())
+                is Long -> putLong(key, value as Long)
                 is Unit -> {}
                 else -> throw UnsupportedOperationException("The given type ${default!!::class.java} is no valid setting type")
             }
