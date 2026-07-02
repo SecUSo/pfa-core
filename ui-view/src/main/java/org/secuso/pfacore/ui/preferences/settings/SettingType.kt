@@ -1,7 +1,9 @@
 package org.secuso.pfacore.ui.preferences.settings
 
 import android.content.res.Resources
+import android.text.InputType
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.widget.doOnTextChanged
 import androidx.lifecycle.LiveData
 import org.secuso.pfacore.model.preferences.settings.ISettingData
 import org.secuso.pfacore.model.preferences.settings.ISettingDataBuildInfo
@@ -13,6 +15,7 @@ import org.secuso.pfacore.model.preferences.settings.SettingFactory
 import org.secuso.pfacore.model.preferences.settings.MenuSetting as MMenuSetting
 import org.secuso.pfacore.model.preferences.settings.ActionSetting as MActionSetting
 import org.secuso.pfacore.model.preferences.settings.RadioSetting as MRadioSetting
+import org.secuso.pfacore.model.preferences.settings.InputSetting as MInputSetting
 import org.secuso.pfacore.model.preferences.settings.SwitchSetting as MSwitchSetting
 import org.secuso.pfacore.ui.BasicInfo
 import org.secuso.pfacore.ui.Inflatable
@@ -20,6 +23,7 @@ import org.secuso.pfacore.ui.TransformableInfo
 import org.secuso.pfacore.ui.preferences.settings.components.RadioAdapter
 import org.secuso.ui.view.R
 import org.secuso.ui.view.databinding.PreferenceActionListBinding
+import org.secuso.ui.view.databinding.PreferenceInputBinding
 import org.secuso.ui.view.databinding.PreferenceSwitchBinding
 import org.secuso.ui.view.databinding.SimpleDescriptionBinding
 import org.secuso.ui.view.databinding.SimpleTitleBinding
@@ -143,6 +147,61 @@ class RadioSetting<T>(data: RadioData<T>) : MRadioSetting<T, RadioSetting.RadioD
         get() = Inflatable { inflater, root, _ ->
             PreferenceActionListBinding.inflate(inflater, root, false).apply {
                 list.adapter = RadioAdapter(inflater, data.entries, data.value ?: data.default) { data.value = it }
+            }.root
+        }
+}
+
+class InputSetting<T>(data: InputData<T>) : MInputSetting<T, InputSetting.InputData<T>>(data), InflatableSettingInfo {
+    companion object {
+        fun <T> factory(): SettingFactory<InputBuildInfo<T>, InputData<T>> = factory() { info, data -> InputData(data.data, info.validation,info.requireTitle(), info.requireSummary()) }
+    }
+    class InputData<T>(
+        data: SettingData<T>,
+        validation: (value: T?) -> T?,
+        val title: (InputData<T>, T) -> Inflatable,
+        val summary: (InputData<T>, T) -> Inflatable,
+    ): MInputSetting.InputData<T>(data, validation) {
+        fun create() = InputSetting(this)
+    }
+
+    class InputBuildInfo<T>(val resources: Resources, override var validation: (value: T?) -> T?, data: SettingDataBuildInfo<T> = SettingDataBuildInfo()):
+        DisplaySetting<T, InputData<T>>(resources), MInputSetting.InputBuildInfo<T>, ISettingDataBuildInfo<T> by data
+
+    override val enabled: LiveData<Boolean>
+        get() = data.enabled
+    override val expandable: Boolean
+        get() = true
+    override val title: Inflatable
+        get() = data.title(data, data.state.value ?: data.default)
+    override val description: Inflatable
+        get() = data.summary(data, data.state.value ?: data.default)
+    override val action: Inflatable
+        get() = Inflatable { inflater, root, _ ->
+            PreferenceInputBinding.inflate(inflater, root, false).apply {
+                this.action.inputType = when (data.default) {
+                    is String -> InputType.TYPE_CLASS_TEXT
+                    is Int, Long -> InputType.TYPE_CLASS_NUMBER or InputType.TYPE_NUMBER_FLAG_SIGNED
+                    is UInt, ULong -> InputType.TYPE_CLASS_NUMBER
+                    is Float, is Double -> InputType.TYPE_CLASS_NUMBER or InputType.TYPE_NUMBER_FLAG_DECIMAL
+                    else -> throw UnsupportedOperationException("Preference ${data.key} has a not supported type")
+                }
+                this.action.doOnTextChanged { text, start, before, count ->
+                    val text = text.toString()
+                    val value = when (data.default) {
+                        is String -> text
+                        is Int -> text.toIntOrNull()
+                        is Long -> text.toLongOrNull()
+                        is UInt -> text.toUIntOrNull()
+                        is ULong -> text.toULongOrNull()
+                        is Float -> text.toFloatOrNull()
+                        is Double -> text.toDoubleOrNull()
+                        else -> throw UnsupportedOperationException("Preference ${data.key} has a not supported type")
+                    } as T?
+                    val afterValidation = data.validation(value)
+                    if (afterValidation !== null) {
+                        data.state.value = afterValidation
+                    }
+                }
             }.root
         }
 }

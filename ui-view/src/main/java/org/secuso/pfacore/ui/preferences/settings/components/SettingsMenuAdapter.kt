@@ -3,6 +3,7 @@ package org.secuso.pfacore.ui.preferences.settings.components
 import android.util.Log
 import android.util.TypedValue
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.LifecycleOwner
@@ -73,6 +74,7 @@ class SettingsMenuAdapter(
                         }
                         toggle.setColorFilter(color.data)
                     }
+
 
                     title.replace(inflater, owner, setting.title)
                     if (setting.description != null) {

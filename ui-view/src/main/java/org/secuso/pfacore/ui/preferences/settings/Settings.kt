@@ -52,6 +52,10 @@ fun InflatableSetting.action(initializer: ActionSetting.ActionBuildInfo.() -> Un
     ActionSetting.ActionBuildInfo(context.resources).apply(initializer).build(ActionSetting.factory()).create().register()
 }
 
+fun <T> InflatableSetting.input(initializer: InputSetting.InputBuildInfo<T>.() -> Unit): InputSetting.InputData<T> {
+    return InputSetting.InputBuildInfo<T>(context.resources, {x -> x}).apply(initializer).build(InputSetting.factory()).create().register().data
+}
+
 interface InflatableSettingInfo: Info {
 
     val enabled: LiveData<Boolean>

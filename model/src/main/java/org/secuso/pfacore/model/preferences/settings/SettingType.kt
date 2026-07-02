@@ -68,6 +68,23 @@ abstract class RadioSetting<T, SD: RadioSetting.RadioData<T>>(override val data:
 }
 
 /**
+ * A bare input setting without any information to be displayed.
+ * Those will be added in the `ui-*` libraries.
+ *
+ * @author Patrick Schneider
+ */
+abstract class InputSetting<T, SD: InputSetting.InputData<T>>(override val data: SD): Setting<SD> {
+    open class InputData<T>(val data: SettingData<T>, val validation: (value: T?) -> T?): ISettingData<T> by data
+    interface InputBuildInfo<T>: ISettingDataBuildInfo<T> {
+        var validation: (value: T?) -> T?
+    }
+    companion object {
+        inline fun < T, SI: InputBuildInfo<T>, SD: InputData<T>> factory(crossinline adapt: (SI, InputData<T>) -> SD): SettingFactory<SI, SD>
+                = settingDataFactory { info, it -> adapt(info, InputData(it, info.validation)) }
+    }
+}
+
+/**
  * A bare menu setting without any information to be displayed.
  * Those will be added in the `ui-*` libraries.
  *
