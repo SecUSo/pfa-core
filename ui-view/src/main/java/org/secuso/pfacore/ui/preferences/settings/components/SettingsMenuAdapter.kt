@@ -118,7 +118,7 @@ class SettingsMenuAdapter(
                                 doToggle()
                             }
                             doToggle(false)
-                            holder.binding.root.setOnClickListener {
+                            (if (setting.onlyRootExpandable()) { holder.binding.top } else { holder.binding.root }).setOnClickListener {
                                 toggle.callOnClick()
                             }
                         }

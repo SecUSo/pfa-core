@@ -178,6 +178,8 @@ class InputSetting<T>(data: InputData<T>) : MInputSetting<T, InputSetting.InputD
     override val action: Inflatable
         get() = Inflatable { inflater, root, _ ->
             PreferenceInputBinding.inflate(inflater, root, false).apply {
+                this.action.setText(data.value.toString())
+                this.enabled = data.enabled.value ?: true
                 this.action.inputType = when (data.default) {
                     is String -> InputType.TYPE_CLASS_TEXT
                     is Int, Long -> InputType.TYPE_CLASS_NUMBER or InputType.TYPE_NUMBER_FLAG_SIGNED
@@ -199,11 +201,13 @@ class InputSetting<T>(data: InputData<T>) : MInputSetting<T, InputSetting.InputD
                     } as T?
                     val afterValidation = data.validation(value)
                     if (afterValidation !== null) {
-                        data.state.value = afterValidation
+                        data.value = afterValidation
                     }
                 }
             }.root
         }
+
+    override fun onlyRootExpandable() = true
 }
 
 class MenuSetting(data: MenuData) : MMenuSetting<MenuSetting.MenuData>(data), InflatableSettingInfo {

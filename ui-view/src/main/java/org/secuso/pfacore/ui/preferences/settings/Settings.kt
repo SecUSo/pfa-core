@@ -72,6 +72,7 @@ interface InflatableSettingInfo: Info {
      * Use another icon to display the expand-toggle state. Returning null uses the default icons.
      */
     fun expandableIcon(expanded: Boolean): Int? = null
+    fun onlyRootExpandable() = false
 }
 
 typealias InflatableSetting = MSettings.Setting<InflatableSettingInfo>
