@@ -115,3 +115,21 @@ abstract class ActionSetting<SD : ActionSetting.ActionData>(override val data: S
         fun <SI: ActionBuildInfo, SD: ActionData> factory(adapt: (SI, ActionData) -> SD): SettingFactory<SI, SD> = { _, _ -> InfoFactory { info -> { adapt(info, ActionData(info.onClick)) } } }
     }
 }
+
+/**
+ * A bare time setting without any information to be displayed.
+ * This should enable a user to pick a time.
+ * Those will be added in the `ui-*` libraries.
+ *
+ * @author Patrick Schneider
+ */
+abstract class TimeSetting<SD : TimeSetting.TimeData>(override val data: SD): Setting<SD> {
+    open class TimeData(val data: SettingData<Long>, var validation: (hour: Int, minute: Int) -> Boolean): ISettingData<Long> by data
+    interface TimeBuildInfo: ISettingDataBuildInfo<Long> {
+        var validation: (hour: Int, minute: Int) -> Boolean
+    }
+    companion object {
+        fun <SI: TimeBuildInfo, SD: TimeData> factory(adapt: (SI, TimeData) -> SD): SettingFactory<SI, SD> =
+            settingDataFactory { info, data -> adapt(info, TimeData(data, info.validation)) } }
+}
+

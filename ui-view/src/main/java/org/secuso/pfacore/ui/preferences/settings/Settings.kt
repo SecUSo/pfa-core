@@ -56,6 +56,10 @@ fun <T> InflatableSetting.input(initializer: InputSetting.InputBuildInfo<T>.() -
     return InputSetting.InputBuildInfo<T>(context.resources, {x -> x}).apply(initializer).build(InputSetting.factory()).create().register().data
 }
 
+fun InflatableSetting.time(initializer: TimeSetting.TimeBuildInfo.() -> Unit): TimeSetting.TimeData {
+    return TimeSetting.TimeBuildInfo(context.resources, {_,_ -> true}).apply(initializer).build(TimeSetting.factory()).create().register().data
+}
+
 interface InflatableSettingInfo: Info {
 
     val enabled: LiveData<Boolean>

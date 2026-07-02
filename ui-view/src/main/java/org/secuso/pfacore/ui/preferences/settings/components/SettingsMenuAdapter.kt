@@ -1,11 +1,12 @@
 package org.secuso.pfacore.ui.preferences.settings.components
 
-import android.util.Log
+import android.os.Build
 import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.content.res.AppCompatResources
 import androidx.lifecycle.LifecycleOwner
 import androidx.recyclerview.widget.RecyclerView
 import org.secuso.pfacore.R
@@ -18,6 +19,22 @@ import org.secuso.pfacore.ui.preferences.settings.InflatableSettingInfo
 import org.secuso.pfacore.ui.preferences.settings.InflatableSettingMenu
 import org.secuso.ui.view.databinding.PreferenceBasicBinding
 import org.secuso.ui.view.databinding.PreferenceCategoryBinding
+
+fun View.addClickStyle() {
+    // resolve the selectableItemBackground drawable such that there is a nice visual feedback
+    val typedValue = TypedValue()
+    context.theme.resolveAttribute(
+        com.google.android.material.R.attr.selectableItemBackground,
+        typedValue,
+        true
+    )
+
+    val drawable = AppCompatResources.getDrawable(context, typedValue.resourceId)
+    background = drawable
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+        foreground = drawable?.constantState?.newDrawable()?.mutate()
+    }
+}
 
 class SettingsMenuAdapter(
     private val activity: AppCompatActivity,
@@ -89,14 +106,23 @@ class SettingsMenuAdapter(
                     if (setting.description != null) {
                         description.replace(inflater, owner, setting.description!!)
                     }
+                    val rootClick = if (setting.onlyRootExpandable()) { holder.binding.top } else { holder.binding.root }
+                    rootClick.apply {
+                        isFocusable = true
+                        isClickable = true
+                        addClickStyle()
+                    }
+                    rootClick.isClickable = true
                     if (!setting.expandable) {
                         if (setting.action != null) {
                             val view = toggle.replace(inflater, owner, setting.action!!)
-                            holder.binding.root.setOnClickListener { view.callOnClick() }
+                            rootClick.setOnClickListener { view.callOnClick() }
                         } else if (setting.onClick != null) {
-                            holder.binding.root.setOnClickListener { setting.onClick?.invoke(activity) }
+                            rootClick.setOnClickListener {
+                                setting.onClick?.invoke(activity)
+                            }
                         } else {
-                            // Item is toggable, therefore
+                            // Item is toggleable, therefore
                             toggle.setOnClickListener {
                                 doToggle()
                                 when (val item = items[holder.adapterPosition]) {
@@ -107,7 +133,7 @@ class SettingsMenuAdapter(
                                 }
                             }
                             doToggle(false)
-                            holder.binding.root.setOnClickListener {
+                            rootClick.setOnClickListener {
                                 toggle.callOnClick()
                             }
                         }
@@ -118,7 +144,7 @@ class SettingsMenuAdapter(
                                 doToggle()
                             }
                             doToggle(false)
-                            (if (setting.onlyRootExpandable()) { holder.binding.top } else { holder.binding.root }).setOnClickListener {
+                            rootClick.setOnClickListener {
                                 toggle.callOnClick()
                             }
                         }

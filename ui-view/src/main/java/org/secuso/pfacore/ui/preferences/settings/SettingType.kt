@@ -17,6 +17,7 @@ import org.secuso.pfacore.model.preferences.settings.ActionSetting as MActionSet
 import org.secuso.pfacore.model.preferences.settings.RadioSetting as MRadioSetting
 import org.secuso.pfacore.model.preferences.settings.InputSetting as MInputSetting
 import org.secuso.pfacore.model.preferences.settings.SwitchSetting as MSwitchSetting
+import org.secuso.pfacore.model.preferences.settings.TimeSetting as MTimeSetting
 import org.secuso.pfacore.ui.BasicInfo
 import org.secuso.pfacore.ui.Inflatable
 import org.secuso.pfacore.ui.TransformableInfo
@@ -27,6 +28,9 @@ import org.secuso.ui.view.databinding.PreferenceInputBinding
 import org.secuso.ui.view.databinding.PreferenceSwitchBinding
 import org.secuso.ui.view.databinding.SimpleDescriptionBinding
 import org.secuso.ui.view.databinding.SimpleTitleBinding
+import com.google.android.material.timepicker.MaterialTimePicker
+import com.google.android.material.timepicker.TimeFormat
+import kotlin.time.Duration.Companion.seconds
 
 open class DisplaySetting<T, SD: ISettingData<T>>(private val resources: Resources) {
     var title: ((SD, T) -> Inflatable)? = null
@@ -256,4 +260,48 @@ class ActionSetting(data: ActionData) : MActionSetting<ActionSetting.ActionData>
         return 0
     }
     override val onClick: (AppCompatActivity) -> Unit = data.onClick
+}
+
+class TimeSetting(data: TimeData) : MTimeSetting<TimeSetting.TimeData>(data), InflatableSettingInfo {
+    companion object {
+        fun factory(): SettingFactory<TimeBuildInfo, TimeData> = factory() { info, data -> TimeData(data.data, info.validation,info.requireTitle(), info.requireSummary()) }
+    }
+    class TimeData(
+        data: SettingData<Long>,
+        validation: (hour: Int, minute: Int) -> Boolean,
+        val title: (TimeData, Long) -> Inflatable,
+        val summary: (TimeData, Long) -> Inflatable,
+    ): MTimeSetting.TimeData(data, validation) {
+        fun create() = TimeSetting(this)
+    }
+
+    class TimeBuildInfo(
+        val resources: Resources,
+        override var validation: (hour: Int, minute: Int) -> Boolean,
+        data: SettingDataBuildInfo<Long> = SettingDataBuildInfo()
+    ): DisplaySetting<Long, TimeData>(resources), MTimeSetting.TimeBuildInfo, ISettingDataBuildInfo<Long> by data
+
+    override val enabled: LiveData<Boolean>
+        get() = data.enabled
+    override val expandable: Boolean
+        get() = false
+    override val title: Inflatable
+        get() = data.title(data, data.state.value ?: data.default)
+    override val description: Inflatable
+        get() = data.summary(data, data.state.value ?: data.default)
+    override fun expandableIcon(expanded: Boolean): Int {
+        return 0
+    }
+    override val onClick: (AppCompatActivity) -> Unit = {
+        val picker = MaterialTimePicker.Builder()
+            .setTimeFormat(TimeFormat.CLOCK_24H)
+            .setHour(data.value.seconds.inWholeHours.toInt())
+            .setMinute(data.value.seconds.inWholeMinutes.toInt())
+            .build()
+        picker.addOnPositiveButtonClickListener {
+            if (data.validation(picker.hour, picker.minute))
+            data.value = (picker.hour * 3600 + picker.minute * 60).toLong()
+        }
+        picker.show(it.supportFragmentManager, picker.toString())
+    }
 }

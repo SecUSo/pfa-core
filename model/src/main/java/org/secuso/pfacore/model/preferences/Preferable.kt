@@ -165,6 +165,7 @@ fun <T, BI: BuildInfo, SI: Info> BI.build(preferences: SharedPreferences, factor
             is Float -> floatRestorer
             is Double -> doubleRestorer
             is Unit -> noRestorer
+            is Long -> longRestorer
             else -> throw UnsupportedOperationException("The given type ${value!!::class.java} cannot be restored")
         } as Restorer<T>
     }
