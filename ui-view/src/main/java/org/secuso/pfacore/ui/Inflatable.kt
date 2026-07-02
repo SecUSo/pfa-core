@@ -16,13 +16,16 @@ internal fun View.replace(inflater: LayoutInflater, owner: LifecycleOwner, infla
         // If this is the case, postpone the call until the parent is set again.
         val newView = inflatable.inflate(inflater, null, owner)
         post {
-            this.replace(newView)
+            val current = (this.rootView as? ViewGroup)?.findViewById<View>(this.id) ?: this
+            current.replace(newView)
         }
         return newView
     }
+    val id = this.id
     val index = parent.indexOfChild(this)
     parent.removeViewAt(index)
     val newView = inflatable.inflate(inflater, parent, owner)
+    newView.id = id
     parent.addView(newView, index)
     return newView
 }
@@ -31,10 +34,15 @@ internal fun View.replace(view: View) {
     val parent = this.parent as? ViewGroup ?: run {
         // Parent should never be null, but sometimes it is (assuming due to lifecycle issues
         // If this is the case, postpone the call until the parent is set again.
-        post { this.replace(view) }
+        post {
+            val current = (this.rootView as? ViewGroup)?.findViewById<View>(this.id) ?: this
+            current.replace(view)
+        }
         return
     }
+    val id = this.id
     val index = parent.indexOfChild(this)
+    view.id = id
     parent.removeViewAt(index)
     parent.addView(view)
 }

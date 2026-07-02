@@ -52,6 +52,15 @@ class SettingsMenuAdapter(
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
+        /* temporary fix
+           recyclerview normally recycles the view holder and keeps the binding valid
+           but as we replace the views of the binding, and we cannot alter the binding itself,
+           a reuse of a view holder will lead to issues like the usage of false titles, descriptions, toggles, ...
+
+           Telling recyclerview to not recycle the view holder is an easy, but rather expensive fix.
+           But as we don't expect there to be any circumstance where hundreds of settings need to be rendered in a second
+           this should be acceptable until the logic is more refined.*/
+        holder.setIsRecyclable(false)
         when (holder) {
             is CategoryViewHolder -> holder.binding.text = (items[position] as SettingCategory).name
             is SettingViewHolder -> {
