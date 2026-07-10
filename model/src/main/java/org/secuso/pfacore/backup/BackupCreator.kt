@@ -19,9 +19,9 @@ import android.util.JsonWriter
 import android.util.Log
 import androidx.preference.PreferenceManager
 import org.secuso.pfacore.application.PFModelApplication
-import org.secuso.pfacore.model.preferences.Preferable
 import org.secuso.privacyfriendlybackup.api.backup.PreferenceUtil
 import org.secuso.privacyfriendlybackup.api.pfa.IBackupCreator
+import java.io.BufferedWriter
 import java.io.OutputStream
 import java.io.OutputStreamWriter
 import java.nio.charset.StandardCharsets
@@ -34,7 +34,8 @@ class BackupCreator : IBackupCreator {
         } else {
             OutputStreamWriter(outputStream)
         }
-        val writer = JsonWriter(outputStreamWriter)
+        val bufferedWriter = BufferedWriter(outputStreamWriter, 32 * 1024); // 32KB char buffer
+        val writer = JsonWriter(bufferedWriter)
         writer.setIndent("")
 
         try {
@@ -58,12 +59,21 @@ class BackupCreator : IBackupCreator {
                 .filter { !it.backup }
                 .map { it.key }
                 .toTypedArray()
-            Log.d("PFA BackupCreator", "Found ${excludedKeys.size} keys to exclude. \n ${excludedKeys.joinToString(",")}")
+            Log.d(
+                "PFA BackupCreator",
+                "Found ${excludedKeys.size} keys to exclude. \n ${excludedKeys.joinToString(",")}"
+            )
             writer.name("preferences")
-            PreferenceUtil.writePreferences(writer, PreferenceManager.getDefaultSharedPreferences(context), excludedKeys)
+            PreferenceUtil.writePreferences(
+                writer,
+                PreferenceManager.getDefaultSharedPreferences(context),
+                excludedKeys
+            )
 
             writer.endObject()
 
+            bufferedWriter.flush();
+            writer.flush();
             writer.close()
         } catch (e: Exception) {
             Log.e("PFA BackupCreator", "Error occurred", e)
