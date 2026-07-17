@@ -12,6 +12,7 @@ import org.secuso.pfacore.backup.intRestorer
 import org.secuso.pfacore.backup.longRestorer
 import org.secuso.pfacore.backup.noRestorer
 import org.secuso.pfacore.backup.stringRestorer
+import org.secuso.pfacore.backup.stringSetRestorer
 
 interface Info
 interface BuildInfo
@@ -67,7 +68,7 @@ interface Preferable<T> : Info {
     val onUpdate: (T) -> Unit
 }
 
-open class PreferenceBuildInfo<T>: PreferableBuildInfo<T> {
+open class PreferenceBuildInfo<T> : PreferableBuildInfo<T> {
     override var default: T? = null
     override var key: String? = null
     override var backup: Boolean = false
@@ -97,7 +98,7 @@ open class Preference<T>(
     override val backup: Boolean,
     private val restorer: Restorer<T>,
     override val onUpdate: (T) -> Unit
-): Preferable<T> {
+) : Preferable<T> {
     override var value
         get() = state.value ?: default
         set(value) {
@@ -115,14 +116,14 @@ open class Preference<T>(
  *
  * @author Patrick Schneider.
  */
-fun interface InfoFactory<BI: BuildInfo, SI: Info> {
+fun interface InfoFactory<BI : BuildInfo, SI : Info> {
     fun build(info: BI): () -> SI
 }
 typealias DeriveState<T> = (String, T) -> MutableLiveData<T>
 typealias DataSaverUpdater<T> = (String, T, (T) -> Unit) -> (T) -> Unit
 typealias PreferenceFactory<T, BI, SI> = (DeriveState<T>, (T) -> Restorer<T>, DataSaverUpdater<T>) -> InfoFactory<BI, SI>
 
-fun <T, BI: BuildInfo, SI: Info> BI.build(preferences: SharedPreferences, factory: PreferenceFactory<T, BI, SI>): SI {
+fun <T, BI : BuildInfo, SI : Info> BI.build(preferences: SharedPreferences, factory: PreferenceFactory<T, BI, SI>): SI {
     val state = { key: String, value: T ->
         @Suppress("IMPLICIT_CAST_TO_ANY")
         MutableLiveData(
@@ -130,6 +131,7 @@ fun <T, BI: BuildInfo, SI: Info> BI.build(preferences: SharedPreferences, factor
                 is Unit -> Unit
                 is Boolean -> preferences.getBoolean(key, value as Boolean)
                 is String -> preferences.getString(key, value as String)
+                is Set<*> if (value.firstOrNull() is String || value.isEmpty()) -> preferences.getStringSet(key, value as Set<String>)
                 is Int -> preferences.getInt(key, value as Int)
                 is Float -> preferences.getFloat(key, value as Float)
                 // Double is not supported by PreferenceManager. Workaround: Restore the long bitwise
@@ -139,28 +141,31 @@ fun <T, BI: BuildInfo, SI: Info> BI.build(preferences: SharedPreferences, factor
             } as T
         )
     }
-    val update: DataSaverUpdater<T> = { key: String, default: T, onUpdate: (T) -> Unit -> { value: T ->
-        preferences.edit().apply {
-            Log.d("Saving setting", "key: ${key}, value: $value")
-            when (default) {
-                is Boolean -> putBoolean(key, value as Boolean)
-                is String -> putString(key, value as String)
-                is Int -> putInt(key, value as Int)
-                is Float -> putFloat(key, value as Float)
-                // Double is not supported by PreferenceManager. Workaround: Interpret it as double and store the raw bits
-                is Double -> putLong(key, (value as Double).toRawBits())
-                is Long -> putLong(key, value as Long)
-                is Unit -> {}
-                else -> throw UnsupportedOperationException("The given type ${default!!::class.java} is no valid setting type")
-            }
-        }.apply()
-        onUpdate(value)
-    }
+    val update: DataSaverUpdater<T> = { key: String, default: T, onUpdate: (T) -> Unit ->
+        { value: T ->
+            preferences.edit().apply {
+                Log.d("Saving setting", "key: ${key}, value: $value")
+                when (default) {
+                    is Boolean -> putBoolean(key, value as Boolean)
+                    is String -> putString(key, value as String)
+                    is Set<*> if ((value as Set<*>).firstOrNull() is String || value.isEmpty()) -> putStringSet(key, value as Set<String>)
+                    is Int -> putInt(key, value as Int)
+                    is Float -> putFloat(key, value as Float)
+                    // Double is not supported by PreferenceManager. Workaround: Interpret it as double and store the raw bits
+                    is Double -> putLong(key, (value as Double).toRawBits())
+                    is Long -> putLong(key, value as Long)
+                    is Unit -> {}
+                    else -> throw UnsupportedOperationException("The given type ${default!!::class.java} is no valid setting type")
+                }
+            }.apply()
+            onUpdate(value)
+        }
     }
     val restorer = { value: T ->
         when (value) {
             is Boolean -> booleanRestorer
             is String -> stringRestorer
+            is Set<*> if (value.firstOrNull() is String || value.isEmpty()) -> stringSetRestorer
             is Int -> intRestorer
             is Float -> floatRestorer
             is Double -> doubleRestorer
