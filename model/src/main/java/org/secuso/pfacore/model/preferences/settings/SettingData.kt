@@ -3,7 +3,6 @@ package org.secuso.pfacore.model.preferences.settings
 import android.content.SharedPreferences
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import org.secuso.pfacore.activities.PFActivity
 import org.secuso.pfacore.backup.Restorer
 import org.secuso.pfacore.model.preferences.BuildInfo
 import org.secuso.pfacore.model.preferences.Info
@@ -28,44 +27,16 @@ data class SettingEntry<T>(
     var value: T
 )
 
-typealias UseActivityCallback = ((PFActivity) -> (() -> Unit)?)
-
-/**
- * The behavior specific to any setting, even those entries not associated with any value.
- *
- * @property enabled An observable value stating if this setting is currently active or if it should be ignored.
- * @property useActivity A function being called with the current activity in the [android.app.Activity.onCreate] lifecycle.
- *      This function is expected to return a function which will be invoked in the [android.app.Activity.onDestroy] lifecycle to allow some cleanup code to be run.
- *      It is NOT intended to do any heavy work in this function as it will be called immediately, even if the preference is not visible, e.g. hidden inside another menu.
- *
- * @author Patrick Schneider
- */
-interface ISettingBehaviour : Info {
-    var enabled: LiveData<Boolean>
-    var useActivity: UseActivityCallback?
-}
-
-open class SettingBehaviour(
-    override var enabled: LiveData<Boolean> = MutableLiveData(true),
-    override var useActivity: UseActivityCallback? = null
-) : ISettingBehaviour
-
-interface ISettingBehaviourBuildInfo : BuildInfo {
-    var dependency: DependencyRelation.() -> Unit
-    var useActivity: UseActivityCallback?
-}
-
-class SettingBehaviourBuildInfo : ISettingBehaviourBuildInfo {
-    override var dependency: DependencyRelation.() -> Unit = {}
-    override var useActivity: UseActivityCallback? = null
-}
-
 /**
  * The data specific to a setting.
  *
+ * @property enabled An observable value stating if this setting is currently active or if it should be ignored.
+ *
  * @author Patrick Schneider
  */
-interface ISettingData<T> : ISettingBehaviour, Preferable<T>
+interface ISettingData<T> : Info, Preferable<T> {
+    var enabled: LiveData<Boolean>
+}
 
 /**
  * Declare dependencies between settings by requiring that a condition is met for a specific key.
@@ -90,11 +61,13 @@ class DependencyRelation(internal val dependencies: MutableList<Pair<String, (An
  *
  * @author Patrick Schneider
  */
-interface ISettingDataBuildInfo<T> : BuildInfo, PreferableBuildInfo<T>, ISettingBehaviourBuildInfo
+interface ISettingDataBuildInfo<T> : BuildInfo, PreferableBuildInfo<T> {
+    var dependency: DependencyRelation.() -> Unit
 
-open class SettingDataBuildInfo<T>: ISettingDataBuildInfo<T>, PreferenceBuildInfo<T>(), ISettingBehaviourBuildInfo {
+}
+
+open class SettingDataBuildInfo<T>: ISettingDataBuildInfo<T>, PreferenceBuildInfo<T>() {
     override var dependency: DependencyRelation.() -> Unit = {}
-    override var useActivity: UseActivityCallback? = null
 }
 
 /**
@@ -117,16 +90,15 @@ open class SettingData<T>(
     override var backup: Boolean,
     restorer: Restorer<T>,
     override var onUpdate: (T) -> Unit,
-    override var enabled: LiveData<Boolean>,
-    override var useActivity: UseActivityCallback? = null
+    override var enabled: LiveData<Boolean>
 ): ISettingData<T>, Preference<T>(state, default, key, backup, restorer, onUpdate)
 
 typealias EnabledByDependency = (DependencyRelation) -> LiveData<Boolean>
-typealias SettingDataFactory<BI, SI> = (SharedPreferences, EnabledByDependency) -> InfoFactory<BI, SI>
+typealias SettingFactory<BI, SI> = (SharedPreferences, EnabledByDependency) -> InfoFactory<BI, SI>
 
 fun <T, BI: ISettingDataBuildInfo<T>, SI: ISettingData<T>> settingDataFactory(
     adapt: (BI, SettingData<T>) -> SI
-): SettingDataFactory<BI, SI> {
+): SettingFactory<BI, SI> {
     return { preferences, enabled -> InfoFactory {
             info -> {
                 val data = info.build<T, BI, SettingData<T>>(preferences) { state, restorer, onUpdate -> InfoFactory {
@@ -138,28 +110,11 @@ fun <T, BI: ISettingDataBuildInfo<T>, SI: ISettingData<T>> settingDataFactory(
                             info.backup,
                             restorer(info.default!!),
                             onUpdate(info.key!!, info.default!!, info.onUpdate),
-                            enabled(DependencyRelation().apply(info.dependency)),
-                            info.useActivity
+                            enabled(DependencyRelation().apply(info.dependency))
                         )
                     }
                 } }
                 adapt(info, data)
-            }
-        }
-    }
-}
-
-typealias SettingFactory<BI, SI> = (EnabledByDependency) -> InfoFactory<BI, SI>
-fun <BI: ISettingBehaviourBuildInfo, SI: ISettingBehaviour> settingFactory(
-    adapt: (BI, SettingBehaviour) -> SI
-): SettingFactory<BI, SI> {
-    return { enabled -> InfoFactory {
-            info -> {
-                val behaviour = SettingBehaviour(
-                    enabled(DependencyRelation().apply(info.dependency)),
-                    info.useActivity
-                )
-                adapt(info, behaviour)
             }
         }
     }

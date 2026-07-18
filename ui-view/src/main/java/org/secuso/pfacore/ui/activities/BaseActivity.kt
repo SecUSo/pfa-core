@@ -3,21 +3,33 @@ package org.secuso.pfacore.ui.activities
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.MenuItem
 import android.view.View
 import androidx.annotation.LayoutRes
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.TaskStackBuilder
-import org.secuso.pfacore.activities.PFActivity
+import org.secuso.pfacore.model.permission.PFAPermissionLifecycleCallbacks
+import org.secuso.pfacore.model.permission.PFAPermissionOwner
 import org.secuso.pfacore.ui.PFApplication
 import org.secuso.ui.view.databinding.ActivityBaseBinding
 
-open class BaseActivity(val base: Boolean = true): PFActivity() {
+open class BaseActivity(val base: Boolean = true): AppCompatActivity(), PFAPermissionOwner {
 
     open val parentActivity: Class<out Activity> = PFApplication.instance.mainActivity
     private lateinit var binding: ActivityBaseBinding
+    private val permissionCallbacks: MutableList<() -> Unit> = mutableListOf()
+
+    override fun registerPFAPermissionInitialization(action: () -> Unit) {
+        permissionCallbacks.add(action)
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        for (callback in permissionCallbacks) {
+            callback()
+        }
 
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         if (!PFApplication.instance.data.theme.hasActiveObservers()) {

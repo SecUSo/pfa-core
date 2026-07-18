@@ -1,8 +1,10 @@
 package org.secuso.pfacore.model.preferences.settings
 
 import android.content.Context
+import android.content.SharedPreferences
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.map
 import androidx.preference.PreferenceManager
 import org.secuso.pfacore.model.preferences.BuildInfo
 import org.secuso.pfacore.model.preferences.Info
@@ -77,11 +79,8 @@ abstract class Settings<SI: Info>(internal val settings: List<SettingCategory<SI
             }
         }
 
-        fun <BI: BuildInfo, SI: Info> BI.build(factory: SettingDataFactory<BI, SI>): SI {
-            return factory(PreferenceManager.getDefaultSharedPreferences(context), enabled).build(this).invoke()
-        }
         fun <BI: BuildInfo, SI: Info> BI.build(factory: SettingFactory<BI, SI>): SI {
-            return factory(enabled).build(this).invoke()
+            return factory(PreferenceManager.getDefaultSharedPreferences(context), enabled).build(this).invoke()
         }
         fun <S: org.secuso.pfacore.model.preferences.settings.Setting<*>> S.register(): S = this.apply { addSetting(SettingComposite(this as org.secuso.pfacore.model.preferences.settings.Setting<SI>)) }
 
