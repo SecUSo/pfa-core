@@ -78,7 +78,7 @@ class SettingsMenuAdapter(
            Telling recyclerview to not recycle the view holder is an easy, but rather expensive fix.
            But as we don't expect there to be any circumstance where hundreds of settings need to be rendered in a second
            this should be acceptable until the logic is more refined.*/
-//        holder.setIsRecyclable(false)
+        holder.setIsRecyclable(false)
         when (holder) {
             is CategoryViewHolder -> holder.binding.text = (items[position] as SettingCategory).name
             is SettingViewHolder -> {
