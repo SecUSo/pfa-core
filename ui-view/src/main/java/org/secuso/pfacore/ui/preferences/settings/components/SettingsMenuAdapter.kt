@@ -1,6 +1,7 @@
 package org.secuso.pfacore.ui.preferences.settings.components
 
 import android.os.Build
+import android.util.Log
 import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
@@ -102,23 +103,44 @@ class SettingsMenuAdapter(
                     }
 
 
-                    title.replace(inflater, owner, setting.title)
-                    if (setting.description != null) {
+                    val titleView = title.replace(inflater, owner, setting.title)
+                    val descriptionView = if (setting.description != null) {
                         description.replace(inflater, owner, setting.description!!)
+                    } else {
+                        null
                     }
+
                     val rootClick = if (setting.onlyRootExpandable()) { holder.binding.top } else { holder.binding.root }
-                    rootClick.apply {
-                        isFocusable = true
-                        isClickable = true
-                        addClickStyle()
-                    }
+                    enabled = setting.enabled.value ?: true
                     rootClick.isClickable = true
+                    setting.enabled.observe(owner) {
+                        enabled = it
+                        if (enabled) {
+                            rootClick.apply {
+                                isFocusable = true
+                                isClickable = true
+                                addClickStyle()
+                            }
+                            root.isEnabled = true
+                            action.isEnabled = true
+                            titleView.isEnabled = true
+                            descriptionView?.isEnabled = true
+                        } else {
+                            root.isEnabled = false
+                            action.isEnabled = false
+                            titleView.isEnabled = false
+                            descriptionView?.isEnabled = false
+                        }
+
+                    }
+
                     if (!setting.expandable) {
                         if (setting.action != null) {
                             val view = toggle.replace(inflater, owner, setting.action!!)
                             rootClick.setOnClickListener { view.callOnClick() }
                         } else if (setting.onClick != null) {
                             rootClick.setOnClickListener {
+                                Log.d("click", "click")
                                 setting.onClick?.invoke(activity)
                             }
                         } else {
@@ -149,9 +171,6 @@ class SettingsMenuAdapter(
                             }
                         }
                     }
-
-                    setting.enabled.observe(owner) { enabled = it}
-                    enabled = setting.enabled.value ?: true
                 }
             }
         }
