@@ -2,6 +2,7 @@ package org.secuso.pfacore.model.preferences.settings
 
 import android.content.res.Resources
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.LiveData
 import org.secuso.pfacore.model.preferences.InfoFactory
 import org.secuso.pfacore.model.preferences.BuildInfo
 import org.secuso.pfacore.model.preferences.Info
@@ -44,7 +45,7 @@ abstract class SwitchSetting<SD: SwitchSetting.SwitchData>(override val data: SD
     open class SwitchData(val data: SettingData<Boolean>): ISettingData<Boolean> by data
     interface SwitchBuildInfo: ISettingDataBuildInfo<Boolean>
     companion object {
-        fun <SI: SwitchBuildInfo, SD: SwitchData> factory(adapt: (SI, SwitchData) -> SD): SettingFactory<SI, SD>
+        fun <SI: SwitchBuildInfo, SD: SwitchData> factory(adapt: (SI, SwitchData) -> SD): SettingDataFactory<SI, SD>
             = settingDataFactory { info, it -> adapt(info, SwitchData(it)) }
     }
 }
@@ -62,7 +63,7 @@ abstract class RadioSetting<T, SD: RadioSetting.RadioData<T>>(override val data:
         var entries: List<SettingEntry<T>>
     }
     companion object {
-        inline fun < T, SI: RadioBuildInfo<T>, SD: RadioData<T>> factory(crossinline adapt: (SI, RadioData<T>) -> SD): SettingFactory<SI, SD>
+        inline fun < T, SI: RadioBuildInfo<T>, SD: RadioData<T>> factory(crossinline adapt: (SI, RadioData<T>) -> SD): SettingDataFactory<SI, SD>
             = settingDataFactory { info, it -> adapt(info, RadioData(it, info.entries)) }
     }
 }
@@ -79,7 +80,7 @@ abstract class InputSetting<T, SD: InputSetting.InputData<T>>(override val data:
         var validation: (value: T?) -> T?
     }
     companion object {
-        inline fun < T, SI: InputBuildInfo<T>, SD: InputData<T>> factory(crossinline adapt: (SI, InputData<T>) -> SD): SettingFactory<SI, SD>
+        inline fun < T, SI: InputBuildInfo<T>, SD: InputData<T>> factory(crossinline adapt: (SI, InputData<T>) -> SD): SettingDataFactory<SI, SD>
                 = settingDataFactory { info, it -> adapt(info, InputData(it, info.validation)) }
     }
 }
@@ -91,10 +92,13 @@ abstract class InputSetting<T, SD: InputSetting.InputData<T>>(override val data:
  * @author Patrick Schneider
  */
 abstract class MenuSetting<SD : MenuSetting.MenuData>(override val data: SD): Setting<SD> {
-    open class MenuData: Info
-    interface MenuBuildInfo: BuildInfo
+    open class MenuData(
+        behaviour: ISettingBehaviour
+    ): ISettingBehaviour by behaviour
+    interface MenuBuildInfo: ISettingBehaviourBuildInfo
     companion object {
-        fun <SI: MenuBuildInfo, SD: MenuData> factory(adapt: (SI, MenuData) -> SD): SettingFactory<SI, SD> = { _, _ -> InfoFactory { info -> { adapt(info, MenuData()) } } }
+        fun <SI : MenuBuildInfo, SD : MenuData> factory(adapt: (SI, MenuData) -> SD): SettingFactory<SI, SD> =
+            settingFactory { info, behaviour -> adapt(info, MenuData(behaviour)) }
     }
 }
 
@@ -106,13 +110,14 @@ abstract class MenuSetting<SD : MenuSetting.MenuData>(override val data: SD): Se
  * @author Patrick Schneider
  */
 abstract class ActionSetting<SD : ActionSetting.ActionData>(override val data: SD): Setting<SD> {
-    open class ActionData(val onClick: (AppCompatActivity) -> Unit): Info
-    interface ActionBuildInfo: BuildInfo {
+    open class ActionData(behaviour: ISettingBehaviour, val onClick: (AppCompatActivity) -> Unit): ISettingBehaviour by behaviour
+    interface ActionBuildInfo: ISettingBehaviourBuildInfo {
         var onClick: (AppCompatActivity) -> Unit
 
     }
     companion object {
-        fun <SI: ActionBuildInfo, SD: ActionData> factory(adapt: (SI, ActionData) -> SD): SettingFactory<SI, SD> = { _, _ -> InfoFactory { info -> { adapt(info, ActionData(info.onClick)) } } }
+        fun <SI: ActionBuildInfo, SD: ActionData> factory(adapt: (SI, ActionData) -> SD): SettingFactory<SI, SD>
+            = settingFactory { info, behaviour -> adapt(info, ActionData(behaviour = behaviour, onClick = info.onClick)) }
     }
 }
 
@@ -129,7 +134,7 @@ abstract class TimeSetting<SD : TimeSetting.TimeData>(override val data: SD): Se
         var validation: (hour: Int, minute: Int) -> Boolean
     }
     companion object {
-        fun <SI: TimeBuildInfo, SD: TimeData> factory(adapt: (SI, TimeData) -> SD): SettingFactory<SI, SD> =
+        fun <SI: TimeBuildInfo, SD: TimeData> factory(adapt: (SI, TimeData) -> SD): SettingDataFactory<SI, SD> =
             settingDataFactory { info, data -> adapt(info, TimeData(data, info.validation)) } }
 }
 

@@ -2,6 +2,7 @@ package org.secuso.pfacore.ui.preferences.settings
 
 import android.content.res.Resources
 import android.text.InputType
+import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.widget.doOnTextChanged
 import androidx.lifecycle.LiveData
@@ -11,7 +12,7 @@ import org.secuso.pfacore.model.preferences.settings.SettingData
 import org.secuso.pfacore.model.preferences.settings.SettingDataBuildInfo
 import org.secuso.pfacore.model.preferences.settings.SettingEntry
 import org.secuso.pfacore.model.preferences.settings.Entries
-import org.secuso.pfacore.model.preferences.settings.SettingFactory
+import org.secuso.pfacore.model.preferences.settings.SettingDataFactory
 import org.secuso.pfacore.model.preferences.settings.MenuSetting as MMenuSetting
 import org.secuso.pfacore.model.preferences.settings.ActionSetting as MActionSetting
 import org.secuso.pfacore.model.preferences.settings.RadioSetting as MRadioSetting
@@ -30,6 +31,11 @@ import org.secuso.ui.view.databinding.SimpleDescriptionBinding
 import org.secuso.ui.view.databinding.SimpleTitleBinding
 import com.google.android.material.timepicker.MaterialTimePicker
 import com.google.android.material.timepicker.TimeFormat
+import org.secuso.pfacore.model.preferences.settings.ISettingBehaviour
+import org.secuso.pfacore.model.preferences.settings.ISettingBehaviourBuildInfo
+import org.secuso.pfacore.model.preferences.settings.SettingBehaviour
+import org.secuso.pfacore.model.preferences.settings.SettingBehaviourBuildInfo
+import org.secuso.pfacore.model.preferences.settings.SettingFactory
 import kotlin.time.Duration.Companion.seconds
 
 open class DisplaySetting<T, SD: ISettingData<T>>(private val resources: Resources) {
@@ -85,7 +91,7 @@ open class BasicDisplaySetting(private val resources: Resources) {
 
 class SwitchSetting(data: SwitchData) : MSwitchSetting<SwitchSetting.SwitchData>(data), InflatableSettingInfo {
     companion object {
-        fun factory(): SettingFactory<SwitchBuildInfo, SwitchData> = factory { info, data -> SwitchData(data.data, info.requireTitle(), info.requireSummary()) }
+        fun factory(): SettingDataFactory<SwitchBuildInfo, SwitchData> = factory { info, data -> SwitchData(data.data, info.requireTitle(), info.requireSummary()) }
     }
 
     class SwitchData(
@@ -112,7 +118,7 @@ class SwitchSetting(data: SwitchData) : MSwitchSetting<SwitchSetting.SwitchData>
             PreferenceSwitchBinding.inflate(inflater, root, false).apply {
                 action.setOnClickListener { data.value = !(data.value ?: data.default) }
                 action.isChecked = data.value ?: data.default
-                data.state.observe(owner) { action.isChecked = it }
+                data.state.observe(owner) { action.isChecked = it; Log.d("switch", "state changed $it") }
                 enabled = data.enabled.value ?: true
                 data.enabled.observe(owner) { enabled = it }
             }.root
@@ -121,7 +127,7 @@ class SwitchSetting(data: SwitchData) : MSwitchSetting<SwitchSetting.SwitchData>
 
 class RadioSetting<T>(data: RadioData<T>) : MRadioSetting<T, RadioSetting.RadioData<T>>(data), InflatableSettingInfo {
     companion object {
-        fun <T> factory(): SettingFactory<RadioBuildInfo<T>, RadioData<T>> = factory() { info, data -> RadioData(data.data, info.entries, info.requireTitle(), info.requireSummary()) }
+        fun <T> factory(): SettingDataFactory<RadioBuildInfo<T>, RadioData<T>> = factory() { info, data -> RadioData(data.data, info.entries, info.requireTitle(), info.requireSummary()) }
     }
     class RadioData<T>(
         data: SettingData<T>,
@@ -157,7 +163,7 @@ class RadioSetting<T>(data: RadioData<T>) : MRadioSetting<T, RadioSetting.RadioD
 
 class InputSetting<T>(data: InputData<T>) : MInputSetting<T, InputSetting.InputData<T>>(data), InflatableSettingInfo {
     companion object {
-        fun <T> factory(): SettingFactory<InputBuildInfo<T>, InputData<T>> = factory() { info, data -> InputData(data.data, info.validation,info.requireTitle(), info.requireSummary()) }
+        fun <T> factory(): SettingDataFactory<InputBuildInfo<T>, InputData<T>> = factory() { info, data -> InputData(data.data, info.validation,info.requireTitle(), info.requireSummary()) }
     }
     class InputData<T>(
         data: SettingData<T>,
@@ -216,15 +222,19 @@ class InputSetting<T>(data: InputData<T>) : MInputSetting<T, InputSetting.InputD
 
 class MenuSetting(data: MenuData) : MMenuSetting<MenuSetting.MenuData>(data), InflatableSettingInfo {
     companion object {
-        fun factory(): SettingFactory<MenuBuildInfo, MenuData> = factory() { info, data -> MenuData(info.requireTitle(), info.summary) }
+        fun factory(): SettingFactory<MenuBuildInfo, MenuData> 
+            = factory { info, data -> MenuData(data, info.requireTitle(), info.summary) }
     }
     class MenuData(
+        behaviour: ISettingBehaviour,
         val title: Inflatable,
         val summary: Inflatable?,
-    ): MMenuSetting.MenuData() {
+    ): MMenuSetting.MenuData(behaviour) {
         fun create() = MenuSetting(this)
     }
-    class MenuBuildInfo(resources: Resources): BasicDisplaySetting(resources), MMenuSetting.MenuBuildInfo
+    class MenuBuildInfo(
+        resources: Resources, behaviour: ISettingBehaviourBuildInfo = SettingBehaviourBuildInfo()
+    ): BasicDisplaySetting(resources), MMenuSetting.MenuBuildInfo, ISettingBehaviourBuildInfo by behaviour
 
     override val expandable: Boolean
         get() = false
@@ -239,16 +249,22 @@ class MenuSetting(data: MenuData) : MMenuSetting<MenuSetting.MenuData>(data), In
 
 class ActionSetting(data: ActionData) : MActionSetting<ActionSetting.ActionData>(data), InflatableSettingInfo {
     companion object {
-        fun factory(): SettingFactory<ActionBuildInfo, ActionData> = factory() { info, data -> ActionData(data.onClick, info.requireTitle(), info.summary) }
+        fun factory(): SettingFactory<ActionBuildInfo, ActionData>
+            = factory { info, data -> ActionData(data, data.onClick, info.requireTitle(), info.summary) }
     }
     class ActionData(
+        behaviour: ISettingBehaviour,
         onClick: (AppCompatActivity) -> Unit,
         val title: Inflatable,
         val summary: Inflatable?,
-    ): MActionSetting.ActionData(onClick) {
+    ): MActionSetting.ActionData(behaviour, onClick) {
         fun create() = ActionSetting(this)
     }
-    class ActionBuildInfo(resources: Resources, override var onClick: (AppCompatActivity) -> Unit = {}): BasicDisplaySetting(resources), MActionSetting.ActionBuildInfo
+    class ActionBuildInfo(
+        resources: Resources,
+        behaviour: ISettingBehaviourBuildInfo = SettingBehaviourBuildInfo(),
+        override var onClick: (AppCompatActivity) -> Unit = {}
+    ): BasicDisplaySetting(resources), MActionSetting.ActionBuildInfo, ISettingBehaviourBuildInfo by behaviour
 
     override val expandable: Boolean
         get() = false
@@ -264,7 +280,7 @@ class ActionSetting(data: ActionData) : MActionSetting<ActionSetting.ActionData>
 
 class TimeSetting(data: TimeData) : MTimeSetting<TimeSetting.TimeData>(data), InflatableSettingInfo {
     companion object {
-        fun factory(): SettingFactory<TimeBuildInfo, TimeData> = factory() { info, data -> TimeData(data.data, info.validation,info.requireTitle(), info.requireSummary()) }
+        fun factory(): SettingDataFactory<TimeBuildInfo, TimeData> = factory() { info, data -> TimeData(data.data, info.validation,info.requireTitle(), info.requireSummary()) }
     }
     class TimeData(
         data: SettingData<Long>,
