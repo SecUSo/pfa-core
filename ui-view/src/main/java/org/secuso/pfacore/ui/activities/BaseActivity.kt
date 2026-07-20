@@ -57,7 +57,10 @@ open class BaseActivity(val base: Boolean = true): PFActivity() {
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
     }
 
-    override fun setContentView(view: View) {
+    override fun setContentView(view: View?) {
+        if (view == null) {
+            return
+        }
         if (base) {
             initContent()
             binding.content.addView(view)

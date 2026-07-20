@@ -104,7 +104,7 @@ abstract class DrawerActivity: BaseActivity(base = false), Drawer {
         }
     }
 
-    override fun setContentView(view: View) {
+    override fun setContentView(view: View?) {
         initContent()
         drawerBinding.content.addView(view)
     }
