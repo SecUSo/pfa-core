@@ -16,6 +16,9 @@ ax-constraintlayuout = "2.0.1"
 ax-lifecycle = "2.5.0"
 ax-lifecycle-ext = "2.2.0"
 ax-legacy-v4 = "1.0.0"
+ax-viewpager = "1.0.0"
+ax-fragment = "1.6.0"
+ax-drawerlayout = "1.2.0"
 material = "1.11.0"
 junit = "4.13.2"
 ax-test-junit = "1.1.5"
@@ -54,6 +57,9 @@ ax-lifecycle-ext = { group = "androidx.lifecycle", name = "lifecycle-extensions"
 ax-lifecycle-viewmodel = { group = "androidx.lifecycle", name = "lifecycle-viewmodel-ktx", version.ref = "ax-lifecycle"}
 ax-lifecycle-runtime = { group = "androidx.lifecycle", name = "lifecycle-runtime-ktx", version.ref = "ax-lifecycle"}
 ax-legacy-v4 = { group = "androidx.legacy", name = "legacy-support-v4", version.ref = "ax-legacy-v4" }
+ax-viewpager = { group = "androidx.viewpager", name = "viewpager", version.ref = "ax-viewpager" }
+ax-fragment = { group = "androidx.fragment", name = "fragment", version.ref = "ax-fragment" }
+ax-drawerlayout = { group = "androidx.drawerlayout", name = "drawerlayout", version.ref = "ax-drawerlayout" }
 ax-compose-bom = { group = "androidx.compose", name = "compose-bom", version.ref = "compose-bom"}
 ax-compose-ui-graphics = { group = "androidx.compose.ui", name = "ui-graphics", version.ref = "compose"}
 ax-compose-ui-tooling = { group = "androidx.compose.ui", name = "ui-tooling", version.ref = "compose"}
